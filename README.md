@@ -1,4 +1,4 @@
-# auto-coding — AI变成助手
+# auto-coding — AI编程搭档
 
 **🌐 语言 / Language：** [简体中文](README.md) · [English](README-EN.md)
 
