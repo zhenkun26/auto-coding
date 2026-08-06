@@ -1,0 +1,24 @@
+{
+  "name": "auto-coding",
+  "version": "0.1.0",
+  "description": "Parallel development system for Codex: OpenSpec planning + Pipeline execution + Ponytail code minimization.",
+  "author": {
+    "name": "auto-coding contributors"
+  },
+  "license": "MIT",
+  "keywords": ["openspec", "pipeline", "ponytail", "planning", "codex"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Auto Coding",
+    "shortDescription": "Parallel development system: plan, implement, verify, commit.",
+    "longDescription": "auto-coding bundles the sb_coding parallel development system for Codex: grill-me design stress tests, OpenSpec business planning (explore/propose/sync/archive), a six-stage engineering pipeline (breakdown to commit), Ponytail lazy code minimization, and a three-layer self-check protocol.",
+    "developerName": "auto-coding contributors",
+    "category": "Productivity",
+    "capabilities": ["Write"],
+    "defaultPrompt": [
+      "Explore this idea with me using OpenSpec planning.",
+      "Propose a change and break it down into pipeline tasks.",
+      "Implement the pending change tasks with self-verification."
+    ]
+  }
+}

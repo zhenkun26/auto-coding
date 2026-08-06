@@ -1,0 +1,26 @@
+# macOS
+.DS_Store
+
+# Generated / cache
+__pycache__/
+.mypy_cache/
+.pytest_cache/
+*.pyc
+.coverage
+coverage.json
+
+# Sandbox test code (not part of skill)
+sandbox_test/
+
+# Local dev/test locations
+src/
+tests_payment/
+tests_taskrunner/
+tests_validator/
+
+# Pipeline runtime artifacts (per-run, regenerated)
+ai_pipeline/
+
+# IDE
+.vscode/
+.idea/
