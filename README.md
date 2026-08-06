@@ -41,15 +41,40 @@
 
 ## 架构
 
-```
-OpenSpec（总）+ grill-me（决策）        Pipeline（分）+ Ponytail（落地）
-──────────────────────────────        ─────────────────────────────────────
-grill-me → explore → propose → update  节点2(拆解) → 节点3(定位) → 节点4(实现) → 节点5(验证) → 节点6(运行时) → 节点8(提交)
-              ↓                                    ↑
-         sync → archive                  Ponytail full + RUN_LOG/ERROR_MEMORY 全程
+```mermaid
+flowchart LR
+    subgraph PL["规划 · OpenSpec + grill-me"]
+        direction LR
+        G["grill-me 决策追问"] --> E["explore 探索"]
+        E --> P["propose 变更立项"]
+        P --> U["update 修订"]
+    end
+
+    subgraph EX["执行 · Pipeline + Ponytail"]
+        direction LR
+        N2["节点2 拆解"] --> N3["节点3 定位"]
+        N3 --> N4["节点4 实现"]
+        N4 --> N5["节点5 静态验证"]
+        N5 --> N6["节点6 运行时验证"]
+        N6 --> N8["节点8 语义提交"]
+    end
+
+    subgraph PH["收尾 · Phase D"]
+        direction LR
+        S["sync 增量规格合并"] --> A["archive 变更归档"]
+    end
+
+    U -->|"规划制品交接"| N2
+    N8 -->|"质量闸门通过"| S
+    P0["Ponytail 代码最小化"] -.-> N4
 ```
 
-**关键设计**：grill-me 在规划阶段独立运行（>2 个决策时触发 C1b，>3 个决策时触发 C2），追问每个决策分支直至达成共识。OpenSpec 和 Pipeline 不重叠——OpenSpec 做完规划后，Pipeline 直接消费 OpenSpec 制品，从工程拆解/定位开始执行，不做重复的需求理解和任务拆解。
+**关键设计**：
+
+- **职责不重叠**：OpenSpec 只做规划（explore / propose / update），Pipeline 只做执行（节点2→8），不做重复的需求理解与任务拆解；
+- **决策前置**：grill-me 在规划阶段独立运行——>2 个决策时 C1b 触发、>3 个决策时 C2 触发，逐分支追问直至达成共识；
+- **全程兜底**：Ponytail 在节点4 全程驱动代码最小化，RUN_LOG / ERROR_MEMORY 持续沉淀；
+- **闭环收口**：Phase D 的 sync 合并增量规格到主 specs、archive 归档变更，一次变更完整闭环。
 
 ## 组件职责
 

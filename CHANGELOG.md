@@ -38,6 +38,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - README optimized and the English version synchronized: fixed intro formatting, real install commands, added Quickstart and Contributing sections, and brought the directory tree and QA numbers up to date.
 - README now opens with the creation story ("创作初衷 / Origin story") explaining the vibe-coding pain points that motivated the system; English version synced.
 - README and README-EN now carry a bilingual language switcher at the top (`[简体中文](README.md) · [English](README-EN.md)`).
+- Architecture section converted from ASCII art to a Mermaid flowchart with bullet-pointed key design notes; English version synced.
 
 ### Renamed
 

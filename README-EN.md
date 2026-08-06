@@ -41,15 +41,40 @@ So I distilled the lessons into this system, giving every phase a methodology th
 
 ## Architecture
 
-```
-OpenSpec (planning) + grill-me (decisions)   Pipeline (execution) + Ponytail (implementation)
-──────────────────────────────────────       ───────────────────────────────────────────────
-grill-me → explore → propose → update        Node 2 (decompose) → Node 3 (locate) → Node 4 (implement) → Node 5 (verify) → Node 6 (runtime) → Node 8 (commit)
-              ↓                                    ↑
-         sync → archive                    Ponytail full + RUN_LOG/ERROR_MEMORY throughout
+```mermaid
+flowchart LR
+    subgraph PL["Planning · OpenSpec + grill-me"]
+        direction LR
+        G["grill-me decision drill-down"] --> E["explore"]
+        E --> P["propose change"]
+        P --> U["update"]
+    end
+
+    subgraph EX["Execution · Pipeline + Ponytail"]
+        direction LR
+        N2["Node 2 decompose"] --> N3["Node 3 locate"]
+        N3 --> N4["Node 4 implement"]
+        N4 --> N5["Node 5 static verify"]
+        N5 --> N6["Node 6 runtime verify"]
+        N6 --> N8["Node 8 commit"]
+    end
+
+    subgraph PH["Wrap-up · Phase D"]
+        direction LR
+        S["sync delta specs"] --> A["archive change"]
+    end
+
+    U -->|"handoff artifacts"| N2
+    N8 -->|"gates passed"| S
+    P0["Ponytail minimalism"] -.-> N4
 ```
 
-**Key design**: grill-me runs independently during planning (triggered when >2 decisions for C1b, >3 for C2), questioning every branch of the decision tree until shared understanding. OpenSpec and Pipeline do not overlap — once OpenSpec finishes planning, Pipeline consumes OpenSpec artifacts directly, starting from engineering decomposition and location — no duplicated requirement analysis or task breakdown.
+**Key design**:
+
+- **No overlapping responsibilities**: OpenSpec handles planning only (explore / propose / update); Pipeline handles execution only (Node 2→8) — no duplicated requirement analysis or task breakdown;
+- **Decisions first**: grill-me runs independently during planning — triggered at >2 decisions for C1b and >3 for C2, questioning every branch until shared understanding;
+- **Guardrails throughout**: Ponytail drives code minimalism through Node 4, while RUN_LOG / ERROR_MEMORY keep sedimenting continuously;
+- **Closed loop**: Phase D merges delta specs into the main specs via `sync` and archives the change, closing the loop on every change.
 
 ## Component responsibilities
 
