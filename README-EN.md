@@ -14,6 +14,29 @@ A parallel development system for AI coding assistants: **OpenSpec (business pla
 
 **auto-coding** (formerly sb_coding) is assembled from quality skills the author collected and battle-tested through countless vibe-coding mishaps — especially the "turned to garbage halfway through" kind. In today's vibe-coding environment, coding agents remain largely black-box, and auto-coding pins down the lower bound of agent quality. From an idea to a half-built project to a stable landing, it keeps the ride smooth. There are bumps, but it beats the model running away by a wide margin.
 
+## Origin story
+
+**The real pain of vibe coding is not writing code — it is not knowing what to do next.**
+
+When I first started vibe coding with AI, I kept getting stuck in the same places:
+
+- **No idea how to explore** — vague ideas, no clue what to ask or investigate, straight to writing code;
+- **No idea how to plan** — no requirement breakdown, no interface contracts, realizing halfway that the direction was wrong;
+- **No idea how to run** — after writing code, not knowing whether to verify or commit, all by gut feeling;
+- **No idea how to accept** — "it seems to work" counted as done; types, edge cases, coverage, and regressions were pure luck.
+
+The result: **the project turned to garbage halfway through**. AI tries hard, but without a process to hold the line, effort just accelerates the chaos.
+
+So I distilled the lessons into this system, giving every phase a methodology that has your back:
+
+- Vague idea → **grill-me + OpenSpec explore** handle discovery and clarification;
+- Change planning → **OpenSpec propose** produces requirements, interface contracts, and task breakdowns;
+- Engineering execution → **Pipeline** (Node 2→8) handles decomposition, location, implementation, verification, and commit;
+- Code quality → **Ponytail** forces the smallest, simplest, sufficient code;
+- Acceptance → **L0/L1/L2 three-layer self-checks** and quality gates make acceptance executable and reproducible.
+
+**This repository is itself a dogfooding product** — from productization and hardening to release, everything was iterated using this very system.
+
 ## Architecture
 
 ```
