@@ -35,8 +35,7 @@ grill-me → explore → propose → update        Node 2 (decompose) → Node 3
 ├── ai_pipeline/              # Runtime artifacts and continuous sedimentation (RUN_LOG / ERROR_MEMORY / TECH_NOTES / VERIFY, etc.)
 ├── grill-me/                 # Design stress-test skill
 ├── openspec/
-│   ├── commands/opsx/        # explore / propose / update / sync / archive / apply commands
-│   └── skills/               # Skill implementations behind each OpenSpec command
+│   └── skills/               # Skill implementations behind each OpenSpec command ($openspec-explore / propose / apply / sync / archive / update)
 ├── pipeline/
 │   ├── SKILL.md              # 6-stage engineering pipeline overview
 │   ├── CONFIG.md             # Single source of truth for default thresholds
@@ -77,13 +76,13 @@ Breakpoint recovery: on the next invocation, `ai_pipeline/SESSION_STATE.json` is
 ## Usage
 
 ```text
-/opsx:explore <topic>                                  # Explore requirements
-/opsx:propose <name>                                   # Create a change (tasks + specs + design)
+$openspec-explore <topic>                              # Explore requirements
+$openspec-propose <name>                               # Create a change (tasks + specs + design)
 
 "Implement via the three-layer pipeline: openspec/changes/<name>/"   # Hand off to Pipeline
 
-/opsx:sync <name> && git commit specs                  # Merge delta into main specs
-/opsx:archive <name>                                   # Archive the change
+$openspec-sync-specs <name> && git commit specs        # Merge delta into main specs
+$openspec-archive-change <name>                        # Archive the change
 ```
 
 ## Installation (Codex plugin)

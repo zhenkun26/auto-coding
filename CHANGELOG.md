@@ -21,8 +21,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - C1b routing prose aligned with the routing table: Nodes 2/3 are skipped for changes touching ≤5 files and run explicitly (greenfield summary / brownfield full) for >5 files.
 - Phase 0 bootstrap now uses `openspec init --tools codex`.
 - README verification claims rewritten: the historical test matrix (10 suites / 148 tests) is now explicitly marked as not shipped with the repository and currently non-reproducible.
+- Usage documentation now invokes OpenSpec through the bundled skills (`$openspec-explore` / `$openspec-propose` / `$openspec-apply-change` / `$openspec-sync-specs` / `$openspec-archive-change` / `$openspec-update-change`) instead of legacy `/opsx:*` slash commands.
+- `scripts/check_repo.py` now also verifies that `README.md` and `README-EN.md` have identical heading structures.
+- First release gates verified locally: the plugin was installed from the repo marketplace (`codex plugin add auto-coding@auto-coding`), its 18 skills loaded, and it was removed cleanly afterwards.
 
 ### Renamed
 
 - `pipeline/simulator_verify/` → `pipeline/runtime_verify/` (Node 6 runtime verification).
   - **Migration**: update any references to the old `simulator_verify` path or the `simulator-verify-runtime` skill name.
+
+### Removed
+
+- Legacy `openspec/commands/opsx/` slash-command definitions (superseded by the `openspec/skills/` skill implementations).
+  - **Migration**: use the `$openspec-*` skill invocations listed above.
+
+### Completed
+
+- Phase D for the initial productization change: delta specs merged into `openspec/specs/` (content-consistency, legal-compliance, plugin-distribution) and the change archived.

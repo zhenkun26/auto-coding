@@ -138,9 +138,9 @@ This guarantees: even when openspec is completely absent, the `ai_pipeline/` dir
 ```
 Requirements take shape → grill-me (independent, not embedded in explore)
       ↓
-/opsx:propose <change-name>     # Create the change; tasks.md includes fileHint+symbolHint+dependsOn
+$openspec-propose <change-name>     # Create the change; tasks.md includes fileHint+symbolHint+dependsOn
       ↓                           # spec interface contracts forbid any/object/unknown types
-/opsx:update <change-name>      # Revise as needed
+$openspec-update-change <change-name>  # Revise as needed
 ```
 
 **Lightweight planning mode `[NO_OPENSPEC]`** (replaces Phases A/B when there is no openspec repo):
@@ -153,7 +153,7 @@ Requirements take shape → grill-me (independent, not embedded in explore)
 
 The user sends `"Implement via the three-layer pipeline: openspec/changes/<name>/"`
 
-or: `/opsx:apply` detects that Pipeline is available → automatically suggests delegation → user confirms → outputs the bridge instruction
+or: `$openspec-apply-change` detects that Pipeline is available → automatically suggests delegation → user confirms → outputs the bridge instruction
 
 ### Phase C: Pipeline execution
 
@@ -187,9 +187,9 @@ The Pipeline must not end silently — it must actively advance to Phase D.
 ### Phase D: OpenSpec wrap-up
 
 ```
-/opsx:sync <change-name>       # delta→main specs, show the sync summary
+$openspec-sync-specs <change-name>   # delta→main specs, show the sync summary
       ↓                           # git add openspec/specs/ && git commit
-/opsx:archive <change-name>    # archive to archive/
+$openspec-archive-change <change-name>  # archive to archive/
 ```
 
 **C1a variant (Phase D-lite)**: C1a creates no change and does no sync/archive; it only appends the "interface contract" section of CHANGE_NOTES to the main spec, then git commits (see C1a contract sync).
@@ -258,11 +258,11 @@ Write immediately after each job, never batch-generated at the end.
 ## 6. Usage
 
 ```
-/opsx:explore <topic>
-/opsx:propose <name>
+$openspec-explore <topic>
+$openspec-propose <name>
 
 "Implement via the three-layer pipeline: openspec/changes/<name>/"
 
-/opsx:sync <name> && git commit specs
-/opsx:archive <name>
+$openspec-sync-specs <name> && git commit specs
+$openspec-archive-change <name>
 ```

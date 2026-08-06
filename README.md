@@ -37,8 +37,7 @@ grill-me → explore → propose → update  节点2(拆解) → 节点3(定位)
 ├── ai_pipeline/              # 运行产物与持续沉淀（RUN_LOG / ERROR_MEMORY / TECH_NOTES / VERIFY 等）
 ├── grill-me/                 # 设计压力测试技能
 ├── openspec/
-│   ├── commands/opsx/        # explore / propose / update / sync / archive / apply 命令
-│   └── skills/               # OpenSpec 各命令对应的技能实现
+│   └── skills/               # OpenSpec 各命令对应的技能实现（$openspec-explore / propose / apply / sync / archive / update）
 ├── pipeline/
 │   ├── SKILL.md              # 6 阶段工程流水线总览
 │   ├── CONFIG.md             # 默认阈值单一事实源
@@ -79,13 +78,13 @@ grill-me → explore → propose → update  节点2(拆解) → 节点3(定位)
 ## 使用
 
 ```text
-/opsx:explore <topic>                                  # 探索需求
-/opsx:propose <name>                                   # 创建变更（tasks + specs + design）
+$openspec-explore <topic>                              # 探索需求
+$openspec-propose <name>                               # 创建变更（tasks + specs + design）
 
 「按三层流水线实现: openspec/changes/<name>/」          # 交接给 Pipeline 执行
 
-/opsx:sync <name> && git commit specs                  # delta 合并到主 specs
-/opsx:archive <name>                                   # 归档变更
+$openspec-sync-specs <name> && git commit specs        # delta 合并到主 specs
+$openspec-archive-change <name>                        # 归档变更
 ```
 
 ## 安装（Codex Plugin）

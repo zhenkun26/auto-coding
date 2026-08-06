@@ -3,6 +3,7 @@
 Checks:
 1. Every relative Markdown link resolves to an existing file (dirname-aware).
 2. Every SKILL.md carries a ``license: MIT`` frontmatter entry.
+3. README.md and README-EN.md have identical heading structures.
 
 Exit code is nonzero when any check fails. Standard library only.
 """
@@ -51,10 +52,32 @@ def check_skill_licenses() -> list[str]:
     return problems
 
 
+def check_readme_heading_structure() -> list[str]:
+    """Return reports when the Chinese and English README heading structures differ."""
+    heading_levels = {}
+    for name in ("README.md", "README-EN.md"):
+        path = REPO_ROOT / name
+        levels = [
+            len(line) - len(line.lstrip("#"))
+            for line in path.read_text(encoding="utf-8").splitlines()
+            if line.startswith("#")
+        ]
+        heading_levels[name] = levels
+
+    if heading_levels["README.md"] != heading_levels["README-EN.md"]:
+        return [
+            "README heading structures differ: "
+            f"README.md={heading_levels['README.md']} vs "
+            f"README-EN.md={heading_levels['README-EN.md']}"
+        ]
+    return []
+
+
 def main() -> int:
     """Run all checks and report failures."""
     link_problems = check_relative_links()
     license_problems = check_skill_licenses()
+    readme_problems = check_readme_heading_structure()
 
     if link_problems:
         print("BROKEN RELATIVE LINKS:")
@@ -64,10 +87,14 @@ def main() -> int:
         print("SKILLS MISSING license: MIT:")
         for problem in license_problems:
             print(f"  {problem}")
+    if readme_problems:
+        print("README HEADING STRUCTURE MISMATCH:")
+        for problem in readme_problems:
+            print(f"  {problem}")
 
-    if link_problems or license_problems:
+    if link_problems or license_problems or readme_problems:
         return 1
-    print("check_repo: all relative links and skill licenses OK")
+    print("check_repo: links, skill licenses, and README heading structure OK")
     return 0
 
 
