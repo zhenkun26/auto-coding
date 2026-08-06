@@ -20,6 +20,13 @@ import re
 import sys
 from dataclasses import dataclass, field
 
+DIAGNOSTICS: list[str] = []
+
+
+def record_diagnostic(message: str) -> None:
+    """Record a non-fatal problem (parse/read failure) for reporting at the end."""
+    DIAGNOSTICS.append(message)
+
 
 @dataclass
 class ContractSymbol:
@@ -56,11 +63,15 @@ def parse_spec_contracts(spec_path: str) -> list[ContractSymbol]:
     """
     symbols: list[ContractSymbol] = []
     if not os.path.exists(spec_path):
-        print(f"[contract_check] Spec file not found: {spec_path}")
+        record_diagnostic(f"spec file not found: {spec_path}")
         return symbols
 
-    with open(spec_path, "r", encoding="utf-8") as f:
-        text = f.read()
+    try:
+        with open(spec_path, "r", encoding="utf-8") as f:
+            text = f.read()
+    except (OSError, UnicodeDecodeError) as exc:
+        record_diagnostic(f"spec read error ({spec_path}): {exc}")
+        return symbols
 
     func_pattern = re.compile(
         r"^(\s*)(\w+)\s*\(([^)]*)\)\s*(?:->\s*(\S+(?:\s*\|\s*\S+)*))?",
@@ -118,7 +129,11 @@ def extract_source_symbols(src_dir: str) -> list[ActualSymbol]:
             try:
                 with open(fpath, "r", encoding="utf-8") as f:
                     tree = ast.parse(f.read(), filename=fpath)
-            except SyntaxError:
+            except SyntaxError as exc:
+                record_diagnostic(f"parse error ({fpath}): {exc}")
+                continue
+            except (OSError, UnicodeDecodeError) as exc:
+                record_diagnostic(f"read error ({fpath}): {exc}")
                 continue
 
             for node in ast.walk(tree):
@@ -158,10 +173,15 @@ def parse_gherkin_specs(spec_path: str) -> list[ContractSymbol]:
     """
     symbols: list[ContractSymbol] = []
     if not os.path.exists(spec_path):
+        record_diagnostic(f"spec file not found (gherkin fallback): {spec_path}")
         return symbols
 
-    with open(spec_path, "r", encoding="utf-8") as f:
-        text = f.read()
+    try:
+        with open(spec_path, "r", encoding="utf-8") as f:
+            text = f.read()
+    except (OSError, UnicodeDecodeError) as exc:
+        record_diagnostic(f"spec read error (gherkin fallback, {spec_path}): {exc}")
+        return symbols
 
     # Match: WHEN (POST|GET|PUT|DELETE|PATCH) /path
     endpoint_pattern = re.compile(
@@ -204,7 +224,8 @@ def extract_fastapi_endpoints(src_dir: str) -> list[ActualSymbol]:
             try:
                 with open(fpath, "r", encoding="utf-8") as f:
                     content = f.read()
-            except Exception:
+            except (OSError, UnicodeDecodeError) as exc:
+                record_diagnostic(f"read error ({fpath}): {exc}")
                 continue
 
             for match in route_pattern.finditer(content):
@@ -265,23 +286,43 @@ def run_check(spec_path: str, src_dir: str) -> tuple[list[str], list[str]]:
     return passes, failures
 
 
-if __name__ == "__main__":
-    spec_path = sys.argv[sys.argv.index("--spec") + 1] if "--spec" in sys.argv else ""
-    src_dir = sys.argv[sys.argv.index("--source") + 1] if "--source" in sys.argv else "src/"
-
-    if not spec_path:
+def parse_cli_args(argv: list[str]) -> tuple[str, str]:
+    """Parse CLI arguments, printing usage and exiting on invalid input."""
+    spec_path = ""
+    src_dir = "src/"
+    index = 0
+    while index < len(argv):
+        flag = argv[index]
+        if flag in ("--spec", "--source") and index + 1 < len(argv):
+            value = argv[index + 1]
+            if not value.startswith("-"):
+                if flag == "--spec":
+                    spec_path = value
+                else:
+                    src_dir = value
+                index += 2
+                continue
         print("Usage: python pipeline/_contract_check.py --spec <spec.md> --source <src_dir>")
         sys.exit(1)
+    return spec_path, src_dir
+
+
+def run_cli(spec_path: str, src_dir: str) -> int:
+    """Execute the check pipeline against a validated spec/source pair."""
+    if not os.path.exists(spec_path):
+        print(f"[contract_check] Spec file not found: {spec_path}", file=sys.stderr)
+        return 1
+    if not os.path.isdir(src_dir):
+        print(f"[contract_check] Source directory not found: {src_dir}", file=sys.stderr)
+        return 1
 
     print(f"[contract_check] Spec: {spec_path}")
     print(f"[contract_check] Source: {src_dir}")
     print()
 
-    # Phase 1: Type-signature contracts (works with PROJECT_SPEC.md style specs)
     passes, failures = run_check(spec_path, src_dir)
     total_symbols = len(passes) + len(failures)
 
-    # Phase 2: Gherkin fallback — if type parser found few/no contracts, try endpoint extraction
     if total_symbols < 3:
         print(f"[contract_check] Type parser found only {total_symbols} contracts. Trying Gherkin fallback...")
         print()
@@ -307,6 +348,24 @@ if __name__ == "__main__":
         print(f"FAILED ({len(failures)}):")
         for f in failures:
             print(f"  {f}")
-        sys.exit(1)
-    else:
-        print(f"All {len(passes)} contracts structurally verified.")
+        return 1
+    print(f"All {len(passes)} contracts structurally verified.")
+
+    if DIAGNOSTICS:
+        print(f"DIAGNOSTICS ({len(DIAGNOSTICS)}):")
+        for diagnostic in DIAGNOSTICS:
+            print(f"  {diagnostic}")
+    return 0
+
+
+def main(argv: list[str]) -> int:
+    """CLI entry point: parse arguments, validate, run, and return the exit code."""
+    spec_path, src_dir = parse_cli_args(argv)
+    if not spec_path:
+        print("Usage: python pipeline/_contract_check.py --spec <spec.md> --source <src_dir>")
+        return 1
+    return run_cli(spec_path, src_dir)
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))

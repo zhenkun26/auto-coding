@@ -17,49 +17,67 @@ EXCLUDED_PARTS = {".git", "plugins", ".codex"}
 LINK_PATTERN = re.compile(r"\]\(([^)]+)\)")
 
 
-def iter_markdown_files() -> list[Path]:
+def read_text_safely(path: Path) -> str:
+    """Read a text file, warning to stderr and returning '' on unreadable input."""
+    try:
+        return path.read_text(encoding="utf-8")
+    except (OSError, UnicodeDecodeError) as exc:
+        print(f"WARNING: cannot read {path}: {exc}", file=sys.stderr)
+        return ""
+
+
+def iter_markdown_files(root: Path | None = None) -> list[Path]:
     """Return all Markdown files under the repo root except generated bundles."""
+    if root is None:
+        root = REPO_ROOT
     return [
         path
-        for path in REPO_ROOT.rglob("*.md")
+        for path in root.rglob("*.md")
         if not any(part in EXCLUDED_PARTS for part in path.parts)
     ]
 
 
-def check_relative_links() -> list[str]:
+def check_relative_links(root: Path | None = None) -> list[str]:
     """Return broken relative-link reports across all Markdown files."""
+    if root is None:
+        root = REPO_ROOT
     problems: list[str] = []
-    for path in iter_markdown_files():
-        for match in LINK_PATTERN.finditer(path.read_text(encoding="utf-8")):
+    for path in iter_markdown_files(root):
+        for match in LINK_PATTERN.finditer(read_text_safely(path)):
             target = match.group(1)
             if target.startswith(("http://", "https://", "#", "/")):
                 continue
             resolved = (path.parent / target.split("#")[0]).resolve()
             if not resolved.exists():
-                problems.append(f"{path.relative_to(REPO_ROOT)} -> {target}")
+                problems.append(f"{path.relative_to(root)} -> {target}")
     return problems
 
 
-def check_skill_licenses() -> list[str]:
+def check_skill_licenses(root: Path | None = None) -> list[str]:
     """Return SKILL.md files whose frontmatter lacks a MIT license field."""
+    if root is None:
+        root = REPO_ROOT
     problems: list[str] = []
-    for path in REPO_ROOT.rglob("SKILL.md"):
+    for path in root.rglob("SKILL.md"):
         if any(part in EXCLUDED_PARTS for part in path.parts):
             continue
-        text = path.read_text(encoding="utf-8")
-        if "license: MIT" not in text.split("---", 2)[1]:
-            problems.append(str(path.relative_to(REPO_ROOT)))
+        text = read_text_safely(path)
+        frontmatter_parts = text.split("---", 2)
+        if len(frontmatter_parts) < 2 or "license: MIT" not in frontmatter_parts[1]:
+            problems.append(str(path.relative_to(root)))
     return problems
 
 
-def check_readme_heading_structure() -> list[str]:
+def check_readme_heading_structure(root: Path | None = None) -> list[str]:
     """Return reports when the Chinese and English README heading structures differ."""
+    if root is None:
+        root = REPO_ROOT
     heading_levels = {}
     for name in ("README.md", "README-EN.md"):
-        path = REPO_ROOT / name
+        path = root / name
         levels = [
             len(line) - len(line.lstrip("#"))
-            for line in path.read_text(encoding="utf-8").splitlines()
+            for line in read_text_safely(path).splitlines()
             if line.startswith("#")
         ]
         heading_levels[name] = levels

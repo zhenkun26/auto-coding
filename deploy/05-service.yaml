@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: auto-coding
+  namespace: auto-coding
+  labels:
+    app.kubernetes.io/name: auto-coding
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: auto-coding
+  ports:
+    - name: http
+      port: 80
+      targetPort: http

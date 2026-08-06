@@ -2,6 +2,8 @@
 
 import subprocess
 import sys
+from concurrent.futures import ThreadPoolExecutor
+from functools import partial
 from pathlib import Path
 
 import pytest
@@ -10,6 +12,14 @@ PIPELINE_DIR = Path(__file__).resolve().parent.parent / "pipeline"
 sys.path.insert(0, str(PIPELINE_DIR))
 
 import _contract_check as contract_check  # noqa: E402
+
+
+@pytest.fixture(autouse=True)
+def clear_diagnostics() -> None:
+    """Reset the module-level diagnostics list before every test."""
+    contract_check.DIAGNOSTICS.clear()
+    yield
+    contract_check.DIAGNOSTICS.clear()
 
 
 def write(path: Path, content: str) -> Path:
@@ -40,6 +50,15 @@ def test_should_prefix_method_with_class_when_indented_under_class(tmp_path: Pat
 
     assert symbols[0].name == "Calculator.add"
     assert symbols[0].kind == "method"
+
+
+def test_should_not_qualify_method_under_lowercase_class(tmp_path: Path) -> None:
+    """Given a lowercase header that is not a class declaration, no prefix is added."""
+    spec = write(tmp_path / "spec.md", "lower:\n    foo() -> None\n")
+
+    symbols = contract_check.parse_spec_contracts(str(spec))
+
+    assert symbols[0].name == "foo"
 
 
 def test_should_skip_def_keyword_when_spec_embeds_code_snippets(tmp_path: Path) -> None:
@@ -76,6 +95,7 @@ def test_should_extract_functions_and_class_methods_from_source(tmp_path: Path) 
 
     assert "helper" in by_name
     assert by_name["helper"].kind == "function"
+    assert by_name["Greeter"].kind == "class"
     assert "Greeter.greet" in by_name
     assert by_name["Greeter.greet"].kind == "method"
     assert by_name["Greeter.greet"].params == ["name"]  # self stripped
@@ -203,3 +223,169 @@ def test_should_print_usage_and_exit_when_spec_flag_is_missing() -> None:
 
     assert result.returncode == 1
     assert "Usage:" in result.stdout
+
+
+def test_should_report_parse_failure_instead_of_silently_skipping(tmp_path: Path) -> None:
+    """Given an unparseable source file, a diagnostic is recorded instead of silence."""
+    write(tmp_path / "src" / "broken.py", "def broken(: :\n")
+    write(tmp_path / "src" / "module.py", "def visible() -> None: pass\n")
+
+    symbols = contract_check.extract_source_symbols(str(tmp_path / "src"))
+
+    assert [symbol.name for symbol in symbols] == ["visible"]
+    assert any("parse error" in diagnostic for diagnostic in contract_check.DIAGNOSTICS)
+
+
+def test_should_report_unreadable_file_instead_of_crashing(tmp_path: Path) -> None:
+    """Given a non-UTF-8 source file, a diagnostic is recorded instead of a crash."""
+    broken = tmp_path / "src" / "binary.py"
+    broken.parent.mkdir(parents=True, exist_ok=True)
+    broken.write_bytes(b"\xff\xfe\x00bad encoding\xff")
+
+    symbols = contract_check.extract_source_symbols(str(broken.parent))
+
+    assert symbols == []
+    assert any("read error" in diagnostic for diagnostic in contract_check.DIAGNOSTICS)
+
+
+def test_should_exit_usage_when_spec_flag_has_no_value() -> None:
+    """Given --spec without a value, the CLI exits nonzero with usage."""
+    result = subprocess.run(
+        [sys.executable, str(PIPELINE_DIR / "_contract_check.py"), "--spec"],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+    assert result.returncode == 1
+    assert "Usage:" in result.stdout
+
+
+def test_should_exit_error_when_spec_file_is_missing(tmp_path: Path) -> None:
+    """Given a nonexistent spec file, the CLI exits nonzero with a stderr message."""
+    write(tmp_path / "src" / "module.py", "def visible() -> None: pass\n")
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(PIPELINE_DIR / "_contract_check.py"),
+            "--spec",
+            str(tmp_path / "missing.md"),
+            "--source",
+            str(tmp_path / "src"),
+        ],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+    assert result.returncode == 1
+    assert "Spec file not found" in result.stderr
+
+
+def test_should_exit_error_when_source_directory_is_missing(tmp_path: Path) -> None:
+    """Given a nonexistent --source, the CLI exits nonzero instead of a false pass."""
+    spec = write(tmp_path / "spec.md", "visible() -> None\n")
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(PIPELINE_DIR / "_contract_check.py"),
+            "--spec",
+            str(spec),
+            "--source",
+            str(tmp_path / "no-such-dir"),
+        ],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+    assert result.returncode == 1
+    assert "Source directory not found" in result.stderr
+
+
+def test_should_parse_cli_args_with_defaults() -> None:
+    """Given no arguments, the parser returns an empty spec and default source."""
+    spec_path, src_dir = contract_check.parse_cli_args([])
+
+    assert spec_path == ""
+    assert src_dir == "src/"
+
+
+def test_should_exit_usage_from_parser_on_unknown_flag() -> None:
+    """Given an unknown flag, the parser exits with SystemExit and prints usage."""
+    with pytest.raises(SystemExit) as exc_info:
+        contract_check.parse_cli_args(["--unknown"])
+
+    assert exc_info.value.code == 1
+
+
+def test_should_return_usage_code_when_spec_omitted(capsys: pytest.CaptureFixture) -> None:
+    """Given no --spec, main returns 1 and prints usage."""
+    exit_code = contract_check.main([])
+    captured = capsys.readouterr()
+
+    assert exit_code == 1
+    assert "Usage:" in captured.out
+
+
+def test_should_return_success_for_valid_spec_source(tmp_path: Path, capsys: pytest.CaptureFixture) -> None:
+    """Given a valid spec/source pair, main returns 0 and verifies the contract."""
+    spec = write(tmp_path / "spec.md", "add(a: int, b: int) -> int\n")
+    write(tmp_path / "src" / "math.py", "def add(a: int, b: int) -> int:\n    return a + b\n")
+
+    exit_code = contract_check.main(["--spec", str(spec), "--source", str(tmp_path / "src")])
+
+    assert exit_code == 0
+    assert "All 1 contracts structurally verified." in capsys.readouterr().out
+
+
+def test_should_return_failure_code_when_contract_mismatches(
+    tmp_path: Path, capsys: pytest.CaptureFixture
+) -> None:
+    """Given a mismatched contract, main returns 1 and reports the failure."""
+    spec = write(tmp_path / "spec.md", "add(a: int, b: int) -> int\n")
+    write(tmp_path / "src" / "math.py", "def add(a: int) -> int:\n    return a\n")
+
+    exit_code = contract_check.main(["--spec", str(spec), "--source", str(tmp_path / "src")])
+
+    assert exit_code == 1
+    assert "PARAM_COUNT" in capsys.readouterr().out
+
+
+def test_should_return_error_when_source_directory_missing(
+    tmp_path: Path, capsys: pytest.CaptureFixture
+) -> None:
+    """Given a missing --source, main returns 1 with a stderr message."""
+    spec = write(tmp_path / "spec.md", "add(a: int, b: int) -> int\n")
+
+    exit_code = contract_check.main(["--spec", str(spec), "--source", str(tmp_path / "nope")])
+
+    assert exit_code == 1
+    assert "Source directory not found" in capsys.readouterr().err
+
+
+def test_should_pass_1000_concurrent_invocations(tmp_path: Path) -> None:
+    """Given a valid spec/source pair, 1000 concurrent CLI calls all exit zero."""
+    spec = write(tmp_path / "spec.md", "add(a: int, b: int) -> int\n")
+    write(tmp_path / "src" / "math.py", "def add(a: int, b: int) -> int:\n    return a + b\n")
+    command = partial(
+        subprocess.run,
+        [
+            sys.executable,
+            str(PIPELINE_DIR / "_contract_check.py"),
+            "--spec",
+            str(spec),
+            "--source",
+            str(tmp_path / "src"),
+        ],
+        capture_output=True,
+        check=False,
+    )
+
+    with ThreadPoolExecutor(max_workers=50) as executor:
+        results = list(executor.map(lambda _index: command(), range(1000)))
+
+    assert len(results) == 1000
+    assert all(result.returncode == 0 for result in results)

@@ -24,6 +24,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Usage documentation now invokes OpenSpec through the bundled skills (`$openspec-explore` / `$openspec-propose` / `$openspec-apply-change` / `$openspec-sync-specs` / `$openspec-archive-change` / `$openspec-update-change`) instead of legacy `/opsx:*` slash commands.
 - `scripts/check_repo.py` now also verifies that `README.md` and `README-EN.md` have identical heading structures.
 - First release gates verified locally: the plugin was installed from the repo marketplace (`codex plugin add auto-coding@auto-coding`), its 18 skills loaded, and it was removed cleanly afterwards.
+- Adversarial hardening: `pipeline/_contract_check.py` no longer swallows errors (`except Exception` removed), reports parse/read failures via diagnostics, validates CLI arguments instead of crashing on missing values, and fails loudly on a missing spec or source directory.
+- `scripts/check_repo.py` is encoding-safe and no longer crashes on SKILL.md files without frontmatter.
+- Test suite expanded to 36 cases (CLI boundaries, diagnostics, check_repo checks, 1000 concurrent CLI invocations); tooling line coverage is 88%.
+
+### Added (containerization)
+
+- Production `Dockerfile` (multi-stage, non-root user with fixed UID, HEALTHCHECK, pip build cache) and `.dockerignore`; two modes: `validate` (pytest + checks) and `serve` (read-only docs mirror).
+- Kubernetes manifests under `deploy/` (Namespace, ConfigMap, Secret with base64 placeholders, Deployment with resource limits and HTTP probes, PDB, ClusterIP Service, Ingress, HPA).
+- Adversarial acceptance report: `docs/ACCEPTANCE_REPORT.md`.
 
 ### Renamed
 

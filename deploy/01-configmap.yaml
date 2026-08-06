@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: auto-coding-config
+  namespace: auto-coding
+data:
+  # Serve mode: read-only docs mirror for the skill package.
+  MODE: "serve"
+  PORT: "8000"
+  LOG_LEVEL: "info"
