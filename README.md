@@ -1,4 +1,4 @@
-# auto-coding — 并联开发体系技能包
+# auto-coding — AI变成助手
 
 **🌐 语言 / Language：** [简体中文](README.md) · [English](README-EN.md)
 
