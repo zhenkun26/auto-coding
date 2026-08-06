@@ -43,30 +43,38 @@ So I distilled the lessons into this system, giving every phase a methodology th
 
 ```mermaid
 flowchart LR
-    subgraph PL["Planning · OpenSpec + grill-me"]
-        direction LR
-        G["grill-me decision drill-down"] --> E["explore"]
+    subgraph PhaseA["🔍 Phase A · Planning — OpenSpec + grill-me"]
+        direction TB
+        G["grill-me decision drill-down"] --> E["explore requirements"]
         E --> P["propose change"]
-        P --> U["update"]
+        P --> U["update revision"]
     end
 
-    subgraph EX["Execution · Pipeline + Ponytail"]
-        direction LR
-        N2["Node 2 decompose"] --> N3["Node 3 locate"]
-        N3 --> N4["Node 4 implement"]
-        N4 --> N5["Node 5 static verify"]
-        N5 --> N6["Node 6 runtime verify"]
-        N6 --> N8["Node 8 commit"]
+    subgraph PhaseB["📋 Phase B · Handoff"]
+        direction TB
+        Artifacts["Artifacts: requirements / contracts / tasks / design"]
     end
 
-    subgraph PH["Wrap-up · Phase D"]
-        direction LR
-        S["sync delta specs"] --> A["archive change"]
+    subgraph PhaseC["⚙️ Phase C · Execution — Pipeline + Ponytail"]
+        direction TB
+        N2["Node 2 Decompose"] --> N3["Node 3 Locate"]
+        N3 --> N4["Node 4 Implement + L0/L1/L2 Self-Check"]
+        N4 --> N5["Node 5 Static Verify · Type / Lint"]
+        N5 --> N6["Node 6 Runtime Verify · Tests / Coverage"]
+        N6 --> N8["Node 8 Commit"]
+        PT["Ponytail Minimalism<br/>reuse → stdlib → native → minimal"] -.-> N4
+        Gate5{{"Quality Gate<br/>Critical / Standard"}} -.-> N5
+        Gate6{{"Quality Gate<br/>Coverage ≥80% / Branch ≥70%"}} -.-> N6
     end
 
-    U -->|"handoff artifacts"| N2
-    N8 -->|"gates passed"| S
-    P0["Ponytail minimalism"] -.-> N4
+    subgraph PhaseD["✅ Phase D · Wrap-up"]
+        direction TB
+        Sync["sync delta specs"] --> Archive["archive change"]
+    end
+
+    U -->|"C1b / C2 trigger"| Artifacts
+    Artifacts -->|"handoff"| N2
+    N8 -->|"gates passed"| Sync
 ```
 
 **Key design**:

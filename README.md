@@ -43,30 +43,38 @@
 
 ```mermaid
 flowchart LR
-    subgraph PL["规划 · OpenSpec + grill-me"]
-        direction LR
-        G["grill-me 决策追问"] --> E["explore 探索"]
+    subgraph PhaseA["🔍 Phase A · 规划 — OpenSpec + grill-me"]
+        direction TB
+        G["grill-me 决策追问"] --> E["explore 探索需求"]
         E --> P["propose 变更立项"]
-        P --> U["update 修订"]
+        P --> U["update 修订迭代"]
     end
 
-    subgraph EX["执行 · Pipeline + Ponytail"]
-        direction LR
-        N2["节点2 拆解"] --> N3["节点3 定位"]
-        N3 --> N4["节点4 实现"]
-        N4 --> N5["节点5 静态验证"]
-        N5 --> N6["节点6 运行时验证"]
+    subgraph PhaseB["📋 Phase B · 交接"]
+        direction TB
+        Artifacts["规划制品：需求 / 接口契约 / tasks / design"]
+    end
+
+    subgraph PhaseC["⚙️ Phase C · 执行 — Pipeline + Ponytail"]
+        direction TB
+        N2["节点2 原子拆解"] --> N3["节点3 精准定位"]
+        N3 --> N4["节点4 代码实现 + L0/L1/L2 自检"]
+        N4 --> N5["节点5 静态验证 · 类型 / Lint"]
+        N5 --> N6["节点6 运行时验证 · 测试 / 覆盖率"]
         N6 --> N8["节点8 语义提交"]
+        PT["Ponytail 代码最小化<br/>复用 → stdlib → 原生 → 最少"] -.-> N4
+        Gate5{{"质量闸门<br/>Critical / Standard"}} -.-> N5
+        Gate6{{"质量闸门<br/>覆盖率 ≥80% / 分支 ≥70%"}} -.-> N6
     end
 
-    subgraph PH["收尾 · Phase D"]
-        direction LR
-        S["sync 增量规格合并"] --> A["archive 变更归档"]
+    subgraph PhaseD["✅ Phase D · 收尾"]
+        direction TB
+        Sync["sync 增量规格合并"] --> Archive["archive 变更归档"]
     end
 
-    U -->|"规划制品交接"| N2
-    N8 -->|"质量闸门通过"| S
-    P0["Ponytail 代码最小化"] -.-> N4
+    U -->|"C1b / C2 触发"| Artifacts
+    Artifacts -->|"制品交接"| N2
+    N8 -->|"质量闸门通过"| Sync
 ```
 
 **关键设计**：
