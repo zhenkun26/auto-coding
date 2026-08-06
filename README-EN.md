@@ -12,6 +12,8 @@
 
 A parallel development system for AI coding assistants: **OpenSpec (business planning) + Pipeline (engineering execution) + Ponytail (code minimization)**. Each component plays to its strengths without overlapping: changes are routed automatically by complexity, and the system continuously accumulates experience while working.
 
+**auto-coding** (formerly sb_coding) is assembled from quality skills the author collected and battle-tested through countless vibe-coding mishaps — especially the "turned to garbage halfway through" kind. In today's vibe-coding environment, coding agents remain largely black-box, and auto-coding pins down the lower bound of agent quality. From an idea to a half-built project to a stable landing, it keeps the ride smooth. There are bumps, but it beats the model running away by a wide margin.
+
 ## Architecture
 
 ```
@@ -41,8 +43,12 @@ grill-me → explore → propose → update        Node 2 (decompose) → Node 3
 ├── LICENSE / THIRD_PARTY.md  # MIT license and third-party component notices
 ├── CHANGELOG.md              # Version history
 ├── .agents/plugins/          # Repo-local marketplace (distribution entry point)
+├── .github/workflows/        # CI + Release workflows
+├── Dockerfile                # Production container (88.9MB, validate/serve modes)
 ├── adaptive/                 # Toolchain adaptation and non-degradable verification baseline
 ├── ai_pipeline/              # Runtime artifacts and continuous sedimentation (RUN_LOG / ERROR_MEMORY / TECH_NOTES / VERIFY, etc.)
+├── deploy/                   # Kubernetes manifests (Deployment/PDB/Service/Ingress/HPA)
+├── docs/                     # Acceptance reports and documentation
 ├── grill-me/                 # Design stress-test skill
 ├── openspec/
 │   └── skills/               # Skill implementations behind each OpenSpec command ($openspec-explore / propose / apply / sync / archive / update)
@@ -56,7 +62,8 @@ grill-me → explore → propose → update        Node 2 (decompose) → Node 3
 │   └── exported-skills/      # ponytail full / audit / debt / gain / help / review sub-skills
 ├── plugins/auto-coding/      # Codex plugin bundle (plugin.json + synced skill copies)
 ├── scripts/                  # Skill sync script, etc.
-└── self_verify/              # Three-layer self-check protocol for code (L0/L1/L2)
+├── self_verify/              # Three-layer self-check protocol for code (L0/L1/L2)
+└── tests/                    # pytest suite (36 cases, 88% tooling coverage)
 ```
 
 ## Routing by complexity
@@ -102,7 +109,7 @@ The distribution form is a Codex plugin + marketplace. The repo-local marketplac
 **Install from GitHub** (after pushing the repository):
 
 ```bash
-codex plugin marketplace add <owner>/<repo>      # add this repository as a marketplace
+codex plugin marketplace add zhenkun26/auto-coding  # add this repository as a marketplace
 codex plugin add auto-coding@auto-coding         # install the plugin
 ```
 
@@ -128,6 +135,37 @@ codex plugin marketplace remove auto-coding
 ```
 
 The plugin skills are synced from the repository root by `scripts/sync_plugin_skills.sh` (single source of truth); re-run it before cutting a release after any skill content change.
+
+## Quickstart
+
+**1. Install (first time)**
+
+```bash
+codex plugin marketplace add zhenkun26/auto-coding
+codex plugin add auto-coding@auto-coding
+```
+
+**2. Explore and propose**
+
+```text
+$openspec-explore <your-idea>
+$openspec-propose <change-name>
+```
+
+**3. Hand off to the Pipeline**
+
+```text
+"Implement via the three-layer pipeline: openspec/changes/<change-name>/"
+```
+
+**4. Wrap up (Phase D)**
+
+```text
+$openspec-sync-specs <change-name> && git commit specs
+$openspec-archive-change <change-name>
+```
+
+From idea to commit in about five minutes; complexity routing (C0-C2) and all quality gates are handled automatically.
 
 ## Environment constraints
 
@@ -161,5 +199,12 @@ The skill pack assumes a minimal baseline. Missing tools trigger either a guided
 - **Risk flag redeclaration** (`[RISK_FLAGS_ACTIVE]`): risk flags declared in Phase A are re-declared at Pipeline Entry and printed before each flag-specific check (Node 4: FINANCE→Decimal enforced, Node 5: AUTH→type check mandatory). Prevents flags from being forgotten mid-pipeline.
 - **Integration test transparency** (Node 6): coverage reports include a breakdown of unit-test files vs. integration-test files (identified by `test_api*.py` naming or `TestClient` imports). Thresholds are unchanged; the breakdown is informational.
 - **OpenSpec CLI integration verified**: the full Phase A→B→C→D handoff contract has been validated via a mock OpenSpec environment at the project root. Four checkpoints confirmed: Entry detection of `openspec/config.yaml`, artifact consumption from `openspec/changes/<name>/`, Phase D delta→main spec sync, and archive. All sandboxes also support `[NO_OPENSPEC]` fallback mode.
-- **Self-verification (shipped)**: the skill pack is verified against a document-level L0/L1/L2 protocol covering front-matter, link integrity, cross-document consistency, and contract alignment. The mechanical checks ship with the repository: a pytest suite for `_contract_check.py`, a markdown link check, and a frontmatter license scan (see `.github/workflows/ci.yml`).
+- **Self-verification (shipped)**: the skill pack is verified against a document-level L0/L1/L2 protocol covering front-matter, link integrity, cross-document consistency, and contract alignment. The mechanical checks ship with the repository and run in CI: a 36-case pytest suite (88% line coverage of the tooling), a markdown link check, a frontmatter license scan, and a Chinese/English README structure check (see `.github/workflows/ci.yml`).
 - **Historical verification record (assets not shipped)**: during development, 10 test suites were run — 6 sandboxes (C0 calculator, C1b auth, C1b apikey, C2 ecommerce + discount codes, C2 finance clearing, C2 inventory) and 4 local suites (C0 utils, C1b validator, C1b payment retry with circuit breaker, C2 task execution engine) — totaling 148 tests, covering all 6 risk flags, greenfield and brownfield, and incremental modification of existing code. The original test assets were not published with this repository and are currently not reproducible; a verification matrix is planned to be rebuilt and shipped in a future release.
+
+## Contributing
+
+- Fork the repository and open a PR; CI automatically runs pytest and the repository checks.
+- After changing any skill content, run `./scripts/sync_plugin_skills.sh` to keep the plugin bundle in sync.
+- Every `SKILL.md` must carry `license: MIT`; new skills need their own documentation and tests.
+- All changes follow the OpenSpec workflow: `$openspec-propose` → implement → `$openspec-archive-change`.

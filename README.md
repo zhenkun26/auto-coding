@@ -12,7 +12,7 @@
 
 一套面向 AI 编码助手的并联开发体系：**grill-me(反思追问)+OpenSpec（业务规划）+ Pipeline（工程执行）+ Ponytail（代码最小化）** 各跑强项、互不重叠，按变更复杂度自动分流，并在作业过程中持续沉淀经验。
 
-**auto-coding**（原名 sb_coding，见名知意，算是自嘲）由本人在收集的优秀的 skills 中，踩过很多坑后挑选的**优质组合**；是本人在和 AI 进行 vibe coding 过程中经过各种翻车总结出的一套可行性经验（**特别是开发到一半直接变垃圾**）。在今天 vibe coding 环境下，编程智能体开发过程还是比较黑盒，而 **auto-coding** 能兜住智能体开发的下限。此 skill 这段时间深受本人青睐，故此进行分享。从一个想法到开发一半，再到落地十分平稳。虽然有磕碰，但总体比模型落跑实在强太多，剩下的东西自己想读就读，不想多打字了。
+**auto-coding** 由本人在收集的优秀 skills 中，踩过很多坑后挑选的**优质组合**；是在和 AI 进行 vibe coding 过程中各种翻车后总结出的一套可行性经验（**特别是"开发到一半直接变垃圾"**）。在今天的 vibe coding 环境下，编程智能体开发过程仍然比较黑盒，而 **auto-coding** 能兜住智能体开发的下限。从一个想法到开发一半，再到平稳落地，总体比模型半路跑路实在强太多。
 
 ## 架构
 
@@ -43,8 +43,12 @@ grill-me → explore → propose → update  节点2(拆解) → 节点3(定位)
 ├── LICENSE / THIRD_PARTY.md  # MIT 许可与第三方组件声明
 ├── CHANGELOG.md              # 版本记录
 ├── .agents/plugins/          # 仓库内 marketplace（分发入口）
+├── .github/workflows/        # CI + Release 工作流
+├── Dockerfile                # 生产级容器（88.9MB，validate/serve 双模式）
 ├── adaptive/                 # Pipeline 工具链自适应与不可降级底线
 ├── ai_pipeline/              # 运行产物与持续沉淀（RUN_LOG / ERROR_MEMORY / TECH_NOTES / VERIFY 等）
+├── deploy/                   # Kubernetes 部署清单（Deployment/PDB/Service/Ingress/HPA）
+├── docs/                     # 验收报告等文档
 ├── grill-me/                 # 设计压力测试技能
 ├── openspec/
 │   └── skills/               # OpenSpec 各命令对应的技能实现（$openspec-explore / propose / apply / sync / archive / update）
@@ -58,7 +62,8 @@ grill-me → explore → propose → update  节点2(拆解) → 节点3(定位)
 │   └── exported-skills/      # ponytail full / audit / debt / gain / help / review 子技能
 ├── plugins/auto-coding/      # Codex plugin 包（plugin.json + 技能同步副本）
 ├── scripts/                  # 技能同步脚本等
-└── self_verify/              # 代码落地三层自检协议（L0/L1/L2）
+├── self_verify/              # 代码落地三层自检协议（L0/L1/L2）
+└── tests/                    # pytest 测试套件（36 用例，工具模块覆盖率 88%）
 ```
 
 ## 按复杂度分流
@@ -104,7 +109,7 @@ $openspec-archive-change <name>                        # 归档变更
 **从 GitHub 安装**（仓库推送后）：
 
 ```bash
-codex plugin marketplace add <owner>/<repo>      # 添加本仓库为 marketplace
+codex plugin marketplace add zhenkun26/auto-coding  # 添加本仓库为 marketplace
 codex plugin add auto-coding@auto-coding         # 安装插件
 ```
 
@@ -130,6 +135,37 @@ codex plugin marketplace remove auto-coding
 ```
 
 插件内技能由 `scripts/sync_plugin_skills.sh` 从仓库根同步（单一事实源）；修改技能内容后，发布前请重新运行该脚本。
+
+## 快速开始
+
+**1. 安装（首次）**
+
+```bash
+codex plugin marketplace add zhenkun26/auto-coding
+codex plugin add auto-coding@auto-coding
+```
+
+**2. 探索并立项**
+
+```text
+$openspec-explore <你的想法>
+$openspec-propose <change-name>
+```
+
+**3. 交接给 Pipeline 执行**
+
+```text
+"按三层流水线实现: openspec/changes/<change-name>/"
+```
+
+**4. 收尾（Phase D）**
+
+```text
+$openspec-sync-specs <change-name> && git commit specs
+$openspec-archive-change <change-name>
+```
+
+从想法到提交约 5 分钟跑通；复杂度分流（C0-C2）与全部质量闸门由体系自动接管。
 
 ## 环境约束
 
@@ -163,5 +199,12 @@ codex plugin marketplace remove auto-coding
 - **风险标志重声明**（`[RISK_FLAGS_ACTIVE]`）：Phase A 声明的风险标志在 Pipeline 入口重新声明，并在每个标志相关检查前打印（节点4：FINANCE→Decimal 强制，节点5：AUTH→类型检查必须执行）。防止标志在 pipeline 中途被遗忘。
 - **集成测试透明度**（Node 6）：覆盖率报告包含单元测试文件与集成测试文件的数量占比（通过 `test_api*.py` 命名或 `TestClient` 导入识别），不改阈值，仅提高透明度。
 - **OpenSpec CLI 联调已验证**：Phase A→B→C→D 完整交接契约已通过项目根 mock OpenSpec 环境验证。四个检查点确认：Entry 检测 `openspec/config.yaml`、从 `openspec/changes/<name>/` 消费制品、Phase D delta→主 spec 合并、以及归档操作。所有沙箱同时支持 `[NO_OPENSPEC]` 降级模式。
-- **自验证（随仓库）**：技能包自身按文档级 L0/L1/L2 协议验证，机械检查随仓库发布：`_contract_check.py` 的 pytest 套件、markdown 链接完整性检查、frontmatter license 扫描（见 `.github/workflows/ci.yml`）。
+- **自验证（随仓库）**：技能包自身按文档级 L0/L1/L2 协议验证，机械检查随仓库发布并在 CI 中运行：36 个 pytest 用例（工具模块行覆盖率 88%）、markdown 链接完整性检查、frontmatter license 扫描、中英 README 结构一致性检查（见 `.github/workflows/ci.yml`）。
 - **历史验证记录（资产未随仓库发布）**：开发期曾运行 10 个测试套件（6 个沙箱：C0 计算器、C1b 认证、C1b API Key、C2 电商+折扣码、C2 金融结算、C2 库存管理；4 个本地套件：C0 工具函数、C1b 数据校验器、C1b 支付重试+熔断器、C2 任务执行引擎），共 148 个测试，覆盖全部 6 个风险标志、greenfield/brownfield 与增量修改。原始测试资产未随本仓库发布，当前不可复现；验证矩阵计划在后续版本随仓库重建。
+
+## 参与贡献
+
+- Fork 后提交 PR，CI 会自动运行 pytest 与仓库检查。
+- 修改任何技能内容后，运行 `./scripts/sync_plugin_skills.sh` 同步插件包副本。
+- 每个 SKILL.md 必须包含 `license: MIT`；新增技能需自带文档与测试。
+- 所有变更走 OpenSpec 工作流：`$openspec-propose` → 实现 → `$openspec-archive-change`。
