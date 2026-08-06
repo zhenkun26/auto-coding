@@ -1,5 +1,7 @@
 # auto-coding — 并联开发体系技能包
 
+**🌐 语言 / Language：** [简体中文](README.md) · [English](README-EN.md)
+
 [![License: MIT](https://img.shields.io/github/license/zhenkun26/auto-coding)](LICENSE)
 [![Release](https://img.shields.io/github/v/release/zhenkun26/auto-coding)](https://github.com/zhenkun26/auto-coding/releases)
 [![CI](https://img.shields.io/github/actions/workflow/status/zhenkun26/auto-coding/ci.yml)](https://github.com/zhenkun26/auto-coding/actions)
@@ -224,10 +226,3 @@ $openspec-archive-change <change-name>
 - **OpenSpec CLI 联调已验证**：Phase A→B→C→D 完整交接契约已通过项目根 mock OpenSpec 环境验证。四个检查点确认：Entry 检测 `openspec/config.yaml`、从 `openspec/changes/<name>/` 消费制品、Phase D delta→主 spec 合并、以及归档操作。所有沙箱同时支持 `[NO_OPENSPEC]` 降级模式。
 - **自验证（随仓库）**：技能包自身按文档级 L0/L1/L2 协议验证，机械检查随仓库发布并在 CI 中运行：36 个 pytest 用例（工具模块行覆盖率 88%）、markdown 链接完整性检查、frontmatter license 扫描、中英 README 结构一致性检查（见 `.github/workflows/ci.yml`）。
 - **历史验证记录（资产未随仓库发布）**：开发期曾运行 10 个测试套件（6 个沙箱：C0 计算器、C1b 认证、C1b API Key、C2 电商+折扣码、C2 金融结算、C2 库存管理；4 个本地套件：C0 工具函数、C1b 数据校验器、C1b 支付重试+熔断器、C2 任务执行引擎），共 148 个测试，覆盖全部 6 个风险标志、greenfield/brownfield 与增量修改。原始测试资产未随本仓库发布，当前不可复现；验证矩阵计划在后续版本随仓库重建。
-
-## 参与贡献
-
-- Fork 后提交 PR，CI 会自动运行 pytest 与仓库检查。
-- 修改任何技能内容后，运行 `./scripts/sync_plugin_skills.sh` 同步插件包副本。
-- 每个 SKILL.md 必须包含 `license: MIT`；新增技能需自带文档与测试。
-- 所有变更走 OpenSpec 工作流：`$openspec-propose` → 实现 → `$openspec-archive-change`。

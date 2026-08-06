@@ -1,5 +1,7 @@
 # auto-coding
 
+**🌐 Language / 语言：** [English](README-EN.md) · [简体中文](README.md)
+
 [![License: MIT](https://img.shields.io/github/license/zhenkun26/auto-coding)](LICENSE)
 [![Release](https://img.shields.io/github/v/release/zhenkun26/auto-coding)](https://github.com/zhenkun26/auto-coding/releases)
 [![CI](https://img.shields.io/github/actions/workflow/status/zhenkun26/auto-coding/ci.yml)](https://github.com/zhenkun26/auto-coding/actions)
@@ -224,10 +226,3 @@ The skill pack assumes a minimal baseline. Missing tools trigger either a guided
 - **OpenSpec CLI integration verified**: the full Phase A→B→C→D handoff contract has been validated via a mock OpenSpec environment at the project root. Four checkpoints confirmed: Entry detection of `openspec/config.yaml`, artifact consumption from `openspec/changes/<name>/`, Phase D delta→main spec sync, and archive. All sandboxes also support `[NO_OPENSPEC]` fallback mode.
 - **Self-verification (shipped)**: the skill pack is verified against a document-level L0/L1/L2 protocol covering front-matter, link integrity, cross-document consistency, and contract alignment. The mechanical checks ship with the repository and run in CI: a 36-case pytest suite (88% line coverage of the tooling), a markdown link check, a frontmatter license scan, and a Chinese/English README structure check (see `.github/workflows/ci.yml`).
 - **Historical verification record (assets not shipped)**: during development, 10 test suites were run — 6 sandboxes (C0 calculator, C1b auth, C1b apikey, C2 ecommerce + discount codes, C2 finance clearing, C2 inventory) and 4 local suites (C0 utils, C1b validator, C1b payment retry with circuit breaker, C2 task execution engine) — totaling 148 tests, covering all 6 risk flags, greenfield and brownfield, and incremental modification of existing code. The original test assets were not published with this repository and are currently not reproducible; a verification matrix is planned to be rebuilt and shipped in a future release.
-
-## Contributing
-
-- Fork the repository and open a PR; CI automatically runs pytest and the repository checks.
-- After changing any skill content, run `./scripts/sync_plugin_skills.sh` to keep the plugin bundle in sync.
-- Every `SKILL.md` must carry `license: MIT`; new skills need their own documentation and tests.
-- All changes follow the OpenSpec workflow: `$openspec-propose` → implement → `$openspec-archive-change`.
