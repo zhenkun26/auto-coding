@@ -9,7 +9,12 @@ WORKDIR /build
 
 # Build cache for pip: accelerates CI/CD rebuilds.
 RUN --mount=type=cache,target=/root/.cache/pip \
-    pip install --no-cache-dir pytest
+    pip install --no-cache-dir pytest && \
+    pip uninstall -y setuptools wheel 2>/dev/null || true
+
+# Strip bytecode caches in the builder so the copy into the runner is lean.
+RUN find /usr/local/lib/python3.12/site-packages -type d -name __pycache__ -prune -exec rm -rf {} + && \
+    find /usr/local/lib/python3.12/site-packages -type f -name '*.pyc' -delete
 
 ########################################
 # Runner: minimal image, non-root, HEALTHCHECK
@@ -21,7 +26,7 @@ RUN addgroup -S -g 10001 app && adduser -S -G app -u 10001 app
 
 WORKDIR /app
 
-# Copy only the runtime/test dependencies from the builder.
+# Copy only the runtime/test dependencies from the builder (bytecode already stripped).
 COPY --from=builder /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
 
 # Copy the repository (see .dockerignore for exclusions).

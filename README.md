@@ -1,5 +1,15 @@
 # auto-coding — 并联开发体系技能包
 
+[![License: MIT](https://img.shields.io/github/license/zhenkun26/auto-coding)](LICENSE)
+[![Release](https://img.shields.io/github/v/release/zhenkun26/auto-coding)](https://github.com/zhenkun26/auto-coding/releases)
+[![CI](https://img.shields.io/github/actions/workflow/status/zhenkun26/auto-coding/ci.yml)](https://github.com/zhenkun26/auto-coding/actions)
+[![Stars](https://img.shields.io/github/stars/zhenkun26/auto-coding)](https://github.com/zhenkun26/auto-coding)
+
+[![Coverage](https://img.shields.io/badge/coverage-88%25-2ea44f)](tests/)
+[![Python](https://img.shields.io/badge/Python-3.12-blue)](pipeline/_contract_check.py)
+[![OpenSpec](https://img.shields.io/badge/OpenSpec-driven-2ea44f)](openspec/)
+[![Codex](https://img.shields.io/badge/Codex-Plugin-412991)](plugins/auto-coding/.codex-plugin/plugin.json)
+
 一套面向 AI 编码助手的并联开发体系：**grill-me(反思追问)+OpenSpec（业务规划）+ Pipeline（工程执行）+ Ponytail（代码最小化）** 各跑强项、互不重叠，按变更复杂度自动分流，并在作业过程中持续沉淀经验。
 
 **auto-coding**（原名 sb_coding，见名知意，算是自嘲）由本人在收集的优秀的 skills 中，踩过很多坑后挑选的**优质组合**；是本人在和 AI 进行 vibe coding 过程中经过各种翻车总结出的一套可行性经验（**特别是开发到一半直接变垃圾**）。在今天 vibe coding 环境下，编程智能体开发过程还是比较黑盒，而 **auto-coding** 能兜住智能体开发的下限。此 skill 这段时间深受本人青睐，故此进行分享。从一个想法到开发一半，再到落地十分平稳。虽然有磕碰，但总体比模型落跑实在强太多，剩下的东西自己想读就读，不想多打字了。

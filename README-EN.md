@@ -1,5 +1,15 @@
 # auto-coding
 
+[![License: MIT](https://img.shields.io/github/license/zhenkun26/auto-coding)](LICENSE)
+[![Release](https://img.shields.io/github/v/release/zhenkun26/auto-coding)](https://github.com/zhenkun26/auto-coding/releases)
+[![CI](https://img.shields.io/github/actions/workflow/status/zhenkun26/auto-coding/ci.yml)](https://github.com/zhenkun26/auto-coding/actions)
+[![Stars](https://img.shields.io/github/stars/zhenkun26/auto-coding)](https://github.com/zhenkun26/auto-coding)
+
+[![Coverage](https://img.shields.io/badge/coverage-88%25-2ea44f)](tests/)
+[![Python](https://img.shields.io/badge/Python-3.12-blue)](pipeline/_contract_check.py)
+[![OpenSpec](https://img.shields.io/badge/OpenSpec-driven-2ea44f)](openspec/)
+[![Codex](https://img.shields.io/badge/Codex-Plugin-412991)](plugins/auto-coding/.codex-plugin/plugin.json)
+
 A parallel development system for AI coding assistants: **OpenSpec (business planning) + Pipeline (engineering execution) + Ponytail (code minimization)**. Each component plays to its strengths without overlapping: changes are routed automatically by complexity, and the system continuously accumulates experience while working.
 
 ## Architecture

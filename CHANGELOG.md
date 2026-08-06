@@ -33,6 +33,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Production `Dockerfile` (multi-stage, non-root user with fixed UID, HEALTHCHECK, pip build cache) and `.dockerignore`; two modes: `validate` (pytest + checks) and `serve` (read-only docs mirror).
 - Kubernetes manifests under `deploy/` (Namespace, ConfigMap, Secret with base64 placeholders, Deployment with resource limits and HTTP probes, PDB, ClusterIP Service, Ingress, HPA).
 - Adversarial acceptance report: `docs/ACCEPTANCE_REPORT.md`.
+- Containerization verified locally: image builds to **88.9MB** (<100MB target), validation mode passes, and serve mode answers HTTP 200 with a working HEALTHCHECK.
+- GitHub Actions: CI workflow (`ci.yml`) and release-on-tag workflow (`release.yml`) configured; README top now carries a full badge set.
 
 ### Renamed
 
