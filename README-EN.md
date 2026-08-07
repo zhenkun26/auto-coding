@@ -3,6 +3,7 @@
 🌐 Language / 语言：[简体中文](README.md) · [English](README-EN.md)
 
 [![CI](https://github.com/zhenkun26/auto-coding/actions/workflows/ci.yml/badge.svg)](https://github.com/zhenkun26/auto-coding/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/zhenkun26/auto-coding)](https://github.com/zhenkun26/auto-coding/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 A **risk-aware delivery skill** for AI coding agents: select execution depth by uncertainty and operational risk, plan proportionally, change minimally, verify with the project's own toolchain, and deliver on evidence.
@@ -82,8 +83,9 @@ All of the above require explicit user authorization. Checks that cannot run are
 │   ├── state_schema.json         # State-file reference schema
 │   ├── check_repo.py             # Repository mechanical checks (links/licenses/README parity)
 │   └── sync_plugin_skills.sh     # Plugin bundle sync (repo root is the single source of truth)
-├── plugins/auto-coding/         # Codex plugin bundle
-├── tests/                       # pytest suite
+├── pyproject.toml               # ruff / mypy (strict) configuration for CI self-checks
+├── plugins/auto-coding/         # Codex plugin bundle (generated from the repo root by the sync script)
+├── tests/                       # pytest suite (including adversarial trap fixtures under fixtures/adversarial)
 └── openspec/                    # This repository's own specs (dogfooding)
 ```
 
@@ -105,7 +107,7 @@ codex plugin marketplace upgrade
 codex plugin remove auto-coding@auto-coding
 ```
 
-After changing skill content, run `bash scripts/sync_plugin_skills.sh` before releasing to re-sync the plugin bundle.
+After changing skill content, run `bash scripts/sync_plugin_skills.sh` before releasing to re-sync the plugin bundle; CI re-runs the script and fails on any drift between the bundle and the repository root.
 
 ## Usage
 
@@ -131,8 +133,8 @@ Or describe the task directly and let the skill handle routing automatically. Re
 - Three-layer self-check (L0/L1/L2) + hard gates: type check Critical (failure → halt + rollback), lint Standard (self-heal ≤3 rounds), coverage defaults line ≥80% / branch ≥70%.
 - Layer-level type checkpoints: after each topological layer, the type checker runs over every file written so far, catching cross-file type errors.
 - Escape-hatch detection: self-heals that pass only via `Any` / `# type: ignore` / `cast()` are recorded as `[ESCAPE_HATCH]` quality debt and listed at handoff.
-- Automated contract checking: AST comparison of spec signatures against actual code, namespace-aware (`ClassName.method`); empty contracts never report a false pass.
-- Repository self-checks: pytest suite + markdown link integrity + license-header scan + Chinese/English README structure parity, all in CI (`.github/workflows/ci.yml`).
+- Automated contract checking: AST comparison of spec signatures against actual code, with spec extraction scoped to fenced code blocks (prose that merely looks like a signature is ignored), namespace-aware (`ClassName.method`); empty contracts never report a false pass.
+- Repository self-checks: the full pytest suite (including deterministic trap assertions over adversarial fixtures), ruff and mypy (strict) over the repository's own scripts, a plugin-bundle drift check, markdown link integrity, license-header scan, and Chinese/English README structure parity — all in CI (`.github/workflows/ci.yml`).
 
 ## Third-party components and license
 
