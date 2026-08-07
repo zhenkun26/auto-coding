@@ -54,7 +54,7 @@ Schema reference: `scripts/state_schema.json`.
 On a new invocation, if the state file exists and is non-empty, print the
 exact breakpoint — phase, task, file, self-heal round — and ask:
 
-```
+```text
 ⚠️ Incomplete run detected. Last state: <phase>/<current_task>
 (file: <current_file>, self-heal round <n>/3). Reply 'resume' to continue
 from the breakpoint, or 'restart' to start fresh.

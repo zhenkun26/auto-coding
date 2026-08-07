@@ -64,6 +64,6 @@ the user explicitly says to continue.
 When the route affects execution depth (Standard or High-risk), print one line
 before substantial work:
 
-```
+```text
 [ROUTE] <Fast|Standard|High-risk>: <N> files, <M> new capabilities, risk flags: <list|none>, <greenfield|brownfield>
 ```

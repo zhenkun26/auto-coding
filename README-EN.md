@@ -2,13 +2,16 @@
 
 🌐 Language / 语言：[简体中文](README.md) · [English](README-EN.md)
 
+[![CI](https://github.com/zhenkun26/auto-coding/actions/workflows/ci.yml/badge.svg)](https://github.com/zhenkun26/auto-coding/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
 A **risk-aware delivery skill** for AI coding agents: route execution depth by uncertainty and operational risk, plan proportionally, change minimally, verify with the project's own toolchain, and deliver on evidence.
 
 ## What it is
 
 auto-coding helps a coding agent, when modifying code, to first identify risks and constraints, then plan, implement, verify, and hand off at a depth proportionate to the task. It is a restructuring of a battle-tested parallel development system (OpenSpec planning + Pipeline execution + Ponytail code minimization + grill-me decision interviews) — every practical mechanism kept, on a more disciplined skeleton:
 
-- **The main file holds only the contract**: `SKILL.md` is ~160 lines; all detail lives in 12 on-demand references;
+- **The main file holds only the contract**: `SKILL.md` is ~180 lines; all detail lives in 12 on-demand references;
 - **Zero process files by default**: no more TASK_PLAN / LOCATE_MAP / RUN_LOG pipelines — a single state file exists only for long tasks;
 - **Authorization boundaries first**: spec-system initialization, dependency installs, commits, deployments, migrations, and deletions all require explicit authorization.
 
@@ -58,7 +61,7 @@ These actions require explicit authorization. Checks that cannot run are marked 
 
 ## Repository layout
 
-```
+```text
 ├── SKILL.md                     # Control: core contract, routing, workflow, resource map
 ├── references/                  # 12 on-demand references
 │   ├── routing.md               #   Fast/Standard/High-risk routing and risk flags
@@ -73,12 +76,12 @@ These actions require explicit authorization. Checks that cannot run are marked 
 │   ├── openspec.md              #   Consuming and wrapping up an existing OpenSpec workflow
 │   └── toolchain-python.md / toolchain-typescript.md
 ├── scripts/
-│   ├── detect_project.py        # Read-only project detection (language/CI/spec system/greenfield)
-│   ├── manage_state.py          # Atomic single state file
-│   ├── check_python_contracts.py# Python structural contract checker (AST + Gherkin fallback)
-│   ├── state_schema.json        # State-file reference schema
-│   ├── check_repo.py            # Repository mechanical checks (links/licenses/README parity)
-│   └── sync_plugin_skills.sh    # Plugin bundle sync (repo root is the single source of truth)
+│   ├── detect_project.py         # Read-only project detection (language/CI/spec system/greenfield)
+│   ├── manage_state.py           # Atomic single state file
+│   ├── check_python_contracts.py # Python structural contract checker (AST + Gherkin fallback)
+│   ├── state_schema.json         # State-file reference schema
+│   ├── check_repo.py             # Repository mechanical checks (links/licenses/README parity)
+│   └── sync_plugin_skills.sh     # Plugin bundle sync (repo root is the single source of truth)
 ├── plugins/auto-coding/         # Codex plugin bundle
 ├── tests/                       # pytest suite
 └── openspec/                    # This repository's own specs (dogfooding)
@@ -106,7 +109,7 @@ After changing skill content, run `bash scripts/sync_plugin_skills.sh` before re
 
 ## Usage
 
-```
+```text
 Use $auto-coding to implement this change with risk-aware routing and verification.
 ```
 

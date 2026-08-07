@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **Architecture restructured to a single risk-aware skill** (inspired by the deliver-code-change skill design): one ~160-line `SKILL.md` holding only the core contract, routing, workflow, and a resource map; all detail moved into 12 on-demand `references/*.md` files with explicit "read when" conditions.
+- **Architecture restructured to a single risk-aware skill** (inspired by the deliver-code-change skill design): one ~180-line `SKILL.md` holding only the core contract, routing, workflow, and a resource map; all detail moved into 12 on-demand `references/*.md` files with explicit "read when" conditions.
 - Routing simplified from C0/C1a/C1b/C2 to **Fast / Standard / High-risk**; the six risk flags (FINANCE / AUTH / MIGRATION / STATE_MACHINE / EXTERNAL_API / ENV_OPS) now escalate directly to High-risk. This removes the C1b "reduced mode vs skipped" self-contradiction.
 - **Zero process files by default**: TASK_PLAN / LOCATE_MAP / IMPLEMENTATION_REPORT / VERIFY_REPORT / VERIFY_RUNTIME_REPORT / RUN_LOG / COMMIT_MESSAGE / PIPELINE_STATUS / PHASE_D_PENDING are gone. Long tasks use a single state file `ai_pipeline/state.json` managed atomically by `scripts/manage_state.py`; `ERROR_MEMORY.md` remains the only standing artifact, appended only on self-heals, escape hatches, or Critical failures.
 - **Authorization boundaries made explicit**: the skill no longer auto-runs `openspec init`, no longer auto-installs test dependencies, and no longer auto-commits at the final node. Commits, installs, spec initialization, sync/archive, deployments, migrations, and deletions all require explicit authorization.

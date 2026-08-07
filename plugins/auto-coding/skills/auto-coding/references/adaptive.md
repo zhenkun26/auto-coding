@@ -45,7 +45,7 @@ there still requires the flag's alternative evidence.
 
 Print one line at the start of verification:
 
-```
+```text
 Adaptation: type check ✅(mypy) | lint ✅(ruff) | tests ✅(pytest, 80%) | CI aligned ✅(github-actions)
 Adaptation: type check ⚠️(BLOCKED, no mypy config) | tests ⚠️(BLOCKED, no pytest) | no CI
 ```

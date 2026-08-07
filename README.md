@@ -2,13 +2,16 @@
 
 🌐 语言 / Language：[简体中文](README.md) · [English](README-EN.md)
 
+[![CI](https://github.com/zhenkun26/auto-coding/actions/workflows/ci.yml/badge.svg)](https://github.com/zhenkun26/auto-coding/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
 一套面向 AI 编码助手的**风险感知交付 skill**：按不确定性与操作风险分流执行深度，按需规划、最小改动、用项目自有工具链验证、凭证据交付。
 
 ## 它是什么
 
 auto-coding 帮助编码智能体在修改代码时：先识别风险与约束，再以与任务相称的深度规划、实现、验证并交付结果。它由一套在 vibe coding 中反复踩坑后沉淀的并联开发体系（OpenSpec 规划 + Pipeline 执行 + Ponytail 代码最小化 + grill-me 决策追问）重构而来——保留全部实战机制，换上更克制的骨架：
 
-- **主文件只留合同**：`SKILL.md` 约 160 行，细节全部下放到 12 份按需读取的 references；
+- **主文件只留合同**：`SKILL.md` 约 180 行，细节全部下放到 12 份按需读取的 references；
 - **默认零过程文件**：不再产出 TASK_PLAN / LOCATE_MAP / RUN_LOG 等十几个流水线文件，只有长任务才使用单一状态文件；
 - **授权边界前置**：初始化规格系统、安装依赖、提交、部署、迁移、删除都需要显式授权。
 
@@ -58,7 +61,7 @@ Greenfield/brownfield 不影响路由等级，只影响规划与定位深度（g
 
 ## 目录结构
 
-```
+```text
 ├── SKILL.md                     # 总控：核心契约、路由、工作流、资源地图
 ├── references/                  # 按需读取的 12 份参考
 │   ├── routing.md               #   Fast/Standard/High-risk 分流与风险标志
@@ -73,12 +76,12 @@ Greenfield/brownfield 不影响路由等级，只影响规划与定位深度（g
 │   ├── openspec.md              #   已有 OpenSpec 工作流的消费与收尾
 │   └── toolchain-python.md / toolchain-typescript.md
 ├── scripts/
-│   ├── detect_project.py        # 只读项目探测（语言/CI/规格系统/greenfield）
-│   ├── manage_state.py          # 原子化单一状态文件
-│   ├── check_python_contracts.py# Python 结构契约检查（AST + Gherkin 回退）
-│   ├── state_schema.json        # 状态文件参考 schema
-│   ├── check_repo.py            # 仓库机械检查（链接/许可/双语 README 一致性）
-│   └── sync_plugin_skills.sh    # 插件包同步（单一事实源为仓库根）
+│   ├── detect_project.py         # 只读项目探测（语言/CI/规格系统/greenfield）
+│   ├── manage_state.py           # 原子化单一状态文件
+│   ├── check_python_contracts.py # Python 结构契约检查（AST + Gherkin 回退）
+│   ├── state_schema.json         # 状态文件参考 schema
+│   ├── check_repo.py             # 仓库机械检查（链接/许可/双语 README 一致性）
+│   └── sync_plugin_skills.sh     # 插件包同步（单一事实源为仓库根）
 ├── plugins/auto-coding/         # Codex plugin 包
 ├── tests/                       # pytest 测试套件
 └── openspec/                    # 本仓库自身的规格（dogfooding）
@@ -106,7 +109,7 @@ codex plugin remove auto-coding@auto-coding
 
 ## 使用
 
-```
+```text
 Use $auto-coding to implement this change with risk-aware routing and verification.
 ```
 
