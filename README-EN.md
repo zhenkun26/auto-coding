@@ -5,21 +5,21 @@
 [![CI](https://github.com/zhenkun26/auto-coding/actions/workflows/ci.yml/badge.svg)](https://github.com/zhenkun26/auto-coding/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-A **risk-aware delivery skill** for AI coding agents: route execution depth by uncertainty and operational risk, plan proportionally, change minimally, verify with the project's own toolchain, and deliver on evidence.
+A **risk-aware delivery skill** for AI coding agents: select execution depth by uncertainty and operational risk, plan proportionally, change minimally, verify with the project's own toolchain, and deliver on evidence.
 
 ## What it is
 
-auto-coding helps a coding agent, when modifying code, to first identify risks and constraints, then plan, implement, verify, and hand off at a depth proportionate to the task. It is a restructuring of a battle-tested parallel development system (OpenSpec planning + Pipeline execution + Ponytail code minimization + grill-me decision interviews) — every practical mechanism kept, on a more disciplined skeleton:
+auto-coding helps a coding agent, when modifying code, to first identify risks and constraints, then plan, implement, verify, and hand off at a depth proportionate to the task. It is a restructuring of a parallel development system distilled through repeated trial and error during vibe coding (OpenSpec planning + Pipeline execution + Ponytail code minimization + grill-me decision interviews) — every practical mechanism is preserved, on a more restrained structure:
 
 - **The main file holds only the contract**: `SKILL.md` is ~180 lines; all detail lives in 12 on-demand references;
 - **Zero process files by default**: no more TASK_PLAN / LOCATE_MAP / RUN_LOG pipelines — a single state file exists only for long tasks;
-- **Authorization boundaries first**: spec-system initialization, dependency installs, commits, deployments, migrations, and deletions all require explicit authorization.
+- **Clear authorization boundaries**: spec-system initialization, dependency installs, commits, deployments, migrations, and deletions all require explicit authorization.
 
 ## Core ideas
 
-Not every change deserves the same heavy pipeline. The skill chooses execution depth by uncertainty, blast radius, and operational risk: **risk overrides size** — a one-line authorization or money change is High-risk.
+Not every change needs to go through the same heavy pipeline. This skill selects execution depth by uncertainty, blast radius, and operational risk, following the principle that **risk overrides change size** — even a one-line authorization or money change is High-risk.
 
-It favors the smallest complete change: reuse existing implementations, the standard library, and installed dependencies first (reuse > stdlib > installed dependency > new code), avoiding unrelated refactoring, process-file bloat, and unauthorized side effects. Verification evidence strictly distinguishes `PASS` / `FAIL` / `BLOCKED` / `NOT_APPLICABLE`, and `BLOCKED` never becomes `PASS`.
+This skill follows the principle of the **smallest complete change**: reuse existing implementations, the standard library, and installed dependencies first (reuse > stdlib > installed dependency > new code), avoiding unrelated refactoring, process-file bloat, and unauthorized side effects. Verification evidence strictly distinguishes `PASS` / `FAIL` / `BLOCKED` / `NOT_APPLICABLE`, and `BLOCKED` is never treated as `PASS`.
 
 ## Three routes
 
@@ -37,14 +37,14 @@ Greenfield/brownfield state does not change the route — only planning and loca
 2. Select the Fast / Standard / High-risk route.
 3. Plan to the route's depth; with ≥3 unresolved design decisions, run the decision-grilling pass.
 4. Implement along the reuse ladder; every task runs the L0 (import) → L1 (behavior assert) → L2 (contract match) self-check, with layer-level type checkpoints and escape-hatch detection.
-5. Verify with the project's own commands; missing tools follow the adaptive rules (configured but missing → halt with install hint; no config → degrade to labeled alternative evidence).
+5. Verify with the project's own commands; missing tools follow the adaptive rules: configured but not installed → halt with an install prompt; no config → degrade to alternative evidence and mark it `BLOCKED`.
 6. Report changes, verification evidence, escape hatches, assumptions, and follow-ups; commits and spec sync/archive are suggestions executed only with authorization.
 
-Conflict rulings (spec wins on requirement existence, reuse wins on duplication, roll back and report on spec defects, facts first on checklists) live in [references/conflict-rulings.md](references/conflict-rulings.md).
+Conflicts follow the established rulings: requirement existence defers to specs, code reuse follows the reuse ladder, spec defects trigger a rollback plus a defect report, and task lists defer to facts. See [references/conflict-rulings.md](references/conflict-rulings.md).
 
 ## Safety boundaries
 
-This skill never automatically:
+By default, this skill does not automatically perform the following:
 
 - initializes OpenSpec or any other specification system
 - installs dependencies
@@ -52,11 +52,11 @@ This skill never automatically:
 - deletes files, runs data migrations, or modifies remote services
 - reports a check it could not execute as passed
 
-These actions require explicit authorization. Checks that cannot run are marked `BLOCKED` and reported separately from alternative evidence.
+All of the above require explicit user authorization. Checks that cannot run are marked `BLOCKED` and reported separately from alternative evidence.
 
 ## Sedimentation and recovery
 
-- **No sedimentation by default.** The only standing artifact is `ai_pipeline/ERROR_MEMORY.md`, appended solely when a self-heal, escape hatch, or Critical failure occurs (see [references/sedimentation.md](references/sedimentation.md)).
+- **No process files by default.** The only standing artifact is `ai_pipeline/ERROR_MEMORY.md`, appended solely when a self-heal, escape hatch, or Critical failure occurs (see [references/sedimentation.md](references/sedimentation.md)).
 - **Breakpoint recovery**: only long or interruption-prone tasks use the single state file `ai_pipeline/state.json`, read and written atomically via `scripts/manage_state.py` (see [references/recovery.md](references/recovery.md)). The next invocation prints the exact breakpoint and asks whether to resume or restart.
 
 ## Repository layout
@@ -77,7 +77,7 @@ These actions require explicit authorization. Checks that cannot run are marked 
 │   └── toolchain-python.md / toolchain-typescript.md
 ├── scripts/
 │   ├── detect_project.py         # Read-only project detection (language/CI/spec system/greenfield)
-│   ├── manage_state.py           # Atomic single state file
+│   ├── manage_state.py           # Atomically reads/writes the single state file
 │   ├── check_python_contracts.py # Python structural contract checker (AST + Gherkin fallback)
 │   ├── state_schema.json         # State-file reference schema
 │   ├── check_repo.py             # Repository mechanical checks (links/licenses/README parity)
@@ -113,7 +113,7 @@ After changing skill content, run `bash scripts/sync_plugin_skills.sh` before re
 Use $auto-coding to implement this change with risk-aware routing and verification.
 ```
 
-Or describe the task directly and let the skill route itself. Repositories already using OpenSpec can hand off a change directory directly: `Implement openspec/changes/<name>/ with auto-coding`.
+Or describe the task directly and let the skill handle routing automatically. Repositories already using OpenSpec can hand off a change directory directly: `Implement openspec/changes/<name>/ with auto-coding`.
 
 ## Environment requirements
 
@@ -122,7 +122,7 @@ Or describe the task directly and let the skill route itself. Repositories alrea
 | bash (POSIX sh) | Required | No fallback — bash is the execution environment |
 | git | Required for commits | Code written but uncommitted, labeled honestly |
 | Python 3.10+ | Contract checker / detection scripts | Contract check degrades to the manual L2 checklist |
-| mypy / ruff / pytest | Python template | Configured but missing → install hint and halt; no config → `BLOCKED` + alternative evidence |
+| mypy / ruff / pytest | Python template | Configured but missing → install prompt and halt; no config → degrade to alternative evidence marked `BLOCKED` |
 | tsc / eslint / jest | TS template | Same as above |
 | OpenSpec CLI | Optional | `[NO_OPENSPEC]` inline planning throughout; never auto-initialized |
 
