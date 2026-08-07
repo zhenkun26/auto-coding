@@ -12,8 +12,8 @@ coverage.json
 # Sandbox test code (not part of skill)
 sandbox_test/
 
-# Local dev/test locations
-src/
+# Local dev/test locations (repo root only)
+/src/
 tests_payment/
 tests_taskrunner/
 tests_validator/
