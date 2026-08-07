@@ -4,14 +4,16 @@ All notable changes to auto-coding are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.2.1] - 2026-08-07
 
 ### Added
 
 - CI now lints and type-checks the repository's own scripts (`ruff check scripts/ tests/`, `mypy scripts/` with `strict = true` in `pyproject.toml`) — the same standard the skill demands of other projects.
 - CI drift check: the workflow re-runs `scripts/sync_plugin_skills.sh` and fails on any `git diff` under `plugins/`, so a stale plugin bundle can no longer be committed.
 - `scripts/manage_state.py`: list fields accept a JSON array literal (preferred — items may contain `;`); the legacy `;`-separated form is kept for backward compatibility.
-- Tests for JSON-array coercion, multi-source-root detection, tightened pytest detection, fenced-block contract parsing, and async FastAPI route extraction (suite now at 62 cases).
+- Adversarial fixture suite (`tests/fixtures/adversarial/` + `tests/test_adversarial_fixtures.py`): seven trap scenarios (contract mismatch, missing return annotations, signature-like prose, empty `tests/` dir, multi-source-root layouts, corrupt state file, plus a valid-project control) with deterministic assertions that the repository's own tooling must never confuse a trap for a pass.
+- Validation-boundary statement appended to `docs/ACCEPTANCE_REPORT.md`: which mechanisms carry machine verification and which still rely on agent discipline.
+- Tests for JSON-array coercion, multi-source-root detection, tightened pytest detection, fenced-block contract parsing, and async FastAPI route extraction (suite now at 70 cases).
 
 ### Changed
 

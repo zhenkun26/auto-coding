@@ -228,3 +228,12 @@ kubectl rollout restart deployment/auto-coding -n auto-coding
 
 - 文档镜像仅只读，无写入面，数据丢失风险为零；异常时直接缩容：`kubectl scale deployment auto-coding -n auto-coding --replicas=0`。
 - PDB 保证滚动更新/节点维护期间至少 2 副本可用。
+
+---
+
+## 验证边界声明（2026-08-07 补充）
+
+本项目的机制分两层，可验证性不同，如实声明如下：
+
+- **有机器验证的一层**：工具脚本（探测、契约检查、状态管理）的确定性行为由 `tests/fixtures/adversarial/` 陷阱场景 + `tests/test_adversarial_fixtures.py` 断言覆盖——契约不匹配必须 FAIL、缺返回注解不得假性 PASS、散文中的伪签名必须被忽略、空 `tests/` 目录不得当作 pytest 已配置、损坏状态文件必须大声报错。这些断言在 CI 中每次运行。
+- **仍依赖执行者自律的一层**：风险路由分级、逃逸门如实上报、`BLOCKED` 不报 `PASS` 等 prompt 级规则，作用于 agent 行为，目前没有客观度量手段能证明 agent 始终遵守。这是 prompt 工程类项目的固有边界，本项目不声称已解决。
