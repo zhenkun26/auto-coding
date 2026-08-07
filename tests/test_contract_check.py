@@ -1,4 +1,4 @@
-"""Unit tests for the structural contract checker ``pipeline/_contract_check.py``."""
+"""Unit tests for the structural contract checker ``scripts/check_python_contracts.py``."""
 
 import subprocess
 import sys
@@ -8,10 +8,10 @@ from pathlib import Path
 
 import pytest
 
-PIPELINE_DIR = Path(__file__).resolve().parent.parent / "pipeline"
-sys.path.insert(0, str(PIPELINE_DIR))
+SCRIPTS_DIR = Path(__file__).resolve().parent.parent / "scripts"
+sys.path.insert(0, str(SCRIPTS_DIR))
 
-import _contract_check as contract_check  # noqa: E402
+import check_python_contracts as contract_check  # noqa: E402
 
 
 @pytest.fixture(autouse=True)
@@ -212,7 +212,7 @@ def test_should_ignore_self_when_comparing_method_params(tmp_path: Path) -> None
 
 def test_should_print_usage_and_exit_when_spec_flag_is_missing() -> None:
     """Given the CLI without --spec, it prints usage and exits nonzero."""
-    script = PIPELINE_DIR / "_contract_check.py"
+    script = SCRIPTS_DIR / "check_python_contracts.py"
 
     result = subprocess.run(
         [sys.executable, str(script)],
@@ -251,7 +251,7 @@ def test_should_report_unreadable_file_instead_of_crashing(tmp_path: Path) -> No
 def test_should_exit_usage_when_spec_flag_has_no_value() -> None:
     """Given --spec without a value, the CLI exits nonzero with usage."""
     result = subprocess.run(
-        [sys.executable, str(PIPELINE_DIR / "_contract_check.py"), "--spec"],
+        [sys.executable, str(SCRIPTS_DIR / "check_python_contracts.py"), "--spec"],
         capture_output=True,
         text=True,
         check=False,
@@ -268,7 +268,7 @@ def test_should_exit_error_when_spec_file_is_missing(tmp_path: Path) -> None:
     result = subprocess.run(
         [
             sys.executable,
-            str(PIPELINE_DIR / "_contract_check.py"),
+            str(SCRIPTS_DIR / "check_python_contracts.py"),
             "--spec",
             str(tmp_path / "missing.md"),
             "--source",
@@ -290,7 +290,7 @@ def test_should_exit_error_when_source_directory_is_missing(tmp_path: Path) -> N
     result = subprocess.run(
         [
             sys.executable,
-            str(PIPELINE_DIR / "_contract_check.py"),
+            str(SCRIPTS_DIR / "check_python_contracts.py"),
             "--spec",
             str(spec),
             "--source",
@@ -374,7 +374,7 @@ def test_should_pass_1000_concurrent_invocations(tmp_path: Path) -> None:
         subprocess.run,
         [
             sys.executable,
-            str(PIPELINE_DIR / "_contract_check.py"),
+            str(SCRIPTS_DIR / "check_python_contracts.py"),
             "--spec",
             str(spec),
             "--source",

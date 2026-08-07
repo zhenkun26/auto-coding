@@ -4,6 +4,34 @@ All notable changes to auto-coding are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2026-08-07
+
+### Changed
+
+- **Architecture restructured to a single risk-aware skill** (inspired by the deliver-code-change skill design): one ~160-line `SKILL.md` holding only the core contract, routing, workflow, and a resource map; all detail moved into 12 on-demand `references/*.md` files with explicit "read when" conditions.
+- Routing simplified from C0/C1a/C1b/C2 to **Fast / Standard / High-risk**; the six risk flags (FINANCE / AUTH / MIGRATION / STATE_MACHINE / EXTERNAL_API / ENV_OPS) now escalate directly to High-risk. This removes the C1b "reduced mode vs skipped" self-contradiction.
+- **Zero process files by default**: TASK_PLAN / LOCATE_MAP / IMPLEMENTATION_REPORT / VERIFY_REPORT / VERIFY_RUNTIME_REPORT / RUN_LOG / COMMIT_MESSAGE / PIPELINE_STATUS / PHASE_D_PENDING are gone. Long tasks use a single state file `ai_pipeline/state.json` managed atomically by `scripts/manage_state.py`; `ERROR_MEMORY.md` remains the only standing artifact, appended only on self-heals, escape hatches, or Critical failures.
+- **Authorization boundaries made explicit**: the skill no longer auto-runs `openspec init`, no longer auto-installs test dependencies, and no longer auto-commits at the final node. Commits, installs, spec initialization, sync/archive, deployments, migrations, and deletions all require explicit authorization.
+- Verification evidence standardized to `PASS` / `FAIL` / `BLOCKED` / `NOT_APPLICABLE`; adaptive degradation is now reported as `BLOCKED` + labeled alternative evidence instead of silent `[SKIP_*]` annotations.
+- OpenSpec support narrowed to consuming an **existing** workflow (`references/openspec.md`): artifact consumption, tasks.md checkbox sync, and a suggested (not automatic) sync/archive wrap-up.
+- grill-me, Ponytail, self-verify, adaptive, and the six pipeline node documents are condensed into `references/planning.md` (decision-grilling), `references/implementation.md` (reuse ladder + L0/L1/L2 + escape hatches + layer checkpoints), `references/verification.md` (gates + thresholds, formerly `pipeline/CONFIG.md`), and `references/adaptive.md`.
+- `pipeline/_contract_check.py` moved to `scripts/check_python_contracts.py`; the session-state schema replaced by `scripts/state_schema.json` (route/phase/task/file/self-heal/escape-hatch fields).
+- Plugin bundle now ships exactly one skill (`auto-coding`) with its references and runtime scripts; `scripts/sync_plugin_skills.sh` rewritten accordingly.
+- README (zh/en) rewritten for the new architecture.
+
+### Added
+
+- `scripts/detect_project.py`: read-only project detection (language template, CI, OpenSpec presence, greenfield/brownfield, tool availability) as JSON.
+- `scripts/manage_state.py`: atomic single-file state management (init/update/read/clear; temp-file + rename writes).
+- Unit tests for both new scripts (`tests/test_manage_state.py`, `tests/test_detect_project.py`).
+
+### Removed
+
+- `pipeline/`, `adaptive/`, `self_verify/`, `grill-me/`, `ponytail_code/` directories (content condensed into references).
+- `Dockerfile`, `.dockerignore`, `deploy/` (Kubernetes manifests), and `scripts/docker-entrypoint.sh` — container orchestration was out of scope for a skill package.
+- Bundled OpenSpec skills (`openspec/skills/`) — regenerable via `openspec init --tools codex`; the plugin no longer redistributes them.
+- Ponytail sub-skills (audit/debt/gain/help/review) — the ladder and review pass are condensed into references.
+
 ## [0.1.0] - 2026-08-06
 
 ### Added

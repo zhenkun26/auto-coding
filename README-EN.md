@@ -1,261 +1,136 @@
-# auto-coding
+# auto-coding — risk-aware coding delivery skill for AI agents
 
-**🌐 Language / 语言：** [English](README-EN.md) · [简体中文](README.md)
+🌐 Language / 语言：[简体中文](README.md) · [English](README-EN.md)
 
-[![License: MIT](https://img.shields.io/github/license/zhenkun26/auto-coding)](LICENSE)
-[![Release](https://img.shields.io/github/v/release/zhenkun26/auto-coding)](https://github.com/zhenkun26/auto-coding/releases)
-[![CI](https://img.shields.io/github/actions/workflow/status/zhenkun26/auto-coding/ci.yml)](https://github.com/zhenkun26/auto-coding/actions)
-[![Stars](https://img.shields.io/github/stars/zhenkun26/auto-coding)](https://github.com/zhenkun26/auto-coding)
+A **risk-aware delivery skill** for AI coding agents: route execution depth by uncertainty and operational risk, plan proportionally, change minimally, verify with the project's own toolchain, and deliver on evidence.
 
-[![Coverage](https://img.shields.io/badge/coverage-88%25-2ea44f)](tests/)
-[![Python](https://img.shields.io/badge/Python-3.12-blue)](pipeline/_contract_check.py)
-[![OpenSpec](https://img.shields.io/badge/OpenSpec-driven-2ea44f)](openspec/)
-[![Codex](https://img.shields.io/badge/Codex-Plugin-412991)](plugins/auto-coding/.codex-plugin/plugin.json)
+## What it is
 
-A parallel development system for AI coding assistants: **OpenSpec (business planning) + Pipeline (engineering execution) + Ponytail (code minimization)**. Each component plays to its strengths without overlapping: changes are routed automatically by complexity, and the system continuously accumulates experience while working.
+auto-coding helps a coding agent, when modifying code, to first identify risks and constraints, then plan, implement, verify, and hand off at a depth proportionate to the task. It is a restructuring of a battle-tested parallel development system (OpenSpec planning + Pipeline execution + Ponytail code minimization + grill-me decision interviews) — every practical mechanism kept, on a more disciplined skeleton:
 
-**auto-coding** (formerly sb_coding) is assembled from quality skills the author collected and battle-tested through countless vibe-coding mishaps — especially the "turned to garbage halfway through" kind. In today's vibe-coding environment, coding agents remain largely black-box, and auto-coding pins down the lower bound of agent quality. From an idea to a half-built project to a stable landing, it keeps the ride smooth. There are bumps, but it beats the model running away by a wide margin.
+- **The main file holds only the contract**: `SKILL.md` is ~160 lines; all detail lives in 12 on-demand references;
+- **Zero process files by default**: no more TASK_PLAN / LOCATE_MAP / RUN_LOG pipelines — a single state file exists only for long tasks;
+- **Authorization boundaries first**: spec-system initialization, dependency installs, commits, deployments, migrations, and deletions all require explicit authorization.
 
-## Origin story
+## Core ideas
 
-**The real pain of vibe coding is not writing code — it is not knowing what to do next.**
+Not every change deserves the same heavy pipeline. The skill chooses execution depth by uncertainty, blast radius, and operational risk: **risk overrides size** — a one-line authorization or money change is High-risk.
 
-When I first started vibe coding with AI, I kept getting stuck in the same places:
+It favors the smallest complete change: reuse existing implementations, the standard library, and installed dependencies first (reuse > stdlib > installed dependency > new code), avoiding unrelated refactoring, process-file bloat, and unauthorized side effects. Verification evidence strictly distinguishes `PASS` / `FAIL` / `BLOCKED` / `NOT_APPLICABLE`, and `BLOCKED` never becomes `PASS`.
 
-- **No idea how to explore** — vague ideas, no clue what to ask or investigate, straight to writing code;
-- **No idea how to plan** — no requirement breakdown, no interface contracts, realizing halfway that the direction was wrong;
-- **No idea how to run** — after writing code, not knowing whether to verify or commit, all by gut feeling;
-- **No idea how to accept** — "it seems to work" counted as done; types, edge cases, coverage, and regressions were pure luck.
+## Three routes
 
-The result: **the project turned to garbage halfway through**. AI tries hard, but without a process to hold the line, effort just accelerates the chaos.
-
-So I distilled the lessons into this system, giving every phase a methodology that has your back:
-
-- Vague idea → **grill-me + OpenSpec explore** handle discovery and clarification;
-- Change planning → **OpenSpec propose** produces requirements, interface contracts, and task breakdowns;
-- Engineering execution → **Pipeline** (Node 2→8) handles decomposition, location, implementation, verification, and commit;
-- Code quality → **Ponytail** forces the smallest, simplest, sufficient code;
-- Acceptance → **L0/L1/L2 three-layer self-checks** and quality gates make acceptance executable and reproducible.
-
-**This repository is itself a dogfooding product** — from productization and hardening to release, everything was iterated using this very system.
-
-## Architecture
-
-```mermaid
-flowchart LR
-    subgraph PhaseA["🔍 Phase A · Planning — OpenSpec + grill-me"]
-        direction TB
-        G["grill-me decision drill-down"] --> E["explore requirements"]
-        E --> P["propose change"]
-        P --> U["update revision"]
-    end
-
-    subgraph PhaseB["📋 Phase B · Handoff"]
-        direction TB
-        Artifacts["Artifacts: requirements / contracts / tasks / design"]
-    end
-
-    subgraph PhaseC["⚙️ Phase C · Execution — Pipeline + Ponytail"]
-        direction TB
-        N2["Node 2 Decompose"] --> N3["Node 3 Locate"]
-        N3 --> N4["Node 4 Implement + L0/L1/L2 Self-Check"]
-        N4 --> N5["Node 5 Static Verify · Type / Lint"]
-        N5 --> N6["Node 6 Runtime Verify · Tests / Coverage"]
-        N6 --> N8["Node 8 Commit"]
-        PT["Ponytail Minimalism<br/>reuse → stdlib → native → minimal"] -.-> N4
-        Gate5{{"Quality Gate<br/>Critical / Standard"}} -.-> N5
-        Gate6{{"Quality Gate<br/>Coverage ≥80% / Branch ≥70%"}} -.-> N6
-    end
-
-    subgraph PhaseD["✅ Phase D · Wrap-up"]
-        direction TB
-        Sync["sync delta specs"] --> Archive["archive change"]
-    end
-
-    U -->|"C1b / C2 trigger"| Artifacts
-    Artifacts -->|"handoff"| N2
-    N8 -->|"gates passed"| Sync
-```
-
-**Key design**:
-
-- **No overlapping responsibilities**: OpenSpec handles planning only (explore / propose / update); Pipeline handles execution only (Node 2→8) — no duplicated requirement analysis or task breakdown;
-- **Decisions first**: grill-me runs independently during planning — triggered at >2 decisions for C1b and >3 for C2, questioning every branch until shared understanding;
-- **Guardrails throughout**: Ponytail drives code minimalism through Node 4, while RUN_LOG / ERROR_MEMORY keep sedimenting continuously;
-- **Closed loop**: Phase D merges delta specs into the main specs via `sync` and archives the change, closing the loop on every change.
-
-## Component responsibilities
-
-| Component | Responsibility | Core capabilities |
+| Route | Typical use | Required depth |
 |:---|:---|:---|
-| **OpenSpec** | Business planning | `explore`, `propose` (create change + artifacts), `update`, `sync` (incremental spec management), `archive` |
-| **Pipeline** | Engineering execution | Node 2 (atomic decomposition) → Node 3 (precise location) → Node 4 (implementation + 3-layer self-check) → Node 5/6 (quality gates) → Node 8 (semantic commit) |
-| **Ponytail** | Code minimization | Ladder framework (reuse → stdlib → native → one-liner → minimal), over-engineering review, tech-debt tracking |
-| **grill-me** | Design stress test | Questions every branch of a plan until shared understanding; used for key decisions |
-| **adaptive** | Toolchain adaptation | Chooses the verification strategy from the project's existing tools; interrupts with install hints when configured tools are missing, degrades only when unconfigured |
+| **Fast** | Single-file, clear, low-risk, easily reversible | Inspect, minimal edit, L0/L1 self-check |
+| **Standard** | Multi-file behavior, interface change, or meaningful uncertainty | Concise plan, caller-aware implementation, static checks and tests |
+| **High-risk** | FINANCE / AUTH / MIGRATION / STATE_MACHINE / EXTERNAL_API / ENV_OPS, concurrency, or destructive behavior | Written invariants and rollback plan, staged implementation, risk-specific verification |
 
-## Directory structure
+Greenfield/brownfield state does not change the route — only planning and location depth (greenfield has no existing code to locate; files are created directly).
+
+## How it works
+
+1. Read repository instructions, CI, and working-tree state; optionally probe the project read-only via `scripts/detect_project.py`.
+2. Select the Fast / Standard / High-risk route.
+3. Plan to the route's depth; with ≥3 unresolved design decisions, run the decision-grilling pass.
+4. Implement along the reuse ladder; every task runs the L0 (import) → L1 (behavior assert) → L2 (contract match) self-check, with layer-level type checkpoints and escape-hatch detection.
+5. Verify with the project's own commands; missing tools follow the adaptive rules (configured but missing → halt with install hint; no config → degrade to labeled alternative evidence).
+6. Report changes, verification evidence, escape hatches, assumptions, and follow-ups; commits and spec sync/archive are suggestions executed only with authorization.
+
+Conflict rulings (spec wins on requirement existence, reuse wins on duplication, roll back and report on spec defects, facts first on checklists) live in [references/conflict-rulings.md](references/conflict-rulings.md).
+
+## Safety boundaries
+
+This skill never automatically:
+
+- initializes OpenSpec or any other specification system
+- installs dependencies
+- commits, pushes, publishes, or deploys
+- deletes files, runs data migrations, or modifies remote services
+- reports a check it could not execute as passed
+
+These actions require explicit authorization. Checks that cannot run are marked `BLOCKED` and reported separately from alternative evidence.
+
+## Sedimentation and recovery
+
+- **No sedimentation by default.** The only standing artifact is `ai_pipeline/ERROR_MEMORY.md`, appended solely when a self-heal, escape hatch, or Critical failure occurs (see [references/sedimentation.md](references/sedimentation.md)).
+- **Breakpoint recovery**: only long or interruption-prone tasks use the single state file `ai_pipeline/state.json`, read and written atomically via `scripts/manage_state.py` (see [references/recovery.md](references/recovery.md)). The next invocation prints the exact breakpoint and asks whether to resume or restart.
+
+## Repository layout
 
 ```
-├── SKILL.md                  # Top-level skill: entry, routing rules, conflict rulings
-├── LICENSE / THIRD_PARTY.md  # MIT license and third-party component notices
-├── CHANGELOG.md              # Version history
-├── .agents/plugins/          # Repo-local marketplace (distribution entry point)
-├── .github/workflows/        # CI + Release workflows
-├── Dockerfile                # Production container (88.9MB, validate/serve modes)
-├── adaptive/                 # Toolchain adaptation and non-degradable verification baseline
-├── ai_pipeline/              # Runtime artifacts and continuous sedimentation (RUN_LOG / ERROR_MEMORY / TECH_NOTES / VERIFY, etc.)
-├── deploy/                   # Kubernetes manifests (Deployment/PDB/Service/Ingress/HPA)
-├── docs/                     # Acceptance reports and documentation
-├── grill-me/                 # Design stress-test skill
-├── openspec/
-│   └── skills/               # Skill implementations behind each OpenSpec command ($openspec-explore / propose / apply / sync / archive / update)
-├── pipeline/
-│   ├── SKILL.md              # 6-stage engineering pipeline overview
-│   ├── CONFIG.md             # Single source of truth for default thresholds
-│   ├── _contract_check.py    # Automated contract checking — Python only (AST; type signatures + Gherkin fallback, namespace-aware)
-│   ├── _session_state_schema.json  # SESSION_STATE.json reference schema for cross-session recovery
-│   └── breakdown|locate|implement|verify|runtime_verify|commit|settle   # Node skills
-├── ponytail_code/
-│   └── exported-skills/      # ponytail full / audit / debt / gain / help / review sub-skills
-├── plugins/auto-coding/      # Codex plugin bundle (plugin.json + synced skill copies)
-├── scripts/                  # Skill sync script, etc.
-├── self_verify/              # Three-layer self-check protocol for code (L0/L1/L2)
-└── tests/                    # pytest suite (36 cases, 88% tooling coverage)
+├── SKILL.md                     # Control: core contract, routing, workflow, resource map
+├── references/                  # 12 on-demand references
+│   ├── routing.md               #   Fast/Standard/High-risk routing and risk flags
+│   ├── planning.md              #   Proportional planning, atomic decomposition, decision-grilling
+│   ├── implementation.md        #   Reuse ladder, location method, L0/L1/L2 self-check, escape hatches
+│   ├── verification.md          #   Static/runtime gates, threshold single source of truth
+│   ├── risk-controls.md         #   Non-degradable controls for the six risk flags
+│   ├── adaptive.md              #   Toolchain adaptation and degradation rules
+│   ├── conflict-rulings.md      #   R1/R2/R6/R8 conflict rulings
+│   ├── sedimentation.md         #   ERROR_MEMORY / TECH_NOTES (optional)
+│   ├── recovery.md              #   Cross-session breakpoint recovery
+│   ├── openspec.md              #   Consuming and wrapping up an existing OpenSpec workflow
+│   └── toolchain-python.md / toolchain-typescript.md
+├── scripts/
+│   ├── detect_project.py        # Read-only project detection (language/CI/spec system/greenfield)
+│   ├── manage_state.py          # Atomic single state file
+│   ├── check_python_contracts.py# Python structural contract checker (AST + Gherkin fallback)
+│   ├── state_schema.json        # State-file reference schema
+│   ├── check_repo.py            # Repository mechanical checks (links/licenses/README parity)
+│   └── sync_plugin_skills.sh    # Plugin bundle sync (repo root is the single source of truth)
+├── plugins/auto-coding/         # Codex plugin bundle
+├── tests/                       # pytest suite
+└── openspec/                    # This repository's own specs (dogfooding)
 ```
 
-## Routing by complexity
+## Installation
 
-The first step is to judge the complexity of a change. The principle: **don't do work that isn't worth doing**.
+Distributed as a Codex plugin + marketplace; the repo-local marketplace lives at `.agents/plugins/marketplace.json`.
 
-| Level | When | Path |
-|:---|:---|:---|
-| **C0** | Single-file / single-function change (typo, small bugfix) | Write code directly + Layer 0/1 self-check + commit |
-| **C1a** | Small multi-file change (2-3 files, single module, no risk flags) | One lightweight `CHANGE_NOTES.md` plan → implement → test → Phase D-lite contract sync |
-| **C1b** | Multi-file / cross-module change (4-10 files, or risk flags) | `propose` → implement → test → commit |
-| **C2** | Large platform / subsystem | grill-me (if >3 decisions) → full pipeline → all nodes + full sedimentation |
+```bash
+# Install from GitHub
+codex plugin marketplace add zhenkun26/auto-coding
+codex plugin add auto-coding@auto-coding
 
-Changes touching any of the **FINANCE / AUTH / MIGRATION / STATE_MACHINE / EXTERNAL_API / ENV_OPS** risk or environment flags are upgraded to at least **C1b** regardless of file count, and must satisfy the corresponding non-degradable verification baseline.
+# Local development install
+codex plugin marketplace add /path/to/this/repo
+codex plugin add auto-coding@auto-coding
 
-**Codebase state detection**: Pipeline Entry checks the project source root for existing source files. If none exist → `[GREENFIELD]`: Node 2/3 run in summary mode (every task is a new file, no existing code to locate). If files exist → `[BROWNFIELD]`: Node 2/3 run full decomposition and precise location (MODIFY tasks need exact insertion points, REUSE opportunities must be identified). The C0-C2 complexity level is unchanged — greenfield/brownfield only affects Node 2/3 report depth.
+# Update / uninstall
+codex plugin marketplace upgrade
+codex plugin remove auto-coding@auto-coding
+```
 
-## Workflow
-
-1. **Phase A — Planning**: `explore` / `propose` produce change artifacts (requirements, interface contracts, tasks, design). Without an openspec repo, this falls back to the single-file lightweight plan `ai_pipeline/PROJECT_SPEC.md`.
-2. **Phase B — Handoff**: hand the planning artifacts to the Pipeline.
-3. **Phase C — Execution**: Node 2 atomic decomposition → Node 3 precise location → Node 4 implementation (Ponytail full + L0/L1/L2 self-checks) → Node 5 static verification → Node 6 runtime verification → Node 8 semantic commit.
-4. **Phase D — Wrap-up**: `sync` merges delta specs into the main specs; `archive` archives the change.
-
-Breakpoint recovery: on the next invocation, `ai_pipeline/SESSION_STATE.json` is read first (schema: `pipeline/_session_state_schema.json`). If non-empty, the Entry step prints the exact breakpoint — which node, which task, which file, which self-heal round — and prompts for resume or restart. Node 4 updates SESSION_STATE before each task and after each self-heal round; Node 5/6 update it on entry; Node 8 clears it on completion. This replaces the implicit RUN_LOG-based recovery with explicit, data-backed state tracking.
+After changing skill content, run `bash scripts/sync_plugin_skills.sh` before releasing to re-sync the plugin bundle.
 
 ## Usage
 
-```text
-$openspec-explore <topic>                              # Explore requirements
-$openspec-propose <name>                               # Create a change (tasks + specs + design)
-
-"Implement via the three-layer pipeline: openspec/changes/<name>/"   # Hand off to Pipeline
-
-$openspec-sync-specs <name> && git commit specs        # Merge delta into main specs
-$openspec-archive-change <name>                        # Archive the change
+```
+Use $auto-coding to implement this change with risk-aware routing and verification.
 ```
 
-## Installation (Codex plugin)
+Or describe the task directly and let the skill route itself. Repositories already using OpenSpec can hand off a change directory directly: `Implement openspec/changes/<name>/ with auto-coding`.
 
-The distribution form is a Codex plugin + marketplace. The repo-local marketplace lives at `.agents/plugins/marketplace.json`.
+## Environment requirements
 
-**Install from GitHub** (after pushing the repository):
-
-```bash
-codex plugin marketplace add zhenkun26/auto-coding  # add this repository as a marketplace
-codex plugin add auto-coding@auto-coding         # install the plugin
-```
-
-**Local development install**:
-
-```bash
-codex plugin marketplace add /path/to/this/repo
-codex plugin add auto-coding@auto-coding
-```
-
-**Update**:
-
-```bash
-codex plugin marketplace upgrade                 # refresh the marketplace snapshot
-codex plugin remove auto-coding@auto-coding && codex plugin add auto-coding@auto-coding
-```
-
-**Uninstall**:
-
-```bash
-codex plugin remove auto-coding@auto-coding
-codex plugin marketplace remove auto-coding
-```
-
-The plugin skills are synced from the repository root by `scripts/sync_plugin_skills.sh` (single source of truth); re-run it before cutting a release after any skill content change.
-
-## Quickstart
-
-**1. Install (first time)**
-
-```bash
-codex plugin marketplace add zhenkun26/auto-coding
-codex plugin add auto-coding@auto-coding
-```
-
-**2. Explore and propose**
-
-```text
-$openspec-explore <your-idea>
-$openspec-propose <change-name>
-```
-
-**3. Hand off to the Pipeline**
-
-```text
-"Implement via the three-layer pipeline: openspec/changes/<change-name>/"
-```
-
-**4. Wrap up (Phase D)**
-
-```text
-$openspec-sync-specs <change-name> && git commit specs
-$openspec-archive-change <change-name>
-```
-
-From idea to commit in about five minutes; complexity routing (C0-C2) and all quality gates are handled automatically.
-
-## Environment constraints
-
-The skill pack assumes a minimal baseline. Missing tools trigger either a guided install prompt or a documented degradation — no silent failures.
-
-| Dependency | Required? | Role | Degradation if missing |
-|:---|:---|:---|:---|
-| **bash** (POSIX sh) | Required | Pipeline commands, `printf`-based append shortcut | None — bash is the execution environment |
-| **git** | Required (Node 8) | Semantic commit | `[SKIP_COMMIT: git unavailable]` — code is written but not committed |
-| **openspec CLI** | Optional | Phase A planning, Phase D sync/archive | `[NO_OPENSPEC]` mode — falls back to `ai_pipeline/PROJECT_SPEC.md` single-file planning; Phase D skipped |
-| **Python 3.10+** | Template-dependent | `_contract_check.py` (AST parsing), mypy, ruff, pytest | Non-Python projects: contract check degrades to manual L2 checklist. Python projects without mypy/ruff/pytest: ADAPTIVE rules apply (install prompt if configured, degrade if unconfigured) |
-| **mypy** | Python template | Node 4/5 type checking | `[SKIP_TYPE_CHECK: no config]` — degrades to IDE diagnostics + AI review (only if project has no mypy config; if configured but missing → install prompt and halt) |
-| **ruff** | Python template | Node 5 lint | `[SKIP_LINT: no config]` — degrades to AI code review |
-| **pytest** | Python template | Node 6 runtime verification | `[SKIP_COVERAGE: no framework]` — degrades to Ponytail self-check + manual acceptance |
-| **TypeScript toolchain** (tsc/eslint/jest) | TS template | Node 4/5/6 equivalents | Same ADAPTIVE degradation rules as Python tools |
-
-**Cross-platform**: All pipeline scripts use POSIX sh syntax (tested on Windows via Git Bash). `_contract_check.py` requires Python 3.10+ for AST `ast.unparse` and `match` statement support. Paths use forward slashes throughout.
+| Dependency | Required? | When missing |
+|:---|:---|:---|
+| bash (POSIX sh) | Required | No fallback — bash is the execution environment |
+| git | Required for commits | Code written but uncommitted, labeled honestly |
+| Python 3.10+ | Contract checker / detection scripts | Contract check degrades to the manual L2 checklist |
+| mypy / ruff / pytest | Python template | Configured but missing → install hint and halt; no config → `BLOCKED` + alternative evidence |
+| tsc / eslint / jest | TS template | Same as above |
+| OpenSpec CLI | Optional | `[NO_OPENSPEC]` inline planning throughout; never auto-initialized |
 
 ## Quality assurance
 
-- **Three-layer self-check (L0/L1/L2)**: syntax/import → behavioral self-check (assert/demo) → interface-contract comparison.
-- **Hard gates**: type checking (Critical; failure interrupts and rolls back), lint (Standard; up to 3 self-heal rounds), runtime coverage (default ≥80% line, ≥70% branch).
-- **Layer-level mypy checkpoint** (Node 4): after each topological layer of tasks completes, type-check all files written so far — catches cross-file type errors that per-file checks miss. Errors must be fixed before the next layer; they must never reach Node 5.
-- **Escape-hatch detection** (Node 4→Node 5): if a self-heal "passes" by using `Any`, `# type: ignore`, or `cast()` as a last-resort workaround, it is recorded in ERROR_MEMORY with the `[ESCAPE_HATCH]` tag. Node 5's Critical gate scans for these markers and flags them for human review — not blocking, but tracked as quality debt.
-- **Continuous sedimentation**: `RUN_LOG.md` is appended after every task (crash-safe), `ERROR_MEMORY.md` accumulates errors across runs, and `TECH_NOTES.md` records ADRs and known issues. A `printf`-based bash one-liner (in `pipeline/SKILL.md` §0) performs atomic prepend/append for append-only files, replacing the manual three-step protocol — no Python required.
-- **Automated contract checking** (`pipeline/_contract_check.py`, Python template only): compares interface contracts from spec files against actual code signatures via AST. Two parsing modes: type-signature contracts from `PROJECT_SPEC.md`-style specs, and Gherkin endpoint extraction (`WHEN POST /path`) as a fallback for OpenSpec-format specs. Namespace-aware: methods under a class header are automatically prefixed (e.g. `TransactionService.authorize`), eliminating false positives from same-named methods in different classes. For non-Python projects, the manual L2 contract comparison checklist in `self_verify/SELF_VERIFY.md` remains the authoritative method.
-- **Conflict rulings**: requirement existence defers to OpenSpec; code reuse defers to Ponytail; incomplete specs trigger a rollback plus a defect report.
-- **Cross-session recovery** (`ai_pipeline/SESSION_STATE.json`): tracks in-progress pipeline state — current node, task, file, and self-heal round — across session boundaries. Five write points (Node 4 per-task + per-heal, Node 5 entry, Node 6 entry, Node 8 clear) ensure that if a session is interrupted, the next session knows exactly where to resume. Schema: `pipeline/_session_state_schema.json`.
-- **Greenfield/brownfield routing**: Pipeline Entry detects whether the project has existing source code and adjusts Node 2/3 depth accordingly. Greenfield projects (no existing files) get summary TASK_PLAN and a one-line LOCATE_MAP — no time wasted locating code that doesn't exist. Brownfield projects (existing codebase) get full decomposition with exact line ranges, context code blocks, and conflict checks.
-- **Tool awareness mechanism** (`[TOOL_CHECK]` matrix): Pipeline Entry outputs a matrix of every tool available for this run and its status. Each node references this matrix before starting, ensuring tools (`_contract_check.py`, bash append shortcut, layer-level mypy) are actively used rather than passively documented.
-- **Risk flag redeclaration** (`[RISK_FLAGS_ACTIVE]`): risk flags declared in Phase A are re-declared at Pipeline Entry and printed before each flag-specific check (Node 4: FINANCE→Decimal enforced, Node 5: AUTH→type check mandatory). Prevents flags from being forgotten mid-pipeline.
-- **Integration test transparency** (Node 6): coverage reports include a breakdown of unit-test files vs. integration-test files (identified by `test_api*.py` naming or `TestClient` imports). Thresholds are unchanged; the breakdown is informational.
-- **OpenSpec CLI integration verified**: the full Phase A→B→C→D handoff contract has been validated via a mock OpenSpec environment at the project root. Four checkpoints confirmed: Entry detection of `openspec/config.yaml`, artifact consumption from `openspec/changes/<name>/`, Phase D delta→main spec sync, and archive. All sandboxes also support `[NO_OPENSPEC]` fallback mode.
-- **Self-verification (shipped)**: the skill pack is verified against a document-level L0/L1/L2 protocol covering front-matter, link integrity, cross-document consistency, and contract alignment. The mechanical checks ship with the repository and run in CI: a 36-case pytest suite (88% line coverage of the tooling), a markdown link check, a frontmatter license scan, and a Chinese/English README structure check (see `.github/workflows/ci.yml`).
-- **Historical verification record (assets not shipped)**: during development, 10 test suites were run — 6 sandboxes (C0 calculator, C1b auth, C1b apikey, C2 ecommerce + discount codes, C2 finance clearing, C2 inventory) and 4 local suites (C0 utils, C1b validator, C1b payment retry with circuit breaker, C2 task execution engine) — totaling 148 tests, covering all 6 risk flags, greenfield and brownfield, and incremental modification of existing code. The original test assets were not published with this repository and are currently not reproducible; a verification matrix is planned to be rebuilt and shipped in a future release.
+- Three-layer self-check (L0/L1/L2) + hard gates: type check Critical (failure → halt + rollback), lint Standard (self-heal ≤3 rounds), coverage defaults line ≥80% / branch ≥70%.
+- Layer-level type checkpoints: after each topological layer, the type checker runs over every file written so far, catching cross-file type errors.
+- Escape-hatch detection: self-heals that pass only via `Any` / `# type: ignore` / `cast()` are recorded as `[ESCAPE_HATCH]` quality debt and listed at handoff.
+- Automated contract checking: AST comparison of spec signatures against actual code, namespace-aware (`ClassName.method`); empty contracts never report a false pass.
+- Repository self-checks: pytest suite + markdown link integrity + license-header scan + Chinese/English README structure parity, all in CI (`.github/workflows/ci.yml`).
+
+## Third-party components and license
+
+MIT License. The reuse ladder is adapted from Ponytail (MIT); earlier releases bundled OpenSpec skills and grill-me. See [THIRD_PARTY.md](THIRD_PARTY.md) and [CHANGELOG.md](CHANGELOG.md).

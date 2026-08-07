@@ -1,24 +1,24 @@
 {
   "name": "auto-coding",
-  "version": "0.1.0",
-  "description": "Parallel development system for Codex: OpenSpec planning + Pipeline execution + Ponytail code minimization.",
+  "version": "0.2.0",
+  "description": "Risk-aware coding delivery for Codex: route by risk, plan proportionally, reuse before writing, verify with evidence, hand off safely.",
   "author": {
     "name": "auto-coding contributors"
   },
   "license": "MIT",
-  "keywords": ["openspec", "pipeline", "ponytail", "planning", "codex"],
+  "keywords": ["risk-aware", "routing", "verification", "reuse", "codex"],
   "skills": "./skills/",
   "interface": {
     "displayName": "Auto Coding",
-    "shortDescription": "Parallel development system: plan, implement, verify, commit.",
-    "longDescription": "auto-coding bundles the sb_coding parallel development system for Codex: grill-me design stress tests, OpenSpec business planning (explore/propose/sync/archive), a six-stage engineering pipeline (breakdown to commit), Ponytail lazy code minimization, and a three-layer self-check protocol.",
+    "shortDescription": "Risk-aware delivery: plan, implement, verify, hand off.",
+    "longDescription": "auto-coding is a risk-aware coding delivery skill for Codex. It routes every task to Fast, Standard, or High-risk execution by uncertainty and operational risk; plans only to the depth the route requires; enforces reuse over new code; verifies with the project's own toolchain under explicit PASS/FAIL/BLOCKED/NOT_APPLICABLE evidence states; and requires authorization for spec initialization, installs, commits, deployments, and destructive operations.",
     "developerName": "auto-coding contributors",
     "category": "Productivity",
     "capabilities": ["Write"],
     "defaultPrompt": [
-      "Explore this idea with me using OpenSpec planning.",
-      "Propose a change and break it down into pipeline tasks.",
-      "Implement the pending change tasks with self-verification."
+      "Fix this bug with risk-aware routing and verification.",
+      "Implement this feature and verify it with the project's own tools.",
+      "Review this change plan and grill me on the open decisions."
     ]
   }
 }
