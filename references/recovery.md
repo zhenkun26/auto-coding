@@ -40,6 +40,10 @@ python scripts/manage_state.py clear ai_pipeline/state.json
 
 Schema reference: `scripts/state_schema.json`.
 
+List fields (`escape_hatches`) accept a JSON array literal (preferred — items
+may contain `;`) or a legacy `;`-separated string, e.g.
+`--set escape_hatches='["T001 L0: Any; deferred"]'`.
+
 ## Write points
 
 1. Before starting each task (implementation).

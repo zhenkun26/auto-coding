@@ -8,7 +8,7 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
 
-import detect_project  # noqa: E402
+import detect_project
 
 
 def write(path: Path, content: str = "") -> Path:
@@ -76,3 +76,41 @@ def test_should_fail_cleanly_on_missing_directory(capsys: pytest.CaptureFixture)
 
     assert exit_code == 2
     assert "not a directory" in capsys.readouterr().err
+
+
+def test_should_report_all_source_roots_when_multiple_exist(tmp_path: Path) -> None:
+    """Given src/ and cmd/ side by side, both roots are reported."""
+    write(tmp_path / "src" / "app.py", "x = 1\n")
+    write(tmp_path / "src" / "lib.py", "y = 2\n")
+    write(tmp_path / "cmd" / "main.go", "package main\n")
+
+    state = detect_project.detect_codebase_state(tmp_path)
+
+    assert state["source_roots"] == ["src", "cmd"]
+    assert state["source_root"] == "src"  # most source files wins
+    assert state["source_files"] == 3
+    assert state["state"] == "brownfield"
+
+
+def test_should_not_treat_empty_tests_dir_as_pytest_configured(tmp_path: Path) -> None:
+    """Given an empty tests/ directory, pytest is not reported as configured."""
+    (tmp_path / "tests").mkdir()
+
+    assert detect_project.detect_configs(tmp_path)["pytest"] is False
+
+
+def test_should_treat_tests_dir_with_test_files_as_pytest_configured(tmp_path: Path) -> None:
+    """Given tests/ containing test modules, pytest is reported as configured."""
+    write(tmp_path / "tests" / "test_app.py", "def test_ok(): pass\n")
+
+    assert detect_project.detect_configs(tmp_path)["pytest"] is True
+
+
+def test_should_detect_pytest_declared_in_pyproject_dependencies(tmp_path: Path) -> None:
+    """Given pytest in pyproject dependencies, it is reported as configured."""
+    write(
+        tmp_path / "pyproject.toml",
+        '[project]\ndependencies = ["pytest>=8"]\n',
+    )
+
+    assert detect_project.detect_configs(tmp_path)["pytest"] is True

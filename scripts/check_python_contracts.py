@@ -20,12 +20,16 @@ import re
 import sys
 from dataclasses import dataclass, field
 
-DIAGNOSTICS: list[str] = []
 
+@dataclass
+class DiagnosticCollector:
+    """Collects non-fatal problems (parse/read failures) for end-of-run reporting."""
 
-def record_diagnostic(message: str) -> None:
-    """Record a non-fatal problem (parse/read failure) for reporting at the end."""
-    DIAGNOSTICS.append(message)
+    messages: list[str] = field(default_factory=list)
+
+    def record(self, message: str) -> None:
+        """Record a non-fatal problem for reporting at the end."""
+        self.messages.append(message)
 
 
 @dataclass
@@ -48,7 +52,18 @@ class ActualSymbol:
     line: int = 0
 
 
-def parse_spec_contracts(spec_path: str) -> list[ContractSymbol]:
+def extract_fenced_code(text: str) -> str:
+    """Return the contents of Markdown fenced code blocks only.
+
+    Contract signatures are expected inside ``` blocks; prose that happens
+    to look like a signature (e.g. ``foo(bar: int)`` in a sentence) must not
+    be misread as a contract.
+    """
+    blocks = re.findall(r"```[^\n]*\n(.*?)```", text, re.DOTALL)
+    return "\n".join(blocks)
+
+
+def parse_spec_contracts(spec_path: str, diagnostics: DiagnosticCollector) -> list[ContractSymbol]:
     """Extract interface contracts from a spec file.
 
     Looks for patterns like:
@@ -60,18 +75,26 @@ def parse_spec_contracts(spec_path: str) -> list[ContractSymbol]:
     with the class name (e.g. ``TransactionService.authorize``), matching
     the namespace-qualified names that ``extract_source_symbols`` produces.
     This prevents false positives from same-named methods in different classes.
+
+    Matching is scoped to fenced code blocks to avoid false positives from
+    prose; when the spec contains no fenced blocks, the full text is used
+    as a fallback.
     """
     symbols: list[ContractSymbol] = []
     if not os.path.exists(spec_path):
-        record_diagnostic(f"spec file not found: {spec_path}")
+        diagnostics.record(f"spec file not found: {spec_path}")
         return symbols
 
     try:
         with open(spec_path, "r", encoding="utf-8") as f:
             text = f.read()
     except (OSError, UnicodeDecodeError) as exc:
-        record_diagnostic(f"spec read error ({spec_path}): {exc}")
+        diagnostics.record(f"spec read error ({spec_path}): {exc}")
         return symbols
+
+    scoped = extract_fenced_code(text)
+    if scoped.strip():
+        text = scoped
 
     func_pattern = re.compile(
         r"^(\s*)(\w+)\s*\(([^)]*)\)\s*(?:->\s*(\S+(?:\s*\|\s*\S+)*))?",
@@ -117,7 +140,7 @@ def parse_spec_contracts(spec_path: str) -> list[ContractSymbol]:
     return symbols
 
 
-def extract_source_symbols(src_dir: str) -> list[ActualSymbol]:
+def extract_source_symbols(src_dir: str, diagnostics: DiagnosticCollector) -> list[ActualSymbol]:
     """Extract all function/class/method signatures from Python source files."""
     symbols: list[ActualSymbol] = []
 
@@ -130,10 +153,10 @@ def extract_source_symbols(src_dir: str) -> list[ActualSymbol]:
                 with open(fpath, "r", encoding="utf-8") as f:
                     tree = ast.parse(f.read(), filename=fpath)
             except SyntaxError as exc:
-                record_diagnostic(f"parse error ({fpath}): {exc}")
+                diagnostics.record(f"parse error ({fpath}): {exc}")
                 continue
             except (OSError, UnicodeDecodeError) as exc:
-                record_diagnostic(f"read error ({fpath}): {exc}")
+                diagnostics.record(f"read error ({fpath}): {exc}")
                 continue
 
             for node in ast.walk(tree):
@@ -161,7 +184,7 @@ def extract_source_symbols(src_dir: str) -> list[ActualSymbol]:
     return symbols
 
 
-def parse_gherkin_specs(spec_path: str) -> list[ContractSymbol]:
+def parse_gherkin_specs(spec_path: str, diagnostics: DiagnosticCollector) -> list[ContractSymbol]:
     """Extract HTTP endpoints from Gherkin-format OpenSpec specs.
 
     Looks for patterns like:
@@ -173,14 +196,14 @@ def parse_gherkin_specs(spec_path: str) -> list[ContractSymbol]:
     """
     symbols: list[ContractSymbol] = []
     if not os.path.exists(spec_path):
-        record_diagnostic(f"spec file not found (gherkin fallback): {spec_path}")
+        diagnostics.record(f"spec file not found (gherkin fallback): {spec_path}")
         return symbols
 
     try:
         with open(spec_path, "r", encoding="utf-8") as f:
             text = f.read()
     except (OSError, UnicodeDecodeError) as exc:
-        record_diagnostic(f"spec read error (gherkin fallback, {spec_path}): {exc}")
+        diagnostics.record(f"spec read error (gherkin fallback, {spec_path}): {exc}")
         return symbols
 
     # Match: WHEN (POST|GET|PUT|DELETE|PATCH) /path
@@ -204,17 +227,15 @@ def parse_gherkin_specs(spec_path: str) -> list[ContractSymbol]:
     return symbols
 
 
-def extract_fastapi_endpoints(src_dir: str) -> list[ActualSymbol]:
-    """Extract FastAPI route endpoints from source files via regex.
+def extract_fastapi_endpoints(src_dir: str, diagnostics: DiagnosticCollector) -> list[ActualSymbol]:
+    """Extract FastAPI route endpoints from source files via AST.
 
-    Matches patterns like:
+    Matches route decorators like:
       @router.get("/products")
-      @router.post("/checkout")
+      @app.post("/checkout")
     """
     symbols: list[ActualSymbol] = []
-    route_pattern = re.compile(
-        r"@(\w+)\.(get|post|put|delete|patch)\s*\(\s*[\"']([^\"']+)[\"']",
-    )
+    http_methods = {"get", "post", "put", "delete", "patch"}
 
     for root, _dirs, files in os.walk(src_dir):
         for fname in files:
@@ -223,26 +244,41 @@ def extract_fastapi_endpoints(src_dir: str) -> list[ActualSymbol]:
             fpath = os.path.join(root, fname)
             try:
                 with open(fpath, "r", encoding="utf-8") as f:
-                    content = f.read()
+                    tree = ast.parse(f.read(), filename=fpath)
+            except SyntaxError as exc:
+                diagnostics.record(f"parse error ({fpath}): {exc}")
+                continue
             except (OSError, UnicodeDecodeError) as exc:
-                record_diagnostic(f"read error ({fpath}): {exc}")
+                diagnostics.record(f"read error ({fpath}): {exc}")
                 continue
 
-            for match in route_pattern.finditer(content):
-                method = match.group(2).upper()
-                path = match.group(3)
-                key = f"{method} {path}"
-                symbols.append(ActualSymbol(
-                    name=key, kind="endpoint", file=fpath, line=0,
-                ))
+            for node in ast.walk(tree):
+                if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                    continue
+                for decorator in node.decorator_list:
+                    if not (
+                        isinstance(decorator, ast.Call)
+                        and isinstance(decorator.func, ast.Attribute)
+                        and decorator.func.attr.lower() in http_methods
+                        and decorator.args
+                        and isinstance(decorator.args[0], ast.Constant)
+                        and isinstance(decorator.args[0].value, str)
+                    ):
+                        continue
+                    key = f"{decorator.func.attr.upper()} {decorator.args[0].value}"
+                    symbols.append(ActualSymbol(
+                        name=key, kind="endpoint", file=fpath, line=node.lineno,
+                    ))
 
     return symbols
 
 
-def run_check(spec_path: str, src_dir: str) -> tuple[list[str], list[str]]:
+def run_check(
+    spec_path: str, src_dir: str, diagnostics: DiagnosticCollector
+) -> tuple[list[str], list[str]]:
     """Run the contract check. Returns (passes, failures)."""
-    expected = parse_spec_contracts(spec_path)
-    actual = extract_source_symbols(src_dir)
+    expected = parse_spec_contracts(spec_path, diagnostics)
+    actual = extract_source_symbols(src_dir, diagnostics)
 
     actual_map: dict[str, ActualSymbol] = {s.name: s for s in actual}
     passes: list[str] = []
@@ -320,14 +356,15 @@ def run_cli(spec_path: str, src_dir: str) -> int:
     print(f"[contract_check] Source: {src_dir}")
     print()
 
-    passes, failures = run_check(spec_path, src_dir)
+    diagnostics = DiagnosticCollector()
+    passes, failures = run_check(spec_path, src_dir, diagnostics)
     total_symbols = len(passes) + len(failures)
 
     if total_symbols < 3:
         print(f"[contract_check] Type parser found only {total_symbols} contracts. Trying Gherkin fallback...")
         print()
-        gherkin_expected = parse_gherkin_specs(spec_path)
-        gherkin_actual = extract_fastapi_endpoints(src_dir)
+        gherkin_expected = parse_gherkin_specs(spec_path, diagnostics)
+        gherkin_actual = extract_fastapi_endpoints(src_dir, diagnostics)
 
         if gherkin_expected:
             actual_names = {s.name for s in gherkin_actual}
@@ -351,9 +388,9 @@ def run_cli(spec_path: str, src_dir: str) -> int:
         return 1
     print(f"All {len(passes)} contracts structurally verified.")
 
-    if DIAGNOSTICS:
-        print(f"DIAGNOSTICS ({len(DIAGNOSTICS)}):")
-        for diagnostic in DIAGNOSTICS:
+    if diagnostics.messages:
+        print(f"DIAGNOSTICS ({len(diagnostics.messages)}):")
+        for diagnostic in diagnostics.messages:
             print(f"  {diagnostic}")
     return 0
 

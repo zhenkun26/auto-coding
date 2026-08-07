@@ -84,9 +84,11 @@ def check_readme_heading_structure(root: Path | None = None) -> list[str]:
 
     if heading_levels["README.md"] != heading_levels["README-EN.md"]:
         return [
-            "README heading structures differ: "
-            f"README.md={heading_levels['README.md']} vs "
-            f"README-EN.md={heading_levels['README-EN.md']}"
+            (
+                "README heading structures differ: "
+                f"README.md={heading_levels['README.md']} vs "
+                f"README-EN.md={heading_levels['README-EN.md']}"
+            )
         ]
     return []
 

@@ -8,7 +8,7 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
 
-import manage_state  # noqa: E402
+import manage_state
 
 
 def init_state(tmp_path: Path, route: str = "Standard") -> Path:
@@ -137,3 +137,48 @@ def test_should_not_leave_temp_files_after_writes(tmp_path: Path) -> None:
     leftovers = list(path.parent.glob("*.tmp"))
 
     assert leftovers == []
+
+
+def test_should_coerce_list_fields_from_json_arrays(tmp_path: Path) -> None:
+    """Given a JSON array literal, items may contain semicolons intact."""
+    path = init_state(tmp_path)
+
+    manage_state.main(
+        [
+            "update",
+            str(path),
+            "--set",
+            'escape_hatches=["T001 L0: Any; deferred", "T004 L1: cast()"]',
+        ]
+    )
+
+    assert read_json(path)["escape_hatches"] == [
+        "T001 L0: Any; deferred",
+        "T004 L1: cast()",
+    ]
+
+
+def test_should_reject_invalid_json_array(tmp_path: Path, capsys: pytest.CaptureFixture) -> None:
+    """Given a malformed JSON array, update exits 2 without writing."""
+    path = init_state(tmp_path)
+
+    with pytest.raises(SystemExit) as excinfo:
+        manage_state.main(["update", str(path), "--set", "escape_hatches=[unclosed"])
+
+    assert excinfo.value.code == 2
+    assert "JSON array is invalid" in capsys.readouterr().err
+    assert read_json(path)["escape_hatches"] == []
+
+
+def test_should_reject_json_array_with_non_string_items(
+    tmp_path: Path, capsys: pytest.CaptureFixture
+) -> None:
+    """Given a JSON array of non-strings, update exits 2 without writing."""
+    path = init_state(tmp_path)
+
+    with pytest.raises(SystemExit) as excinfo:
+        manage_state.main(["update", str(path), "--set", "escape_hatches=[1, 2]"])
+
+    assert excinfo.value.code == 2
+    assert "JSON array of strings" in capsys.readouterr().err
+    assert read_json(path)["escape_hatches"] == []

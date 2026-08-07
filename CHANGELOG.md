@@ -4,6 +4,23 @@ All notable changes to auto-coding are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- CI now lints and type-checks the repository's own scripts (`ruff check scripts/ tests/`, `mypy scripts/` with `strict = true` in `pyproject.toml`) — the same standard the skill demands of other projects.
+- CI drift check: the workflow re-runs `scripts/sync_plugin_skills.sh` and fails on any `git diff` under `plugins/`, so a stale plugin bundle can no longer be committed.
+- `scripts/manage_state.py`: list fields accept a JSON array literal (preferred — items may contain `;`); the legacy `;`-separated form is kept for backward compatibility.
+- Tests for JSON-array coercion, multi-source-root detection, tightened pytest detection, fenced-block contract parsing, and async FastAPI route extraction (suite now at 62 cases).
+
+### Changed
+
+- `scripts/check_python_contracts.py`: spec contract extraction is scoped to Markdown fenced code blocks (with full-text fallback), eliminating false positives from signature-looking prose.
+- `scripts/check_python_contracts.py`: the module-level `DIAGNOSTICS` global is replaced by an explicit `DiagnosticCollector` passed through the call chain.
+- `scripts/check_python_contracts.py`: FastAPI endpoint extraction now uses AST decorator analysis instead of regex, and supports `async def` handlers with accurate line numbers.
+- `scripts/detect_project.py`: pytest is no longer considered configured merely because a `tests/` directory exists — it now requires config files, a pyproject declaration, or actual test modules inside `tests/`.
+- `scripts/detect_project.py`: all matching source-root candidates are reported in `source_roots`; the primary `source_root` is the one with the most source files, so `src` + `cmd` layouts are no longer under-reported.
+
 ## [0.2.0] - 2026-08-07
 
 ### Changed

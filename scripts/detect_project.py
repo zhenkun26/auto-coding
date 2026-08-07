@@ -51,33 +51,60 @@ def detect_ci(root: Path) -> list[str]:
     return [path for path in CI_PATHS if (root / path).exists()]
 
 
-def detect_codebase_state(root: Path) -> dict:
-    """Report greenfield/brownfield state from the source root."""
+def detect_codebase_state(root: Path) -> dict[str, object]:
+    """Report greenfield/brownfield state from all matching source roots.
+
+    Every candidate directory that exists is reported in ``source_roots`` so
+    layouts with several roots (e.g. ``src`` and ``cmd``) are not missed.
+    The primary ``source_root`` is the one with the most source files.
+    """
+    hits: list[tuple[str, int]] = []
     for candidate in SOURCE_ROOT_CANDIDATES:
         source_root = root / candidate
         if not source_root.is_dir():
             continue
-        sources = [
-            path
+        count = sum(
+            1
             for path in source_root.rglob("*")
             if path.suffix in SOURCE_EXTENSIONS and path.is_file()
-        ]
+        )
+        hits.append((candidate, count))
+    if not hits:
         return {
-            "source_root": candidate,
-            "state": "brownfield" if sources else "greenfield",
-            "source_files": len(sources),
+            "source_root": None,
+            "source_roots": [],
+            "state": "greenfield",
+            "source_files": 0,
         }
-    return {"source_root": None, "state": "greenfield", "source_files": 0}
+    primary, _primary_count = max(hits, key=lambda item: item[1])
+    total = sum(count for _name, count in hits)
+    return {
+        "source_root": primary,
+        "source_roots": [name for name, _count in hits],
+        "state": "brownfield" if total else "greenfield",
+        "source_files": total,
+    }
 
 
-def detect_tools(templates: list[str]) -> dict:
+def detect_tools(templates: list[str]) -> dict[str, bool]:
     """Report which template tools are on PATH (no execution)."""
     names = {tool for template in templates for tool in TOOLS.get(template, [])}
     names.update(["git", "bash"])
     return {name: shutil.which(name) is not None for name in sorted(names)}
 
 
-def detect_configs(root: Path) -> dict:
+def _has_test_files(tests_dir: Path) -> bool:
+    """Return True when a tests/ directory contains actual test modules."""
+    if not tests_dir.is_dir():
+        return False
+    return any(
+        path.is_file()
+        and (path.name.startswith("test_") or path.name.endswith("_test.py"))
+        for path in tests_dir.rglob("*.py")
+    )
+
+
+def detect_configs(root: Path) -> dict[str, bool]:
     """Report tool configuration presence (config exists vs tool installed)."""
     pyproject = root / "pyproject.toml"
     pyproject_text = (
@@ -95,7 +122,8 @@ def detect_configs(root: Path) -> dict:
         "pytest": (root / "pytest.ini").exists()
         or (root / "setup.cfg").exists()
         or "[tool.pytest" in pyproject_text
-        or (root / "tests").is_dir(),
+        or '"pytest' in pyproject_text
+        or _has_test_files(root / "tests"),
         "eslint": any(
             (root / name).exists()
             for name in (".eslintrc", ".eslintrc.js", ".eslintrc.json", "eslint.config.js", "eslint.config.mjs")

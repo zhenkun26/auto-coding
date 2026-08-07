@@ -7,7 +7,7 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
 
-import check_repo  # noqa: E402
+import check_repo
 
 
 def write(path: Path, content: str) -> Path:

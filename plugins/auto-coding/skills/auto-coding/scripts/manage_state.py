@@ -18,6 +18,7 @@ import json
 import os
 import sys
 import tempfile
+from collections.abc import Callable
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -42,7 +43,7 @@ def iso_now() -> str:
     return datetime.now(timezone.utc).isoformat(timespec="seconds")
 
 
-def read_state(path: Path) -> dict:
+def read_state(path: Path) -> dict[str, object]:
     """Return the state dict, or {} when the file is absent or empty."""
     if not path.exists():
         return {}
@@ -60,7 +61,7 @@ def read_state(path: Path) -> dict:
     return state
 
 
-def write_state(path: Path, state: dict) -> None:
+def write_state(path: Path, state: dict[str, object]) -> None:
     """Write state atomically via a sibling temp file and rename."""
     path.parent.mkdir(parents=True, exist_ok=True)
     fd, tmp_name = tempfile.mkstemp(
@@ -80,7 +81,13 @@ def write_state(path: Path, state: dict) -> None:
 
 
 def coerce(key: str, value: str) -> object:
-    """Coerce a --set string value to the field's JSON type."""
+    """Coerce a --set string value to the field's JSON type.
+
+    List fields accept either a JSON array literal (preferred — items may
+    contain any character, including ``;``) or a legacy ``;``-separated
+    string. The ``;`` form is kept for backward compatibility but splits on
+    every semicolon, so items must not contain one.
+    """
     if key in INT_FIELDS:
         try:
             return int(value)
@@ -88,6 +95,19 @@ def coerce(key: str, value: str) -> object:
             print(f"error: {key} must be an integer, got {value!r}", file=sys.stderr)
             raise SystemExit(2)
     if key in LIST_FIELDS:
+        stripped = value.strip()
+        if stripped.startswith("["):
+            try:
+                parsed = json.loads(stripped)
+            except json.JSONDecodeError as exc:
+                print(f"error: {key} JSON array is invalid: {exc}", file=sys.stderr)
+                raise SystemExit(2)
+            if not isinstance(parsed, list) or not all(
+                isinstance(item, str) for item in parsed
+            ):
+                print(f"error: {key} must be a JSON array of strings", file=sys.stderr)
+                raise SystemExit(2)
+            return parsed
         return [item for item in value.split(";") if item]
     return value
 
@@ -185,7 +205,8 @@ def main(argv: list[str] | None = None) -> int:
     p_clear.set_defaults(func=cmd_clear)
 
     args = parser.parse_args(argv)
-    return args.func(args)
+    func: Callable[[argparse.Namespace], int] = args.func
+    return func(args)
 
 
 if __name__ == "__main__":
