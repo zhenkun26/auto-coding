@@ -6,6 +6,8 @@
 [![Release](https://img.shields.io/github/v/release/zhenkun26/auto-coding)](https://github.com/zhenkun26/auto-coding/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
+工程记录 / Engineering records: [技术决策](docs/DECISIONS.md) · [精选问题复盘](docs/PROBLEM_REVIEWS.md)
+
 一套面向 AI 编码助手的**风险感知交付 skill**：根据不确定性与操作风险选择执行深度，按需规划、最小改动、以项目自有工具链验证、凭证据交付。
 
 ## 它是什么
