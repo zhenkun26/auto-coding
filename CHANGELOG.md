@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Drop stale `# noqa: E402` directives in tests that ruff 0.16 removed from its default rule set, so CI's latest-ruff lint step passes again.
+- CI now pins lint/test tool versions (`ruff==0.16.2`, `mypy==2.3.0`, `pytest==9.1.1`) instead of installing latest, so upstream tool changes cannot break the pipeline between releases.
 
 ## [0.2.1] - 2026-08-07
 
