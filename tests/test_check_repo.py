@@ -17,6 +17,19 @@ def write(path: Path, content: str) -> Path:
     return path
 
 
+def write_toolchain_routes(root: Path) -> None:
+    """Create the minimal routed references required by the repository checker."""
+    links: list[str] = []
+    for template, _manifests in check_repo.TEMPLATES:
+        relative = f"references/toolchain-{template}.md"
+        write(root / relative, f"# {template}\n")
+        links.append(f"[{template}]({relative})")
+    write(
+        root / "SKILL.md",
+        "---\nname: demo\nlicense: MIT\n---\n" + "\n".join(links) + "\n",
+    )
+
+
 def test_should_find_broken_relative_links(tmp_path: Path) -> None:
     """Given a markdown file referencing a missing file, the check reports it."""
     write(tmp_path / "docs" / "page.md", "[missing](missing-file.md)\n")
@@ -48,6 +61,17 @@ def test_should_flag_skill_without_license_or_frontmatter(tmp_path: Path) -> Non
     assert any("no-frontmatter" in problem for problem in problems)
 
 
+def test_should_honor_exact_vendor_mit_override(tmp_path: Path) -> None:
+    """A user-approved comparative checkout is exempt without weakening other paths."""
+    write(tmp_path / "references" / "codex-skills" / "demo" / "SKILL.md", "no frontmatter\n")
+    write(tmp_path / "references" / "other-vendor" / "demo" / "SKILL.md", "no frontmatter\n")
+
+    problems = check_repo.check_skill_licenses(tmp_path)
+
+    assert not any("codex-skills" in problem for problem in problems)
+    assert any("other-vendor" in problem for problem in problems)
+
+
 def test_should_report_readme_heading_mismatch(tmp_path: Path) -> None:
     """Given READMEs with different heading structures, the check reports it."""
     write(tmp_path / "README.md", "# Title\n## One\n## Two\n")
@@ -56,6 +80,22 @@ def test_should_report_readme_heading_mismatch(tmp_path: Path) -> None:
     problems = check_repo.check_readme_heading_structure(tmp_path)
 
     assert len(problems) == 1
+
+
+def test_should_report_missing_detected_toolchain_route(tmp_path: Path) -> None:
+    """Given an incomplete route map, the missing detected toolchain is reported."""
+    write(tmp_path / "SKILL.md", "---\nname: demo\nlicense: MIT\n---\n")
+
+    problems = check_repo.check_toolchain_routes(tmp_path)
+
+    assert any("go" in problem for problem in problems)
+
+
+def test_should_pass_when_all_detected_toolchains_are_routed(tmp_path: Path) -> None:
+    """Given one reference and route per detector template, no gap is reported."""
+    write_toolchain_routes(tmp_path)
+
+    assert check_repo.check_toolchain_routes(tmp_path) == []
 
 
 def test_should_not_crash_on_non_utf8_markdown(tmp_path: Path) -> None:
@@ -84,7 +124,7 @@ def test_should_return_zero_when_repo_is_clean(tmp_path: Path, monkeypatch: pyte
     """Given a clean repo layout, main exits zero."""
     write(tmp_path / "README.md", "# Title\n## One\n")
     write(tmp_path / "README-EN.md", "# Title\n## One\n")
-    write(tmp_path / "skills" / "demo" / "SKILL.md", "---\nname: demo\nlicense: MIT\n---\nbody\n")
+    write_toolchain_routes(tmp_path)
     monkeypatch.setattr(check_repo, "REPO_ROOT", tmp_path)
 
     assert check_repo.main() == 0
@@ -95,6 +135,7 @@ def test_should_return_nonzero_when_link_is_broken(tmp_path: Path, monkeypatch: 
     write(tmp_path / "README.md", "# Title\n## One\n")
     write(tmp_path / "README-EN.md", "# Title\n## One\n")
     write(tmp_path / "docs" / "page.md", "[missing](gone.md)\n")
+    write_toolchain_routes(tmp_path)
     monkeypatch.setattr(check_repo, "REPO_ROOT", tmp_path)
 
     assert check_repo.main() == 1

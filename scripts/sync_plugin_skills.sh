@@ -19,7 +19,8 @@ mkdir -p "$SKILL_DIR"
 
 # Entry skill: single auto-coding skill with on-demand references.
 cp "$REPO_ROOT/SKILL.md" "$SKILL_DIR/SKILL.md"
-rsync -a --delete "$REPO_ROOT/references/" "$SKILL_DIR/references/"
+# Local comparative checkouts are research inputs, not distributable skill content.
+rsync -a --delete --exclude 'codex-skills/' "$REPO_ROOT/references/" "$SKILL_DIR/references/"
 
 # Runtime scripts referenced by the skill (contract checker, state manager,
 # project detection, state schema). Repo-level tooling (check_repo.py,

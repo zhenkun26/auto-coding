@@ -23,12 +23,18 @@ Refine the requirement into atomic tasks with a topological order. This is
 engineering refinement only — do not redo requirement understanding that a
 spec system already did.
 
-**Atomicity principles**:
+**Bounded-task principles**:
 
-1. Single file: a task modifies only one source file.
-2. Single function/logic: a task handles one function/method or one kind of
-   independent logic.
-3. Independently verifiable: each task can run the L0/L1 self-check alone.
+1. One outcome: the task delivers one behavior or contract result.
+2. One primary risk boundary: do not combine independently hazardous effects,
+   migrations, or compatibility changes merely because they share a feature.
+3. One acceptance gate: the task has evidence that can pass, fail, or block
+   independently of later tasks.
+
+Implementation code, focused tests, and a directly required contract update
+may stay together when they form that one result. Split when outcomes have
+independently meaningful acceptance results, different rollback boundaries,
+or can be reverted safely as separate checkpoints.
 
 **Ordering rules**:
 
@@ -42,8 +48,8 @@ spec system already did.
 
 **Red lines**:
 
-- A task touching ≥2 unrelated files, or described with vague connectives
-  ("etc.", "and also") → split it.
+- A task spanning unrelated files, outcomes, or risk boundaries, or described
+  with vague connectives ("etc.", "and also") → split it.
 - A task with no identifiable target file → mark `[AMBIGUOUS]` and ask.
 - Orphaned task with an implied dependency → annotate `[GUESSED_DEP]`.
 

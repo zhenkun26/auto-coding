@@ -11,7 +11,7 @@ import pytest
 SCRIPTS_DIR = Path(__file__).resolve().parent.parent / "scripts"
 sys.path.insert(0, str(SCRIPTS_DIR))
 
-import check_python_contracts as contract_check
+import check_python_contracts as contract_check  # noqa: E402 - imported after adding the repository scripts path
 
 
 @pytest.fixture

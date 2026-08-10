@@ -18,7 +18,7 @@ FIXTURES = Path(__file__).resolve().parent / "fixtures" / "adversarial"
 
 sys.path.insert(0, str(SCRIPTS_DIR))
 
-import detect_project
+import detect_project  # noqa: E402 - imported after adding the repository scripts path
 
 
 def run_contract_checker(fixture: str) -> subprocess.CompletedProcess[str]:

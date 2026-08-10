@@ -33,6 +33,35 @@ def test_should_detect_typescript_template(tmp_path: Path) -> None:
     assert detect_project.detect_templates(tmp_path) == ["typescript"]
 
 
+@pytest.mark.parametrize(
+    ("manifest", "template", "tool"),
+    [
+        ("go.mod", "go", "go"),
+        ("Cargo.toml", "rust", "cargo"),
+    ],
+)
+def test_should_detect_go_and_rust_templates_with_primary_tools(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    manifest: str,
+    template: str,
+    tool: str,
+) -> None:
+    """Given a Go or Rust manifest, report its template and primary tool availability."""
+    write(tmp_path / manifest)
+    monkeypatch.setattr(
+        detect_project.shutil,
+        "which",
+        lambda name: f"/tools/{name}" if name == tool else None,
+    )
+
+    templates = detect_project.detect_templates(tmp_path)
+    tools = detect_project.detect_tools(templates)
+
+    assert templates == [template]
+    assert tools[tool] is True
+
+
 def test_should_report_greenfield_without_sources(tmp_path: Path) -> None:
     """Given an empty src/ directory, the codebase state is greenfield."""
     (tmp_path / "src").mkdir()

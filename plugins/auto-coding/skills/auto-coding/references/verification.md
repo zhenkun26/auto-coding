@@ -17,15 +17,30 @@ Never convert `BLOCKED` into `PASS`. Degradation is not skipping: a degraded
 check still requires alternative evidence, labeled as alternative evidence
 (see [adaptive.md](adaptive.md) for when degradation is allowed).
 
+## Evidence production order
+
+Produce evidence in this order:
+
+1. implementation;
+2. focused reproduction or regression check;
+3. relevant adjacent-contract checks;
+4. relevant package, repository, integration, or environment gates;
+5. raw command results;
+6. delivery reports, acceptance summaries, and task reconciliation.
+
+When behavior changes after a check or report was generated, treat every
+affected result as stale and regenerate it. Intended output, historical counts,
+and reports written before the latest behavior change are never current proof.
+
 ## Static gate
 
 ### Critical — type check (blocking)
 
 - Python: `mypy --strict <modified files>`; TypeScript: `tsc --noEmit`.
 - On type errors: **halt immediately**. Do not attempt fixes — implementation
-  already had its self-heal rounds; a type error here is structural. Roll back
-  the modified files (`git checkout -- <files>`), output the full error log,
-  and request human intervention.
+  already had its self-heal rounds; a type error here is structural. Preserve
+  the failed working state, output the full error log and affected files, and
+  request human intervention. Never automatically reset or check out files.
 - Configured-but-missing tool → show the install command and halt (no
   degradation). No type-check config → degrade to IDE diagnostics + line-by-line
   review, reported as `BLOCKED` + alternative evidence (see adaptive.md).
@@ -58,6 +73,23 @@ Review the diff for reinvented standard-library features, unnecessary
 dependencies, and speculative abstractions. Findings are informational only —
 append them to the handoff report; never block the gate on them.
 
+## Adjacent-contract checks
+
+For a behavior or contract repair, run the original reproduction plus every
+category the change can affect:
+
+| Category | Verify |
+|---|---|
+| Default | Behavior when the caller accepts the default value or path |
+| Override | Explicit caller/configuration override still wins |
+| Missing/invalid | Required data is absent, malformed, unsupported, or out of range |
+| Failure cleanup | Partial state, resources, registrations, and retries are cleaned up safely |
+| Compatibility | Existing consumers, persisted shapes, feature combinations, and error contracts remain supported |
+
+Do not manufacture a fixed test count. Execute the relevant categories and
+label an irrelevant category `NOT_APPLICABLE` with a short reason; never imply
+that an omitted category passed.
+
 ## Runtime verification
 
 Choose the mode by priority:
@@ -74,8 +106,9 @@ Choose the mode by priority:
 
 - Run the project's test runner with coverage (Python: `pytest --cov=<src>
   --cov-report=term -v`).
-- Unit test pass rate must be 100%; line coverage ≥ 80%; branch coverage
-  ≥ 70%; modified-file coverage ≥ project threshold (default 80%).
+- Unit tests must pass. Apply coverage and other thresholds declared by the
+  repository or CI. When none exist, use the defaults below as labeled fallback
+  guidance rather than claiming they are project-approved acceptance criteria.
 - **Test-composition transparency**: report one line —
   `Tests: N unit + M integration = T total` (integration = files importing
   `TestClient` or matching `test_api*.py`). Informational only; thresholds are
@@ -119,9 +152,11 @@ review of restart/error paths, labeled `[SKIP_ENV: no environment]` /
 | Metrics at 90–100% of threshold, reasonable cause | ⚠️ release with warning | Deliver; list follow-up items explicitly |
 | FAILED tests, or metrics below 90% of threshold | `FAIL` | Halt; embed input/expected/actual for each failure; request human intervention |
 
-## Default thresholds
+## Fallback thresholds
 
-Single source of truth. CI-declared thresholds override these defaults.
+Repository and CI declarations are the source of truth. Use these defaults only
+when the project defines no corresponding value, and label them as
+`[DEFAULT_THRESHOLD]` in the handoff evidence.
 
 | Config item | Default | Overridable by CI |
 |---|---|---|
@@ -133,7 +168,7 @@ Single source of truth. CI-declared thresholds override these defaults.
 | Modified-file coverage | ≥ project threshold (default 80%) | Yes |
 | Single test/eval case timeout | 60 s (timeout = FAILED) | No |
 | Eval metric threshold | ≥ 80% | Yes |
-| Type-check gate | Critical; failure → halt + rollback | No |
+| Type-check gate | Critical; failure → halt and preserve diagnostics | No |
 
 ## Cumulative degradation warning
 

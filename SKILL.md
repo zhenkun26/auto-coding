@@ -50,13 +50,26 @@ available toolchains are not already obvious. Its JSON reports language template
 CI, spec system, greenfield/brownfield state, and tool availability. Treat the
 output as discovery evidence, not as permission to install or execute tools.
 
+Establish exactly one execution boundary before routing implementation risk:
+
+- **Standalone**: derive one outcome, explicit non-goals, affected interfaces,
+  and acceptance evidence from the request and repository. Do not create a
+  phase-document tree for a bounded change.
+- **OpenSpec-managed**: resolve the applicable change with `openspec status`
+  and its apply instructions, then treat the returned artifacts as planning
+  authority. Repository diffs and executed checks remain acceptance authority.
+  Do not create a competing `STATUS.md` / `STEP_*.md` system.
+- **Not yet bounded**: when the request contains multiple independently
+  accepted outcomes or contradicts its governing artifacts, stop before
+  implementation and propose or update the specification boundary.
+
 ### 2. Select a route
 
 Read [references/routing.md](references/routing.md) and choose exactly one route:
 
 | Route | Typical use | Required depth |
 |---|---|---|
-| Fast | Single-file, clear, low-risk, easily reversible | Inspect, edit, L0/L1 self-check |
+| Fast | Localized, clear, low-risk, easily reversible | Inspect, edit, L0/L1 self-check |
 | Standard | Multi-file behavior, interface change, or meaningful uncertainty | Concise plan, caller-aware implementation, static checks and tests |
 | High-risk | FINANCE / AUTH / MIGRATION / STATE_MACHINE / EXTERNAL_API / ENV_OPS, concurrency, or destructive behavior | Written invariants and rollback plan, staged implementation, risk-specific verification |
 
@@ -82,7 +95,8 @@ Read [references/planning.md](references/planning.md).
 ### 4. Implement the change
 
 Read [references/implementation.md](references/implementation.md). For every
-High-risk task, also read [references/risk-controls.md](references/risk-controls.md).
+High-risk task, external side-effect task, or explicit cross-session/model
+handoff, also read [references/risk-controls.md](references/risk-controls.md).
 
 - Locate definitions and consumers before changing a contract (brownfield).
 - Apply the reuse ladder: existing code > standard library > installed
@@ -104,6 +118,8 @@ the matching toolchain reference:
 
 - Python: [references/toolchain-python.md](references/toolchain-python.md)
 - TypeScript or JavaScript: [references/toolchain-typescript.md](references/toolchain-typescript.md)
+- Go: [references/toolchain-go.md](references/toolchain-go.md)
+- Rust: [references/toolchain-rust.md](references/toolchain-rust.md)
 
 Read [references/adaptive.md](references/adaptive.md) when a configured tool is
 missing. Prefer commands declared by the repository, CI, task runner, or package
@@ -178,6 +194,8 @@ Read references only when their condition applies:
 | [openspec.md](references/openspec.md) | The repository already uses OpenSpec |
 | [toolchain-python.md](references/toolchain-python.md) | The project is Python |
 | [toolchain-typescript.md](references/toolchain-typescript.md) | The project is TypeScript/JavaScript |
+| [toolchain-go.md](references/toolchain-go.md) | The project is Go |
+| [toolchain-rust.md](references/toolchain-rust.md) | The project is Rust |
 
 If repository instructions conflict with this skill, follow the higher-priority
 instruction and state the practical consequence.

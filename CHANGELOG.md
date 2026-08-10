@@ -4,6 +4,20 @@ All notable changes to auto-coding are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- Go and Rust toolchain guidance covering repository-native formatting, static checks, focused/full tests, feature constraints, and configured race/concurrency checks without automatic installation or dependency updates.
+- Mechanical detector-to-toolchain routing checks and tests, including Go/Rust manifest and primary-tool availability coverage.
+
+### Changed
+
+- Tasks are bounded by one outcome, one primary risk boundary, and one acceptance gate, so directly required implementation, tests, and contract updates stay together while unrelated outcomes split.
+- OpenSpec task completion now follows scoped acceptance evidence; blocked or contradictory instructions and scope expansion stop implementation instead of creating a competing status tree.
+- Verification now uses an explicit evidence order and conditional adjacent-path matrix, invalidates stale evidence after behavior changes, and prefers repository/CI thresholds over labeled fallback defaults.
+- Failed type checks preserve diagnostic state instead of triggering automatic version-control rollback; repeated repair regressions trip a semantic fuse and force root-cause replanning.
+
 ## [0.2.1] - 2026-08-07
 
 ### Added

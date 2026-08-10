@@ -13,7 +13,12 @@ this file entirely (`[NO_OPENSPEC]`).
 
 ## Consuming planning artifacts
 
-When the user hands off a change directory (`openspec/changes/<name>/`):
+When the user hands off a change directory (`openspec/changes/<name>/`), first
+resolve its current state and apply boundary through the installed OpenSpec CLI.
+Use the returned `changeRoot`, `contextFiles`, and dynamic instruction rather
+than assuming artifact paths or relying on chat history.
+
+Then consume the applicable artifacts:
 
 - `tasks.md` — functional task list. Entries may carry `fileHint`,
   `symbolHint`, and `dependsOn`; use them for decomposition and location.
@@ -25,14 +30,23 @@ When the user hands off a change directory (`openspec/changes/<name>/`):
 Requirement understanding is already done by these artifacts — refine them
 into atomic tasks (see [planning.md](planning.md)); do not redo it.
 
+OpenSpec artifacts are planning authority; current code, diffs, and executed
+verification are acceptance authority. Stop before editing when artifacts are
+blocked, stale, contradictory, or when required work would expand their scope.
+Do not silently repair planning artifacts while implementing, and do not create
+a second phase status tree beside OpenSpec.
+
 ## Task-checkbox sync (two checkpoints)
 
-1. After each task completes (implementation), change the corresponding
-   tasks.md entry from `- [ ]` to `- [x]`. `REUSED` tasks are checked too,
+1. After a bounded task's implementation **and its scoped acceptance checks**
+   pass, change the corresponding tasks.md entry from `- [ ]` to `- [x]`.
+   `REUSED` tasks are checked only after their existing behavior is verified,
    with `<!-- reused: <source> -->` appended.
 2. Before delivery, reconcile tasks.md against the actual work once more.
 
-Unchecked items at wrap-up follow conflict ruling R8 (facts first — see
+Failed or blocked required checks leave the task unchecked. Alternative evidence
+may narrow uncertainty but never upgrades `BLOCKED` to completion. Unchecked
+items at wrap-up follow conflict ruling R8 (facts first — see
 [conflict-rulings.md](conflict-rulings.md)).
 
 ## Wrap-up: sync and archive (authorized only)

@@ -40,3 +40,23 @@ For High-risk tasks, record in writing before the first edit:
 2. **Failure modes** the change can introduce.
 3. **Rollback or recovery approach** (which files, which commands, which data).
 4. **Acceptance evidence** that will demonstrate safety.
+
+## Pre-code rehearsal
+
+Run this rehearsal before editing when any of these applies: the task is
+High-risk, it can reach an external side effect, or it is being handed across
+sessions/models. Ordinary Fast work with none of these triggers does not need
+the rehearsal.
+
+Record:
+
+1. exact file touchpoints and why they are sufficient for the bounded outcome;
+2. the entry-to-effect call chain for every network, process, notification,
+   migration, persistent user-data write, or irreversible action;
+3. factories, fixtures, registries, singletons, caches, environment writes,
+   and other shared mutable state involved;
+4. how automated tests block each real external effect and restore shared state;
+5. likely implementation mistakes and the specific test or observation that
+   detects each one;
+6. the exact contradiction, missing dependency, scope expansion, or unsafe
+   effect that requires implementation to stop.

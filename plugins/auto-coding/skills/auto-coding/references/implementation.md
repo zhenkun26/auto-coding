@@ -75,8 +75,10 @@ Execute tasks serially, in topological order:
    afterwards so unrelated changes are never included.
 4. **Immediate type check** (Python: `mypy --strict <file>`; TypeScript:
    `tsc --noEmit`). On error: fix and re-run, at most 3 rounds. Still failing
-   after round 3 → halt, roll back the file (`git checkout -- <file>`), and
-   ask for human intervention.
+   after round 3 → halt, preserve the failed working state, report the exact
+   errors and affected task files, and ask for human intervention. Never use
+   version-control restore commands automatically: they cannot distinguish the
+   task's edits from pre-existing user changes in the same file.
 5. **Layer-level checkpoint**: after each topological layer (models, services,
    api...), run the type checker over **all files written so far** — per-file
    checks miss cross-file type errors. Fix before entering the next layer;
@@ -87,12 +89,29 @@ Execute tasks serially, in topological order:
    [sedimentation.md](sedimentation.md)) as `[ESCAPE_HATCH]` with the original
    error, the workaround, and the type safety lost. It does not block, but it
    is quality debt and must surface in the handoff report.
-7. Run the L0/L1/L2 self-check below. Only when all applicable layers pass is
-   the task complete.
+7. Run the L0/L1/L2 self-check below and the task's scoped acceptance checks.
+   Only when all required evidence passes is the task complete.
 8. When the repository uses OpenSpec, check off the corresponding tasks.md
-   entry — see [openspec.md](openspec.md).
+   entry only after that evidence passes — see [openspec.md](openspec.md).
 
 Hard constraint: code with type errors must never leave implementation.
+
+## Repair-regression fuse
+
+The three-round cap bounds any one self-heal loop. Stop earlier when two
+consecutive repair rounds in the same bounded task introduce a new failure in
+a declared acceptance path or preserved contract. This is a material repair
+regression, not an ordinary syntax correction.
+
+On trigger:
+
+1. stop adding patches and preserve the current diagnostic state;
+2. record the original reproduction, governing invariant, each introduced
+   regression, and the test or observation that exposed it;
+3. review the root cause and caller boundary;
+4. split or replan the task by independently accepted outcome before resuming.
+
+Do not keep alternating symptom fixes until the generic round cap is exhausted.
 
 ## Three-layer self-check (L0/L1/L2)
 
