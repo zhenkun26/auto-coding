@@ -18,6 +18,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Verification now uses an explicit evidence order and conditional adjacent-path matrix, invalidates stale evidence after behavior changes, and prefers repository/CI thresholds over labeled fallback defaults.
 - Failed type checks preserve diagnostic state instead of triggering automatic version-control rollback; repeated repair regressions trip a semantic fuse and force root-cause replanning.
 
+### Fixed
+
+- Drop stale `# noqa: E402` directives in tests that ruff 0.16 removed from its default rule set, so CI's latest-ruff lint step passes again.
+
 ## [0.2.1] - 2026-08-07
 
 ### Added
