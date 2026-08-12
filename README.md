@@ -145,3 +145,5 @@ Use $auto-coding to implement this change with risk-aware routing and verificati
 ## 第三方组件与许可
 
 MIT License。复用梯子（reuse ladder）改写自 Ponytail（MIT）；历史版本曾捆绑 OpenSpec 技能与 grill-me。详见 [THIRD_PARTY.md](THIRD_PARTY.md) 与 [CHANGELOG.md](CHANGELOG.md)。
+
+> 本项目由 Vibe Coding 辅助实现落地。Built with Vibe Coding.
