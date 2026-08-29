@@ -22,7 +22,7 @@ jobs:
         run: python -m pytest tests/ -q
       - name: Run repository checks
         run: python scripts/check_repo.py
-      - name: Verify plugin bundle is in sync
+      - name: Verify plugin and skills bundles are in sync
         run: |
           bash scripts/sync_plugin_skills.sh
-          git diff --exit-code -- plugins/
+          git diff --exit-code -- plugins/ skills/

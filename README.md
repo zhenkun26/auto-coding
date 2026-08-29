@@ -14,9 +14,10 @@
 
 auto-coding 帮助编码智能体在修改代码时，先识别风险与约束，再以与任务相称的深度完成规划、实现、验证与交付。它由一套在 vibe coding 实践中反复试错沉淀下来的并行开发体系（OpenSpec 规划 + Pipeline 执行 + Ponytail 代码最小化 + grill-me 决策追问）重构而来——保留全部实战机制，换用更克制的结构：
 
-- **主文件只保留契约**：`SKILL.md` 只定义执行契约，细节拆分至 14 份按需读取的 references；
+- **主文件只保留契约**：`SKILL.md` 只定义执行契约，细节拆分至 12 份按需读取的 references；
 - **默认不产生过程文件**：不再产出 TASK_PLAN / LOCATE_MAP / RUN_LOG 等流水线文件，仅长任务使用单一状态文件；
-- **授权边界明确**：初始化规格系统、安装依赖、提交、部署、迁移、删除等操作均需显式授权。
+- **授权边界明确**：安装依赖、提交、部署、迁移、删除等操作均需显式授权；
+- **规格系统可插拔**：核心契约只用一句话对待仓库已有的规划工作流；OpenSpec 支持拆分为可选伴侣 skill（`auto-coding-openspec/`），四态证据纪律另提供可独立安装的 `verify-evidence` skill。
 
 ## 核心理念
 
@@ -24,11 +25,22 @@ auto-coding 帮助编码智能体在修改代码时，先识别风险与约束�
 
 本 skill 以**最小而完整**为改动原则：优先复用现有实现、标准库与已安装依赖（复用 > 标准库 > 已装依赖 > 新代码），避免无关重构、过程文件膨胀与未经授权的副作用。验证证据严格区分 `PASS` / `FAIL` / `BLOCKED` / `NOT_APPLICABLE`，`BLOCKED` 不会被当作 `PASS`。
 
+## 定位对比
+
+auto-coding 不是流程接管者，而是交付保真工具：
+
+| | spec-kit / OpenSpec / GSD | mattpocock/skills | auto-coding |
+|:---|:---|:---|:---|
+| 生态位 | 规格驱动开发流程 | 对齐、规划与设计工作流 | 交付保真：风险路由 + 证据纪律 |
+| 状态存放在 | 规格目录 / change 目录 | issue tracker、CONTEXT.md、ADR | 仓库本身 + 可选单状态文件 |
+| 上手成本 | 需先学习规格仪式 | 低 | 低（默认零过程文件） |
+| 适合谁 | 团队需要正式规格 | 日常工程对齐 | 要求"验证证据不可造假"的个人与小团队 |
+
 ## 三条执行路径
 
 | 路径 | 适用情况 | 最低执行深度 |
 |:---|:---|:---|
-| **Fast** | 局部、明确、低风险、易回滚 | 定位、最小修改、L0/L1 自检 |
+| **Fast** | 局部、明确、低风险、易回滚 | 定位、最小修改、导入/行为自检 |
 | **Standard** | 多文件行为、接口变化或明显不确定性 | 简短计划、调用方感知实现、静态检查与测试 |
 | **High-risk** | FINANCE / AUTH / MIGRATION / STATE_MACHINE / EXTERNAL_API / ENV_OPS，或并发、破坏性行为 | 书面不变量与回滚策略、分步实现、风险专项验证 |
 
@@ -37,14 +49,14 @@ Greenfield/brownfield 不影响路由等级，只影响规划与定位深度（g
 ## 工作方式
 
 1. 读取仓库规则、CI 与当前工作区状态；可通过 `scripts/detect_project.py` 进行只读项目探测。
-2. 先确认执行边界：独立请求使用内联计划；已有 OpenSpec 变更以其动态指令与产物为规划权威；范围尚未界定则先停止实现。
+2. 识别执行边界：仓库已有规划工作流（OpenSpec、spec-kit、issue 流程等）时以其产物为规划权威，否则内联规划；范围尚未界定则先停止实现。
 3. 选择 Fast / Standard / High-risk 路由。
 4. 按路由深度规划；未决设计决策达到 3 个及以上时，进入决策追问（decision-grilling）。
-5. 按照复用梯子实现；每个任务依次执行 L0（导入）→ L1（行为断言）→ L2（契约比对）三层自检，并附带层级类型检查点与逃逸门检测。
+5. 按照复用梯子实现；每个任务依次执行三遍自检（导入可加载 → 行为断言 → 契约比对），并附带层级类型检查点与逃逸门检测。
 6. 使用项目已有命令按“聚焦回归 → 相邻契约 → 更广闸门”的顺序验证；变更行为后旧证据失效。工具缺失时按 adaptive 规则处理并如实标注为 `BLOCKED`。
-7. 汇报改动、验证证据、逃逸门、假设与后续动作；OpenSpec 任务仅在范围内验收证据通过后勾选，提交、规格 sync/archive 仅作为建议，需经授权后执行。
+7. 汇报改动、验证证据、逃逸门、假设与后续动作；规划工作流的任务清单仅在范围内验收证据通过后勾选（事实优先），提交等后续动作需经授权后执行。
 
-冲突按既定裁决执行：需求存在性以规格为准，代码复用遵循复用梯子，规格存在缺陷时停止实现并如实报告，任务清单以事实为准。详见 [references/conflict-rulings.md](references/conflict-rulings.md)。
+冲突以事实为最终裁决：需求存在性以规格为准，代码复用遵循复用梯子，规格存在缺陷时停止实现并如实报告，任务清单以事实为准。
 
 ## 安全边界
 
@@ -67,29 +79,31 @@ Greenfield/brownfield 不影响路由等级，只影响规划与定位深度（g
 
 ```text
 ├── SKILL.md                     # 总控：核心契约、路由、工作流、资源地图
-├── references/                  # 按需读取的 14 份参考
+├── references/                  # 按需读取的 12 份参考
 │   ├── routing.md               # Fast/Standard/High-risk 分流与风险标志
 │   ├── planning.md              # 按比例的规划、原子拆解、决策追问
-│   ├── implementation.md        # 复用梯子、定位法、L0/L1/L2 自检、逃逸门
+│   ├── implementation.md        # 复用梯子、定位法、三遍自检、逃逸门
 │   ├── verification.md          # 静态/运行时闸门、仓库优先阈值与回退值
 │   ├── risk-controls.md         # 六个风险标志的不可降级控制
 │   ├── adaptive.md              # 工具链自适应与降级规则
-│   ├── conflict-rulings.md      # R1/R2/R6/R8 冲突裁决
 │   ├── sedimentation.md         # ERROR_MEMORY / TECH_NOTES（可选）
-│   ├── recovery.md              # 跨会话断点恢复
-│   ├── openspec.md              # 已有 OpenSpec 工作流的消费与收尾
+│   ├── recovery.md              # 跨会话断点恢复（含证据时效规则）
 │   └── toolchain-python.md / toolchain-typescript.md / toolchain-go.md / toolchain-rust.md
+├── auto-coding-openspec/        # 可选伴侣 skill：已有 OpenSpec 的仓库专用（单独安装）
+├── verify-evidence/             # 独立 skill：四态证据纪律，可搭配任何工作流
+├── setup-auto-coding/           # 独立 skill：一次性配置（/setup-auto-coding）
+├── skills/                      # skills.sh / npx 安装通道的分发目录（由同步脚本生成）
 ├── scripts/
 │   ├── detect_project.py         # 只读项目探测（语言/CI/规格系统/greenfield）
 │   ├── manage_state.py           # 原子化读写单一状态文件
 │   ├── check_python_contracts.py # Python 结构契约检查（AST + Gherkin 回退）
 │   ├── state_schema.json         # 状态文件参考 schema
-│   ├── check_repo.py             # 仓库机械检查（链接/许可/README/工具链路由）
+│   ├── check_repo.py             # 仓库机械检查（链接/许可/README/工具链路由/版本一致性）
 │   └── sync_plugin_skills.sh     # 插件包同步（单一事实源为仓库根）
-├── pyproject.toml               # ruff / mypy（strict）配置，供 CI 自检
+├── pyproject.toml               # 唯一版本事实源 + ruff / mypy（strict）配置
 ├── plugins/auto-coding/          # Codex plugin 包（发布前由 sync 脚本从仓库根生成）
-├── tests/                        # pytest 测试套件（含 fixtures/adversarial 对抗性陷阱场景）
-└── openspec/                     # 本仓库自身的规格（dogfooding）
+├── docs/                         # 决策记录、记忆策略、验收报告
+└── tests/                        # pytest 测试套件（含 fixtures/adversarial 对抗性陷阱场景）
 ```
 
 ## 安装
@@ -101,6 +115,10 @@ Greenfield/brownfield 不影响路由等级，只影响规划与定位深度（g
 codex plugin marketplace add zhenkun26/auto-coding
 codex plugin add auto-coding@auto-coding
 
+# 或用 skills.sh 安装器（Claude Code 等其他 agent 亦可用；
+# 安装时可勾选技能，写入仓库的是可编辑的普通文件）
+npx skills@latest add zhenkun26/auto-coding
+
 # 本地开发安装
 codex plugin marketplace add /path/to/this/repo
 codex plugin add auto-coding@auto-coding
@@ -110,15 +128,19 @@ codex plugin marketplace upgrade
 codex plugin remove auto-coding@auto-coding
 ```
 
+插件包含三个 skill：`auto-coding`（主 skill）、`verify-evidence`（可独立使用的证据纪律）与 `setup-auto-coding`（一次性配置）。使用 OpenSpec 的仓库另装伴侣 skill：把 `auto-coding-openspec/` 复制到你的 skills 目录即可。
+
 修改 skill 内容后，发布前运行 `bash scripts/sync_plugin_skills.sh` 重新同步插件包；CI 会重跑该脚本并校验插件包与仓库根逐字节一致，漂移直接判红。
 
 ## 使用
+
+首次在目标仓库使用时，建议跑一次一次性配置：`/setup-auto-coding` 会询问严格度档位（strict / default / light）、主语言与证据阈值，并把结果写入 `AGENTS.md` 的 `## auto-coding` 小节，之后每个会话自动读取。
 
 ```text
 Use $auto-coding to implement this change with risk-aware routing and verification.
 ```
 
-或直接描述任务，由 skill 自动完成路由。已有 OpenSpec 的仓库可以直接交接变更目录：`按 auto-coding 实现 openspec/changes/<name>/`；任务只在范围内验收证据通过后完成。
+或直接描述任务，由 skill 自动完成路由。仓库已有规划工作流（OpenSpec、spec-kit、issue 等）时，直接指认其产物即可，例如 `按 auto-coding 实现 <规划目录>/<变更>/`；任务只在范围内验收证据通过后完成。
 
 ## 环境约束
 
@@ -126,16 +148,16 @@ Use $auto-coding to implement this change with risk-aware routing and verificati
 |:---|:---|:---|
 | bash（POSIX sh） | 必需 | 无降级——bash 是执行环境 |
 | git | 提交时必需 | 代码已写但未提交，如实标注 |
-| Python 3.10+ | 契约检查/检测脚本 | 契约检查降级为人工 L2 清单 |
+| Python 3.10+ | 契约检查/检测脚本 | 契约检查降级为人工契约比对清单 |
 | mypy / ruff / pytest | Python 模板 | 有配置无工具 → 安装提示并中断；无配置 → 降级为替代证据并标记 `BLOCKED` |
 | tsc / eslint / jest | TS 模板 | 同上 |
 | go | Go 模板 | 保留仓库的 tags/平台约束；工具缺失时停止，不自动安装或修改模块依赖 |
 | cargo | Rust 模板 | 保留 toolchain/MSRV 与 feature 约束；工具缺失时停止，不自动安装或更新依赖 |
-| OpenSpec CLI | 可选 | 全程 `[NO_OPENSPEC]` 内联规划，不自动初始化 |
+| OpenSpec CLI | 可选（伴侣 skill） | 仓库使用 OpenSpec 时安装 `auto-coding-openspec`；否则内联规划，永不自动初始化 |
 
 ## 质量保障
 
-- 三层自检（L0/L1/L2）+ 硬性闸门：类型检查 Critical（失败即停止并保留诊断状态）、lint Standard（自愈 ≤3 轮）；覆盖率优先采用仓库/CI 阈值，缺失时才使用带标签的回退值。
+- 三遍自检（导入 / 行为 / 契约）+ 硬性闸门：类型检查 Critical（失败即停止并保留诊断状态）、lint Standard（自愈 ≤3 轮）；覆盖率优先采用仓库/CI 阈值，缺失时才使用带标签的回退值。
 - 相邻契约验证按改动选择默认、覆盖、缺失/无效输入、失败清理与兼容性路径；两轮修复若连续引入新的验收或保留契约失败，则触发语义熔断并重新定位根因。
 - 层级类型检查点：每完成一个拓扑层，对所有已写文件执行全量类型检查，捕获跨文件类型错误。
 - 逃逸门检测：以 `Any` / `# type: ignore` / `cast()` 保命的自愈记为 `[ESCAPE_HATCH]` 质量债，交付时如实列出。

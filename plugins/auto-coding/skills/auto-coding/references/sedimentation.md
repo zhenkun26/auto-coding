@@ -42,6 +42,14 @@ printf '%s\n\n%s' "$(cat ai_pipeline/ERROR_MEMORY.md 2>/dev/null)" "$entry" > ai
 **Feedback loop**: when the same file or module accumulates escape hatches
 across runs, review that module before implementing in it next time.
 
+### Compaction cap
+
+ERROR_MEMORY.md is a rule base, not a log pile. When it exceeds ~100
+entries, distill it: promote recurring patterns into prevention rules,
+merge near-duplicates, and prune resolved issues. Compaction is itself a
+reported action — announce what was merged or dropped before rewriting;
+never silently rewrite memory.
+
 ## TECH_NOTES.md (optional, High-risk or on request)
 
 For High-risk work, or when the user asks for durable rationale, distill the

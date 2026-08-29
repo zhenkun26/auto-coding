@@ -6,10 +6,12 @@ Checks:
    an exact, repository-approved MIT vendor override.
 3. README.md and README-EN.md have identical heading structures.
 4. Every language detected by ``detect_project.py`` has a routed toolchain reference.
+5. The plugin manifest version matches the pyproject version (single version source).
 
 Exit code is nonzero when any check fails. Standard library only.
 """
 
+import json
 import re
 import sys
 from pathlib import Path
@@ -20,6 +22,8 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 EXCLUDED_PARTS = {".git", "plugins", ".codex"}
 VENDOR_MIT_ROOTS = {Path("references/codex-skills")}
 LINK_PATTERN = re.compile(r"\]\(([^)]+)\)")
+PYPROJECT_VERSION_PATTERN = re.compile(r'^version\s*=\s*"([^"]+)"', re.MULTILINE)
+PLUGIN_MANIFEST = Path("plugins/auto-coding/.codex-plugin/plugin.json")
 
 
 def read_text_safely(path: Path) -> str:
@@ -116,12 +120,41 @@ def check_toolchain_routes(root: Path | None = None) -> list[str]:
     return problems
 
 
+def check_version_consistency(root: Path | None = None) -> list[str]:
+    """Return reports when the plugin manifest version drifts from pyproject.
+
+    pyproject.toml is the single version source. A repo layout without a
+    pyproject version is skipped; a declared version with a missing or
+    unreadable plugin manifest is a problem.
+    """
+    if root is None:
+        root = REPO_ROOT
+    match = PYPROJECT_VERSION_PATTERN.search(read_text_safely(root / "pyproject.toml"))
+    if match is None:
+        return []
+    declared = match.group(1)
+    manifest_path = root / PLUGIN_MANIFEST
+    try:
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        return [f"plugin manifest unreadable ({PLUGIN_MANIFEST}): {exc}"]
+    manifest_version = manifest.get("version")
+    if not isinstance(manifest_version, str):
+        return [f"plugin manifest has no version string ({PLUGIN_MANIFEST})"]
+    if manifest_version != declared:
+        return [
+            f"version drift: pyproject.toml {declared} != {PLUGIN_MANIFEST} {manifest_version}"
+        ]
+    return []
+
+
 def main() -> int:
     """Run all checks and report failures."""
     link_problems = check_relative_links()
     license_problems = check_skill_licenses()
     readme_problems = check_readme_heading_structure()
     toolchain_problems = check_toolchain_routes()
+    version_problems = check_version_consistency()
 
     if link_problems:
         print("BROKEN RELATIVE LINKS:")
@@ -139,10 +172,23 @@ def main() -> int:
         print("TOOLCHAIN ROUTING GAPS:")
         for problem in toolchain_problems:
             print(f"  {problem}")
+    if version_problems:
+        print("VERSION DRIFT:")
+        for problem in version_problems:
+            print(f"  {problem}")
 
-    if link_problems or license_problems or readme_problems or toolchain_problems:
+    if (
+        link_problems
+        or license_problems
+        or readme_problems
+        or toolchain_problems
+        or version_problems
+    ):
         return 1
-    print("check_repo: links, skill licenses, README headings, and toolchain routes OK")
+    print(
+        "check_repo: links, skill licenses, README headings, toolchain routes, "
+        "and version consistency OK"
+    )
     return 0
 
 

@@ -12,7 +12,7 @@ Choose exactly one route before any planning or implementation. Principle:
 
 | Route | Typical use | Heuristics | Required depth |
 |---|---|---|---|
-| **Fast** | Typo, small bugfix, single-field addition | 1 file, 0 new capabilities, no risk flags | Inspect, edit, L0/L1 self-check, focused verification |
+| **Fast** | Typo, small bugfix, single-field addition | 1 file, 0 new capabilities, no risk flags | Inspect, edit, import/behavior self-check, focused verification |
 | **Standard** | Small to medium multi-file change | 2–10 files, 1–2 new capabilities, single or cross module, no risk flags | Concise plan, caller-aware implementation, static checks and tests |
 | **High-risk** | Platform/subsystem, or any risk flag | >10 files, ≥3 new capabilities, **or any risk flag below** | Written invariants + rollback plan, staged implementation, risk-specific verification, full verification gates |
 

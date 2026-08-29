@@ -1,6 +1,6 @@
 ---
 name: implementation
-description: Implementation protocol for auto-coding — reuse ladder, brownfield location method, per-task loop with immediate type checks and layer checkpoints, escape-hatch recording, and the L0/L1/L2 three-layer self-check. Read for every implementation task.
+description: Implementation protocol for auto-coding — reuse ladder, brownfield location method, per-task loop with immediate type checks and layer checkpoints, escape-hatch recording, and the three-pass self-check (imports, behavior, contract). Read for every implementation task.
 ---
 
 # Implementation
@@ -89,10 +89,12 @@ Execute tasks serially, in topological order:
    [sedimentation.md](sedimentation.md)) as `[ESCAPE_HATCH]` with the original
    error, the workaround, and the type safety lost. It does not block, but it
    is quality debt and must surface in the handoff report.
-7. Run the L0/L1/L2 self-check below and the task's scoped acceptance checks.
-   Only when all required evidence passes is the task complete.
-8. When the repository uses OpenSpec, check off the corresponding tasks.md
-   entry only after that evidence passes — see [openspec.md](openspec.md).
+7. Run the three-pass self-check below and the task's scoped acceptance
+   checks. Only when all required evidence passes is the task complete.
+8. When a planning workflow tracks tasks (e.g. a tasks.md checklist), check
+   off an entry only after that evidence passes — facts first at wrap-up:
+   factually complete work is checked without warning; genuinely incomplete
+   work is reported as incomplete.
 
 Hard constraint: code with type errors must never leave implementation.
 
@@ -113,11 +115,11 @@ On trigger:
 
 Do not keep alternating symptom fixes until the generic round cap is exhausted.
 
-## Three-layer self-check (L0/L1/L2)
+## Three-pass self-check
 
 After each task's code injection:
 
-### Layer 0 — syntax and imports
+### Pass 1 — syntax and imports
 
 | Property | Value |
 |---|---|
@@ -125,10 +127,10 @@ After each task's code injection:
 | Timeout | ≤ 5 s |
 | Pass | Exit code 0, no Import/Syntax/ModuleNotFound errors |
 | Self-heal | typos / missing imports / circular imports, ≤ 3 rounds |
-| Limit exceeded | `[BLOCKED: L0]` — skip this task, finish the others, then request human intervention |
+| Limit exceeded | `[BLOCKED: import]` — skip this task, finish the others, then request human intervention |
 | Skip | Pure config/docs, no code change |
 
-### Layer 1 — behavior self-check
+### Pass 2 — behavior self-check
 
 | Property | Value |
 |---|---|
@@ -136,13 +138,13 @@ After each task's code injection:
 | Timeout | ≤ 30 s |
 | Pass | All asserts pass, exit code 0 |
 | Self-heal | read the stack, fix, re-run, ≤ 3 rounds |
-| Limit exceeded | `[BLOCKED: L1]` with input/expected/actual/stack |
+| Limit exceeded | `[BLOCKED: behavior]` with input/expected/actual/stack |
 | Skip | Trivial code → `[TRIVIAL: no self-check]` |
 
 Coverage baseline: per-task requirements are defined in
 [planning.md](planning.md) (self-check requirement table).
 
-### Layer 2 — interface contract comparison
+### Pass 3 — interface contract comparison
 
 Compare against the contract baseline (spec system artifacts, or the inline
 contract from planning). Five items: ① name matches; ② parameters
@@ -153,8 +155,11 @@ contract from planning). Five items: ① name matches; ② parameters
 - Extra field in code not in contract → `[EXTRA_FIELD]` (concise addition,
   non-blocking) or `[COMPAT_FIELD]` (deliberate compatibility field; record
   the reason and suggest updating the spec).
-- Code correct but contract wrong → conflict ruling R6
-  ([conflict-rulings.md](conflict-rulings.md)).
+- Code correct but contract wrong → stop and report the defect: the spec's
+  intent wins over blind implementation. Roll back the affected change, output
+  a defect report, and resume after the user updates it. A structural defect
+  falls back immediately; an omission completes current work first; an
+  optimization note is recorded and execution continues.
 - Pure refactor with unchanged interface → `[REFACTOR: contract unchanged]`.
 
 **Automated structural pre-check** (Python): run
@@ -165,6 +170,6 @@ do the manual five-item comparison (error codes and side effects still require
 review). Never claim contract verification when the contract contains no
 supported symbols.
 
-Report each layer exactly: `L0 (import): PASS`, `L1 (self-check): PASS, N
-asserts`, `L2 (contract): 5/5 matched` — or the corresponding `FAIL` /
-`BLOCKED` / `NOT_APPLICABLE`.
+Report each pass exactly: `import: PASS`, `behavior: PASS, N asserts`,
+`contract: 5/5 matched` — or the corresponding `FAIL` / `BLOCKED` /
+`NOT_APPLICABLE`.

@@ -98,6 +98,63 @@ def test_should_pass_when_all_detected_toolchains_are_routed(tmp_path: Path) -> 
     assert check_repo.check_toolchain_routes(tmp_path) == []
 
 
+def test_should_report_version_drift_between_manifest_and_pyproject(tmp_path: Path) -> None:
+    """Given different declared versions, the drift is reported."""
+    write(tmp_path / "pyproject.toml", '[project]\nname = "demo"\nversion = "2.0.0-dev"\n')
+    write(
+        tmp_path / "plugins" / "auto-coding" / ".codex-plugin" / "plugin.json",
+        '{"name": "demo", "version": "0.2.0"}\n',
+    )
+
+    problems = check_repo.check_version_consistency(tmp_path)
+
+    assert len(problems) == 1
+    assert "2.0.0-dev" in problems[0] and "0.2.0" in problems[0]
+
+
+def test_should_pass_when_versions_match(tmp_path: Path) -> None:
+    """Given identical declared versions, no problem is reported."""
+    write(tmp_path / "pyproject.toml", '[project]\nname = "demo"\nversion = "2.0.0-dev"\n')
+    write(
+        tmp_path / "plugins" / "auto-coding" / ".codex-plugin" / "plugin.json",
+        '{"name": "demo", "version": "2.0.0-dev"}\n',
+    )
+
+    assert check_repo.check_version_consistency(tmp_path) == []
+
+
+def test_should_skip_version_check_without_pyproject_version(tmp_path: Path) -> None:
+    """Given no declared pyproject version, the check is skipped entirely."""
+    assert check_repo.check_version_consistency(tmp_path) == []
+
+
+def test_should_report_missing_plugin_manifest_version(tmp_path: Path) -> None:
+    """Given a declared version but no plugin manifest, the missing manifest is reported."""
+    write(tmp_path / "pyproject.toml", '[project]\nname = "demo"\nversion = "2.0.0-dev"\n')
+
+    problems = check_repo.check_version_consistency(tmp_path)
+
+    assert len(problems) == 1
+    assert "unreadable" in problems[0] or "no version string" in problems[0]
+
+
+def test_should_return_nonzero_when_version_drifts(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Given a version drift, main exits nonzero."""
+    write(tmp_path / "README.md", "# Title\n## One\n")
+    write(tmp_path / "README-EN.md", "# Title\n## One\n")
+    write(tmp_path / "pyproject.toml", '[project]\nname = "demo"\nversion = "2.0.0-dev"\n')
+    write(
+        tmp_path / "plugins" / "auto-coding" / ".codex-plugin" / "plugin.json",
+        '{"name": "demo", "version": "0.2.0"}\n',
+    )
+    write_toolchain_routes(tmp_path)
+    monkeypatch.setattr(check_repo, "REPO_ROOT", tmp_path)
+
+    assert check_repo.main() == 1
+
+
 def test_should_not_crash_on_non_utf8_markdown(tmp_path: Path) -> None:
     """Given a non-UTF-8 markdown file, the link check warns instead of crashing."""
     write(tmp_path / "docs" / "target.md", "target\n")

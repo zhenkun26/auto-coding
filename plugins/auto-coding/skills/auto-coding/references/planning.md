@@ -43,8 +43,8 @@ or can be reverted safely as separate checkpoints.
   in parallel.
 - When the requirement comes from a spec system, each task traces back to its
   spec entry; decomposition only refines and adds tasks, never removes them.
-  A task satisfied by reuse is marked `REUSED` and kept for traceability
-  (see [conflict-rulings.md](conflict-rulings.md), R2).
+  A task satisfied by reuse is marked `REUSED` and kept for traceability —
+  reuse wins over the original plan; never silently drop or re-implement it.
 
 **Red lines**:
 
@@ -53,7 +53,7 @@ or can be reverted safely as separate checkpoints.
 - A task with no identifiable target file → mark `[AMBIGUOUS]` and ask.
 - Orphaned task with an implied dependency → annotate `[GUESSED_DEP]`.
 
-**Self-check requirement per task** (used by the L1 layer in
+**Self-check requirement per task** (used by the behavior pass in
 [implementation.md](implementation.md)):
 
 | Code type | Minimum self-check |
@@ -83,9 +83,10 @@ the narrow, reversible assumption and state it.
 
 ## Spec systems
 
-- When the repository already uses OpenSpec (or a comparable spec workflow),
-  plan inside it — see [openspec.md](openspec.md) for artifact formats,
-  handoff, and wrap-up.
+- When the repository already uses a spec workflow (OpenSpec, spec-kit, …),
+  plan inside it and treat its artifacts as planning authority; acceptance
+  stays with repository evidence. OpenSpec-specific mechanics live in the
+  optional `auto-coding-openspec` companion skill at the repository root.
 - When no spec system exists, plan inline: requirements, interface contract,
   edge conditions, and tasks in one concise block. Interface contracts must
   use concrete types — never `any` / `object` / `unknown`.

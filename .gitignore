@@ -5,12 +5,16 @@
 __pycache__/
 .mypy_cache/
 .pytest_cache/
+.venv/
 *.pyc
 .coverage
 coverage.json
 
 # Sandbox test code (not part of skill)
 sandbox_test/
+
+# Local comparative research checkouts (not distributable content)
+references/codex-skills/
 
 # Local dev/test locations (repo root only)
 /src/

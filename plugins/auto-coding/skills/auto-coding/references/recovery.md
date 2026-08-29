@@ -42,7 +42,7 @@ Schema reference: `scripts/state_schema.json`.
 
 List fields (`escape_hatches`) accept a JSON array literal (preferred — items
 may contain `;`) or a legacy `;`-separated string, e.g.
-`--set escape_hatches='["T001 L0: Any; deferred"]'`.
+`--set escape_hatches='["T001 import: Any; deferred"]'`.
 
 ## Write points
 
@@ -66,3 +66,23 @@ from the breakpoint, or 'restart' to start fresh.
 
 Never infer breakpoints from logs or reports; the state file is the only
 authoritative source.
+
+### Evidence staleness
+
+A resumed session inherits the breakpoint, not the proof. Treat every
+verification result from the earlier session — including every `PASS` —
+as unverified, and re-run the gates the selected route requires before
+building on them. Old command output in chat or reports is context, not
+evidence.
+
+### Resume or restart
+
+- **Resume** when the state file, the working tree, and the governing
+  plan still agree.
+- **Restart** when the plan contradicts the repository, the diff is
+  unrecognizable, or most recorded tasks can no longer be located. State
+  the reason honestly before starting over.
+
+Design rationale: the auto-coding repository's `docs/MEMORY_STRATEGY.md`
+(four-layer memory model; rule 2 — evidence has a shelf life, rule 4 —
+resume beats redo, redo beats a stale plan).

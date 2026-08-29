@@ -1,12 +1,18 @@
 {
   "name": "auto-coding",
-  "version": "0.2.0",
+  "version": "2.0.0",
   "description": "Risk-aware coding delivery for Codex: route by risk, plan proportionally, reuse before writing, verify with evidence, hand off safely.",
   "author": {
     "name": "auto-coding contributors"
   },
   "license": "MIT",
-  "keywords": ["risk-aware", "routing", "verification", "reuse", "codex"],
+  "keywords": [
+    "risk-aware",
+    "routing",
+    "verification",
+    "reuse",
+    "codex"
+  ],
   "skills": "./skills/",
   "interface": {
     "displayName": "Auto Coding",
@@ -14,11 +20,13 @@
     "longDescription": "auto-coding is a risk-aware coding delivery skill for Codex. It routes every task to Fast, Standard, or High-risk execution by uncertainty and operational risk; plans only to the depth the route requires; enforces reuse over new code; verifies with the project's own toolchain under explicit PASS/FAIL/BLOCKED/NOT_APPLICABLE evidence states; and requires authorization for spec initialization, installs, commits, deployments, and destructive operations.",
     "developerName": "auto-coding contributors",
     "category": "Productivity",
-    "capabilities": ["Write"],
+    "capabilities": [
+      "Write"
+    ],
     "defaultPrompt": [
+      "Set up auto-coding for this repository.",
       "Fix this bug with risk-aware routing and verification.",
-      "Implement this feature and verify it with the project's own tools.",
-      "Review this change plan and grill me on the open decisions."
+      "Implement this feature and verify it with the project's own tools."
     ]
   }
 }
