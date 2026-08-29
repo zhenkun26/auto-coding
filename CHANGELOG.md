@@ -4,6 +4,12 @@ All notable changes to auto-coding are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- CI actions bumped to the Node 24 runtime line: `actions/checkout@v7`, `actions/setup-python@v7`, and `softprops/action-gh-release@v3`, clearing the Node 20 deprecation annotation from workflow runs.
+
 ## [2.0.0] - 2026-08-29
 
 ### Added
