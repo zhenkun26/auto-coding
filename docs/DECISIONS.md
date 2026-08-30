@@ -14,6 +14,7 @@
 | ADR-AC-006 | 四层记忆模型 + 证据时效规则应对运行中遗忘 | accepted | `docs/MEMORY_STRATEGY.md`、`references/recovery.md`、`references/sedimentation.md` |
 | ADR-AC-007 | OpenSpec 降级为可选伴侣 skill，核心契约一刀切通用规则 | accepted | CHANGELOG、`auto-coding-openspec/`、`verify-evidence/` |
 | ADR-AC-008 | 仓库级配置写入 AGENTS.md 的 `## auto-coding` 小节，不发明新配置格式 | accepted | `setup-auto-coding/`、CHANGELOG 2.0.0 |
+| ADR-AC-009 | 结构契约预检查仅限 Python；TS/Go/Rust 由编译器承担结构验证 | accepted | `check_python_contracts.py` docstring、`references/implementation.md` |
 
 ## ADR-AC-001：单一风险感知 skill + 按需 references
 
@@ -86,3 +87,12 @@
 - **放弃**：新配置文件格式与机器校验（无对应消费方，纯增重）。
 - **验证**：`setup-auto-coding/SKILL.md` 提供引导与模板；AGENTS.md 已是核心工作流第 1 步的必读项。
 - **改判条件**：出现需要机器读取配置的场景（如 CI 强制档位），再评估独立配置文件。
+
+## ADR-AC-009：结构契约预检查仅限 Python；TS/Go/Rust 由编译器承担结构验证
+
+- **背景**：外部评估建议为 TypeScript/Go/Rust 移植 AST 级契约检查（如基于 tree-sitter）。该脚本的定位是填补工具链缺口——Python 动态类型且 mypy 常未配置，需要零依赖的确定性结构基线；而 TS/Go/Rust 的编译器（`tsc --noEmit`、`go build` + `go vet`、`cargo check`）本身就是比启发式更严格的结构检查器。
+- **候选方案**：引入 tree-sitter 移植多语言检查；文档化"编译器即结构检查"的设计边界。
+- **选择**：后者。预检查保持 Python-only 是设计而非缺失；在 `references/implementation.md` 与脚本 docstring 写明理由，防止未来把不对称当缺陷"修复"而引入依赖。
+- **放弃**：tree-sitter 依赖与语法维护、在用户环境制造新的 BLOCKED 路径（违反复用梯子：工具链已有）。
+- **验证**：`check_python_contracts.py` docstring 与 `references/implementation.md` 自动化预检查段落均声明边界；`tests/test_contract_check.py` 全绿。
+- **改判条件**：出现既无编译器检查、又无法用现有脚本覆盖的目标语言（即新的工具链缺口）。

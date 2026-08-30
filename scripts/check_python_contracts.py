@@ -4,14 +4,17 @@ Usage:
   python scripts/check_python_contracts.py --spec <spec.md> --source <src_dir>
 
 Template dependency: Python only. Uses the ``ast`` module to parse Python source files.
-For TypeScript/Go/Rust projects, this tool is a no-op — use the manual L2 contract comparison
-checklist in self_verify/SELF_VERIFY.md instead.
+This pre-check exists only where the toolchain cannot provide one: TypeScript, Go,
+and Rust projects get structural verification from their compilers (``tsc --noEmit``,
+``go build`` + ``go vet``, ``cargo check``) — do not port this script there; use the
+manual contract-comparison checklist from the auto-coding skill instead.
 
 Parses the spec for interface contract blocks (§2.x sections with type signatures),
 extracts actual function/class signatures from source via AST, and reports mismatches.
 
-Covers ~80% of L2 checks (structural): function exists, param count, type annotations present.
-Does NOT cover semantic checks (return value correctness, business logic).
+Covers ~80% of the structural contract checks: function exists, param count, type
+annotations present. Does NOT cover semantic checks (return value correctness,
+business logic).
 """
 
 import ast

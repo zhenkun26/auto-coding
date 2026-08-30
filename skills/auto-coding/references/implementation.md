@@ -146,10 +146,11 @@ Coverage baseline: per-task requirements are defined in
 
 ### Pass 3 — interface contract comparison
 
-Compare against the contract baseline (spec system artifacts, or the inline
-contract from planning). Five items: ① name matches; ② parameters
-(name/type/required) match; ③ return structure matches; ④ error codes match;
-⑤ side effects match.
+Compare against the contract baseline — machine-readable contracts in the
+repository (OpenAPI, GraphQL schema, protobuf, Gherkin) are preferred, then
+spec-system artifacts, then the inline contract from planning. Five items:
+① name matches; ② parameters (name/type/required) match; ③ return structure
+matches; ④ error codes match; ⑤ side effects match.
 
 - Type mismatch → Critical; fix the code.
 - Extra field in code not in contract → `[EXTRA_FIELD]` (concise addition,
@@ -168,7 +169,9 @@ before the manual comparison to catch missing functions, parameter-count
 mismatches, and missing return annotations. Fix structural issues first, then
 do the manual five-item comparison (error codes and side effects still require
 review). Never claim contract verification when the contract contains no
-supported symbols.
+supported symbols. This pre-check is Python-only by design, not by omission:
+TypeScript, Go, and Rust get structural verification from their compilers
+(`tsc --noEmit`, `go build` + `go vet`, `cargo check`) — do not port it there.
 
 Report each pass exactly: `import: PASS`, `behavior: PASS, N asserts`,
 `contract: 5/5 matched` — or the corresponding `FAIL` / `BLOCKED` /

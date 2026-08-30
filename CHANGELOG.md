@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - CI actions bumped to the Node 24 runtime line: `actions/checkout@v7`, `actions/setup-python@v7`, and `softprops/action-gh-release@v3`, clearing the Node 20 deprecation annotation from workflow runs.
+- Contract-comparison baseline now names machine-readable contracts in the repository (OpenAPI, GraphQL schema, protobuf, Gherkin) as preferred, ahead of spec-system artifacts and the inline contract.
+- The Python-only structural pre-check is documented as designed scope, not omission: TS/Go/Rust get structural verification from their compilers (ADR-AC-009). Stale references to the removed `self_verify/` path and the retired "L2" vocabulary dropped from the checker docstring.
 
 ## [2.0.0] - 2026-08-29
 
