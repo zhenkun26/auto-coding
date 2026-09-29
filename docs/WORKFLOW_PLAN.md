@@ -461,3 +461,22 @@ These CI results are separate from the 11 official local validator results.
 The closing commit updates only this record and receives its own CI. All V1-V3
 outcomes are complete, with the retained local environment available for reuse.
 No additional implementation outcome is defined by this dependency closure.
+
+## README alignment
+
+The user requested README updates after the workflow and validation closure.
+`README.md` and `README-EN.md` now explain adaptable workflow navigation,
+mechanical checks versus agent judgment, source authority and merge authorization,
+and the official validator's PyYAML dependency, isolated local environment and
+separate CI boundary. Reuse instructions and observed results link to this record
+and the retained evidence; the READMEs remain product documentation.
+
+Local acceptance: repository checks (including bilingual heading parity), local
+section-link checks, bundle consistency and diff hygiene pass. All 11 previously
+validated skill hashes are unchanged, so their official structural evidence
+remains applicable. A paired semantic review confirmed matching scope, authority,
+dependency and verification claims. No new behavioral tests are warranted for
+this documentation-only change. The complete three-file diff has no known
+unresolved material finding; delivery follows the existing reviewed-branch and
+main CI process, with the published commit and exact-head results recorded by
+Git and GitHub Actions. No runtime, skill, dependency or installer change is made.
