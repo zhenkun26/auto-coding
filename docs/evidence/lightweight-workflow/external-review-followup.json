@@ -440,5 +440,77 @@
     "current_report_path_redaction": "PASS",
     "runtime_release_execution": "NOT_RUN"
   },
-  "recorded_at_utc": "2026-09-29T05:39:16.221040+00:00"
+  "recorded_at_utc": "2026-09-29T05:39:16.221040+00:00",
+  "integration": {
+    "reviewed_commit": "ecaa5b63f22ef82119342c560a5b1724fa38ad6c",
+    "branch_ci": {
+      "url": "https://github.com/zhenkun26/auto-coding/actions/runs/36527298351",
+      "head_sha": "ecaa5b63f22ef82119342c560a5b1724fa38ad6c",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "name": "Python 3.10",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/zhenkun26/auto-coding/actions/runs/36527298351/job/109273043319"
+        },
+        {
+          "name": "Python 3.12",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/zhenkun26/auto-coding/actions/runs/36527298351/job/109273043444"
+        },
+        {
+          "name": "Python 3.11",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/zhenkun26/auto-coding/actions/runs/36527298351/job/109273043496"
+        },
+        {
+          "name": "Python 3.13",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/zhenkun26/auto-coding/actions/runs/36527298351/job/109273043509"
+        }
+      ],
+      "test_summary_lines": [
+        "Python 3.10\tRun unit tests\t2026-09-29T05:41:14.4262367Z 119 passed in 15.09s",
+        "Python 3.12\tRun unit tests\t2026-09-29T05:41:13.2748419Z 119 passed in 15.68s",
+        "Python 3.11\tRun unit tests\t2026-09-29T05:41:15.2886708Z 119 passed in 16.09s",
+        "Python 3.13\tRun unit tests\t2026-09-29T05:41:15.6711963Z 119 passed in 18.42s"
+      ]
+    },
+    "main_ci": {
+      "url": "https://github.com/zhenkun26/auto-coding/actions/runs/36527476474",
+      "head_sha": "ecaa5b63f22ef82119342c560a5b1724fa38ad6c",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "name": "Python 3.10",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/zhenkun26/auto-coding/actions/runs/36527476474/job/109273583928"
+        },
+        {
+          "name": "Python 3.12",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/zhenkun26/auto-coding/actions/runs/36527476474/job/109273583997"
+        },
+        {
+          "name": "Python 3.13",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/zhenkun26/auto-coding/actions/runs/36527476474/job/109273584067"
+        },
+        {
+          "name": "Python 3.11",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/zhenkun26/auto-coding/actions/runs/36527476474/job/109273584087"
+        }
+      ]
+    },
+    "review": "No known unresolved material finding in the bounded repair scope; exact heads, protection, ancestry and clean worktree checked before non-forced fast-forward publication."
+  }
 }

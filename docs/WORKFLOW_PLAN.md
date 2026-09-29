@@ -6,6 +6,8 @@ evidence are archived in place; the narrow clarification is tracked below.
 The subsequently authorized official-validator dependency closure V1-V3 is also
 complete: all 11 official local checks pass, superseding the historical missing-
 dependency limitation. See the continuation below for its environment and evidence.
+External-review repairs R1-R3 are complete and verified on Python 3.10-3.13;
+their evidence and explicit non-adoptions are retained at the end of this record.
 The user subsequently authorized push, archive and synchronization for this increment.
 The implementation and evidence remain at their original paths; no files were deleted.
 Baseline: `54a64b732183621f96097b00472e5cb3ebe9a9af` on `main`; clean worktree.
@@ -501,9 +503,9 @@ conclusion are not adopted as verification evidence.
 
 | Unit | Acceptance | Status |
 |---|---|---|
-| R1 | Bound and correct historical report, release configuration, CI coverage and retention guidance | Implemented; remote matrix pending |
+| R1 | Bound and correct historical report, release configuration, CI coverage and retention guidance | Complete |
 | R2 | Reproduce and reject false contract acceptance; retain valid functions/methods and add meaningful tests | Complete |
-| R3 | Verify local checks and remote matrix, review final scope/risk, integrate and verify main | Local acceptance/review complete; remote gates pending |
+| R3 | Verify local checks and remote matrix, review final scope/risk, integrate and verify main | Complete |
 
 Baseline experiments reproduced exit 0 with a structural-success claim for a
 nested function, a bare class method, an explicit zero-parameter mismatch, an
@@ -518,7 +520,7 @@ checks passing. Eighteen CLI replays from an unrelated working directory cover
 the five reproduced failures and a valid control in all three distributed/source
 script locations. Parsed YAML checks confirm the four Python versions and
 unchanged tag-only release trigger/permissions; Python 3.10 grammar is checked
-locally, while actual interpreter compatibility awaits the CI matrix.
+locally; the four-version CI matrix subsequently passed on both branch and main.
 
 [external-review-followup.json](evidence/lightweight-workflow/external-review-followup.json)
 retains baseline failures, actual post-fix outputs, commands, content identities
@@ -534,6 +536,17 @@ and positive regressions, unchanged valid-consumer behavior, faithful generated
 copies and matched bilingual documentation were checked. No known unresolved
 material finding remains in the bounded repair scope. Current-tree redaction
 does not remove the old path from published Git history. Merged branches, retained
-fixtures and legacy local-trial ignores remain by design. Publication still needs
-successful exact-head matrix CI, unchanged remote base/protection/ancestry and a
-clean worktree before non-forced integration; main CI must then be verified.
+fixtures and legacy local-trial ignores remain by design. Successful exact-head
+matrix CI, unchanged remote base/protection/ancestry and a clean worktree were
+verified before non-forced integration; main CI then passed for the same commit.
+
+Integrated repair commit: `ecaa5b63f22ef82119342c560a5b1724fa38ad6c`.
+[Branch CI 36527298351](https://github.com/zhenkun26/auto-coding/actions/runs/36527298351)
+and [main CI 36527476474](https://github.com/zhenkun26/auto-coding/actions/runs/36527476474)
+passed on Python 3.10, 3.11, 3.12 and 3.13. Branch logs record 119 passed tests
+on each version, alongside lint/types/repository/bundle checks. The evidence
+record contains exact commit/job identities and test-summary output.
+The final archive commit only updates this record and its integration evidence;
+its own published identity and CI remain available in Git/GitHub Actions.
+All bounded repair outcomes are complete. This is not a v3 release or a claim
+that structural checks establish arbitrary application behavior.
