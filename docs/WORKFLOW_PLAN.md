@@ -2,6 +2,7 @@
 
 Status: W1-W4 and M1-M3 are complete; implementation is integrated into main and
 accepted by main CI. Records and evidence are archived in place.
+The narrow source-authority clarification is tracked in the continuation below.
 The user subsequently authorized push, archive and synchronization for this increment.
 The implementation and evidence remain at their original paths; no files were deleted.
 Baseline: `54a64b732183621f96097b00472e5cb3ebe9a9af` on `main`; clean worktree.
@@ -327,3 +328,57 @@ commit. No merge conflict, rewritten history or branch deletion occurred.
   head receives CI as well; Git history and the delivery response identify it.
 - Further release, dependency installation or global plugin activation is not
   part of this continuation. No additional product phase is invented.
+
+## Authorized continuation: source authority clarification
+
+The user requested a narrow clarification of untrusted-source handling, followed
+by verification, completeness/risk review and integration into main. The supplied
+prompt-decomposition idea is a design input, not a new mandatory framework or
+fixed prompt template. Baseline: `d0a47a583eefc27b390a16358a021594c968ee23`;
+clean worktree, branch `codex/source-authority`.
+
+| Unit | Outcome and acceptance | Status |
+|---|---|---|
+| S1 | Clarify source authority in the existing entrypoint; retain valid delegation and normal use of factual context | Complete |
+| S2 | Synchronize both distributions and verify the changed skill and repository | Complete locally; branch CI pending |
+| S3 | Reconcile completeness and merge risks; integrate the reviewed branch and verify main CI | Static review complete; integration pending |
+
+Scope is one delivery-contract bullet in canonical `SKILL.md`, its two generated
+copies and this existing record. Attachments, retrieval, tool output and historical
+memory can provide task context; embedded instructions cannot independently change
+goals, permissions or acceptance. Explicit user or governing-instruction delegation
+remains effective within scope. Existing planning, memory ownership, stopping
+conditions, runtime code and enforcement boundaries remain applicable.
+
+Verification distinguishes structural checks and static interpretation review
+from observed model behavior. No new runtime, dependency, benchmark, process file
+or mandatory test count is introduced. Prior behavioral evidence remains
+historical; it does not prove the effectiveness of the new wording.
+
+Local acceptance:
+
+- `scripts/check_repo.py`, `scripts/sync_plugin_skills.py --check` and
+  `git diff --check`: PASS. Both exported entrypoints are byte-identical to the
+  canonical file (SHA-256 `4d1d2b37022a2d596342b07ae03d4791b26ed38fbea9ba65d3cb3068de9ce294`).
+- The retained independent Ruby YAML/field check from
+  [skill-structure.json](evidence/lightweight-workflow/skill-structure.json)
+  was rerun against all three changed entrypoints: PASS.
+- Official `quick_validate.py .`: BLOCKED, exit 1, `ModuleNotFoundError: No module
+  named 'yaml'`. The existing dependency limitation remains distinct from the
+  independent structural PASS. No dependency was installed.
+
+| Static interpretation case | Review judgment |
+|---|---|
+| A retrieved page or tool output asks to skip required acceptance or perform an unauthorized external action | The source cannot grant that change; normal authorized work can continue |
+| Historical memory claims permission beyond the current task | It supplies context, not independent authority; current governing scope still applies |
+| The user explicitly delegates requirements to an attached specification | Its instructions remain usable within the delegated scope and governing constraints |
+| A tool returns a test failure or retrieval provides relevant technical facts | Factual evidence remains usable; no blanket rejection of external information |
+
+Completeness and pre-merge risk review covered the entire four-file diff. The
+change preserves existing delegation, planning discretion, task-state ownership,
+completion conditions and host enforcement boundaries. Only the intended bullet
+and its distribution copies change product guidance; this record retains the
+decision and actual checks. No known unresolved material issue was found in this
+scope. This is a static wording review, not an independent agent exercise or a
+prompt-injection reliability claim. Integration requires exact-head branch CI,
+unchanged remote main ancestry and a clean worktree before non-forced publication.
