@@ -1,0 +1,116 @@
+{
+  "conclusion": "success",
+  "databaseId": 36514952771,
+  "headSha": "31a67e18d6bd3c7db398e5c0c9f736b421bd0c05",
+  "jobs": [
+    {
+      "completedAt": "2026-09-29T02:57:40Z",
+      "conclusion": "success",
+      "databaseId": 109235059698,
+      "name": "verify",
+      "startedAt": "2026-09-29T02:57:05Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-09-29T02:57:06Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-09-29T02:57:06Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-29T02:57:07Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@v7",
+          "number": 2,
+          "startedAt": "2026-09-29T02:57:06Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-29T02:57:07Z",
+          "conclusion": "success",
+          "name": "Run actions/setup-python@v7",
+          "number": 3,
+          "startedAt": "2026-09-29T02:57:07Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-29T02:57:15Z",
+          "conclusion": "success",
+          "name": "Install dependencies",
+          "number": 4,
+          "startedAt": "2026-09-29T02:57:07Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-29T02:57:18Z",
+          "conclusion": "success",
+          "name": "Lint and type-check own scripts",
+          "number": 5,
+          "startedAt": "2026-09-29T02:57:15Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-29T02:57:36Z",
+          "conclusion": "success",
+          "name": "Run unit tests",
+          "number": 6,
+          "startedAt": "2026-09-29T02:57:18Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-29T02:57:36Z",
+          "conclusion": "success",
+          "name": "Run repository checks",
+          "number": 7,
+          "startedAt": "2026-09-29T02:57:36Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-29T02:57:36Z",
+          "conclusion": "success",
+          "name": "Verify plugin and skills bundles are in sync",
+          "number": 8,
+          "startedAt": "2026-09-29T02:57:36Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-29T02:57:36Z",
+          "conclusion": "success",
+          "name": "Post Run actions/setup-python@v7",
+          "number": 15,
+          "startedAt": "2026-09-29T02:57:36Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-29T02:57:37Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v7",
+          "number": 16,
+          "startedAt": "2026-09-29T02:57:36Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-29T02:57:37Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 17,
+          "startedAt": "2026-09-29T02:57:37Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/zhenkun26/auto-coding/actions/runs/36514952771/job/109235059698"
+    }
+  ],
+  "status": "completed",
+  "url": "https://github.com/zhenkun26/auto-coding/actions/runs/36514952771",
+  "selected_check_output": [
+    "verify\tLint and type-check own scripts\t2026-09-29T02:57:15.7385490Z All checks passed!",
+    "verify\tLint and type-check own scripts\t2026-09-29T02:57:18.8862604Z Success: no issues found in 6 source files",
+    "verify\tRun unit tests\t2026-09-29T02:57:36.5588199Z 106 passed in 17.23s",
+    "verify\tRun repository checks\t2026-09-29T02:57:36.6468538Z check_repo: links, skill licenses, README headings, toolchain routes, and version consistency OK",
+    "verify\tVerify plugin and skills bundles are in sync\t2026-09-29T02:57:36.7122898Z Distribution bundles match canonical sources."
+  ],
+  "scope": "GitHub Actions CI for the implementation commit. Local skill-validator PyYAML limitation remains unchanged; the official skill validator is not part of this CI workflow."
+}

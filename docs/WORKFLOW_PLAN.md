@@ -1,10 +1,11 @@
 # Lightweight delivery workflow plan
 
-Status: implementation and local acceptance complete, with the explicit limitations below.
-Scope authorized in the current conversation on 2026-09-28; no remote delivery authorized.
+Status: archived in place after implementation, local acceptance and successful remote CI.
+The user subsequently authorized push, archive and synchronization for this increment.
+The implementation and evidence remain at their original paths; no files were deleted.
 Baseline: `54a64b732183621f96097b00472e5cb3ebe9a9af` on `main`; clean worktree.
-Working branch: `codex/lightweight-delivery`. This document is the current
-implementation and acceptance record; do not create a competing task-state file.
+Working branch: `codex/lightweight-delivery`. This is the retained implementation
+and acceptance record for the completed increment.
 
 ## Intent and completion
 
@@ -17,8 +18,10 @@ routine in-scope repairs returned to the user as optional follow-up work.
 Deliver a coherent, lightweight workflow in the existing skills, durable recovery
 support, synchronized distributions, relevant automated checks, realistic
 forward tests, and a final completeness review. A local commit is authorized by
-the user's repository workflow. Push, PR creation, merge, release, deployment,
-new dependencies, and filesystem deletion are outside this increment.
+the user's repository workflow. The later closeout approval authorizes publishing
+this task branch to `origin`, synchronizing its distribution bundles, and archiving
+this record in place. PR creation, merge, release, deployment, new dependencies,
+and filesystem deletion remain outside this increment.
 
 No OpenSpec requirement, new orchestration service, policy service, vector store,
 mandatory multi-agent workflow, fixed test counts, or mandatory process artifacts
@@ -163,8 +166,8 @@ authority. The local comparative checkout's existing use attribution is retained
 ## Execution evidence and handoff
 
 All four units are implemented. Root sources and both generated distributions
-match. The new major development version is `3.0.0-dev`; this is not a release,
-remote push, or update of an installed plugin.
+match. The new major development version is `3.0.0-dev`. The implementation branch
+is published; no release or update of an installed plugin was performed.
 
 | Check | Observed result | Scope / evidence |
 |---|---|---|
@@ -177,6 +180,7 @@ remote push, or update of an installed plugin.
 | Official skill quick validator | BLOCKED | PyYAML absent; no dependency installed. [skill-structure.json](evidence/lightweight-workflow/skill-structure.json) retains the failure and a separate Ruby YAML/field validation PASS for all four canonical skills |
 | Forward delivery | Observed workflow PASS | Independent agent implemented a real CLI feature from an existing plan, ran 8 tests, kept one state authority; lead replayed 8 tests and 6 CLI acceptance cases |
 | Forward unavailable gate | Observed workflow PASS; fixture acceptance BLOCKED | Independent agent implemented and locally tested the authorized behavior, then retained blocked acceptance for missing conformance tooling; lead replayed 3 tests and checked the absent tool and blocked record |
+| Remote CI | PASS on Ubuntu with Python 3.12 | [Run 36514952771](https://github.com/zhenkun26/auto-coding/actions/runs/36514952771), 106 tests plus lint/types/repository/bundle checks; [retained metadata and output](evidence/lightweight-workflow/remote-ci.json) |
 | Independent source review | One P3 finding resolved; no blocking findings in reviewed scope | Removed obsolete TypeScript L2/fixed-five wording; independent closure verified final evidence and the lead's legacy-state correction |
 
 The complete forward-test artifacts, post-run source, plans, content hashes,
@@ -217,18 +221,28 @@ substitute weaker checks for a target project's required acceptance.
 | Honest stopping | Continue ordinary repairs; missing prerequisites block dependent work; incomplete handoff is never completion | Missing-conformance forward scenario preserved BLOCKED while completing independent local work |
 | Final review and scope | Independent reviewer covered canonical sources, tools, tests, untracked additions and bundles; lead reconciled evidence and final diff | One P3 corrected; lead also rejected absent legacy work fields as unknown rather than empty; no known material in-scope defect remains |
 
-No filesystem deletion, new dependencies, push, PR, merge, release, deployment,
-or automatic global-memory update was performed. Retained test directories are
+The implementation commit was pushed after explicit authorization. No filesystem
+deletion, new project dependencies, PR, merge, release, deployment, or automatic
+global-memory update was performed. Retained test directories are
 left for the user to manage. Historical acceptance reports and release notes
 remain historical; they are not reused as current verification.
 
 Limits: checks ran locally on macOS with Python 3.13.15 (the executing fixture
 agents used system Python 3.9.6; the lead also replayed on 3.13.15). Linux/Python
-3.12 CI, production effects, long-context loss, cross-host recovery, and statistical
-model reliability were not tested. Two small forward cases support the described
+3.12 CI subsequently passed on GitHub. Production effects, long-context loss,
+cross-host recovery, and statistical model reliability were not tested. Two small forward cases support the described
 observations only; they do not establish that Astra can never stop prematurely.
 
-Delivery: commit this verified increment locally on `codex/lightweight-delivery`;
-the delivery response and Git history identify its hash. No additional in-scope
-implementation is pending. Push to the intended remote requires the user's
-explicit authorization; installation and release are separate future actions.
+## Closeout and archive
+
+- Implementation commit: `31a67e18d6bd3c7db398e5c0c9f736b421bd0c05`.
+- Published branch: `origin/codex/lightweight-delivery` at
+  [zhenkun26/auto-coding](https://github.com/zhenkun26/auto-coding/tree/codex/lightweight-delivery).
+- Implementation CI: [36514952771](https://github.com/zhenkun26/auto-coding/actions/runs/36514952771), successful. The later archive commit changes only this record and its CI evidence; the current branch's CI remains available on GitHub.
+- Synchronization: both generated skill bundles match canonical sources; the
+  published branch tracks its same-named remote branch.
+- Archival: this plan and evidence are retained in place as a closed record.
+  Archival does not remove files, branches, test artifacts, or this conversation.
+- No additional in-scope implementation remains. Integration into `main`, plugin
+  installation, and release are distinct future actions, not implied by this
+  closeout approval.
