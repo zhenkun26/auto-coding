@@ -3,8 +3,9 @@
 Status: W1-W4, M1-M3 and the source-authority clarification S1-S3 are complete;
 implementation is integrated into main and accepted by main CI. Records and
 evidence are archived in place; the narrow clarification is tracked below.
-The subsequently authorized official-validator dependency closure is in progress
-in the V1-V3 continuation below.
+The subsequently authorized official-validator dependency closure V1-V3 is also
+complete: all 11 official local checks pass, superseding the historical missing-
+dependency limitation. See the continuation below for its environment and evidence.
 The user subsequently authorized push, archive and synchronization for this increment.
 The implementation and evidence remain at their original paths; no files were deleted.
 Baseline: `54a64b732183621f96097b00472e5cb3ebe9a9af` on `main`; clean worktree.
@@ -407,7 +408,7 @@ it does not add a skill runtime dependency. Baseline:
 |---|---|---|
 | V1 | Prepare a retained isolated environment with pinned PyYAML and verified package provenance | Complete |
 | V2 | Run the unmodified official validator on four canonical and seven distributed skills; preserve exact evidence | Complete |
-| V3 | Review completeness and merge risks, integrate the evidence and verify main CI | Review complete; integration pending |
+| V3 | Review completeness and merge risks, integrate the evidence and verify main CI | Complete |
 
 Historical BLOCKED records describe the environment at their execution time and
 remain intact. A subsequent PASS must identify the validator, dependency,
@@ -444,10 +445,19 @@ official validation has actually run, all 11 checked entrypoint hashes still
 match their current content, and earlier blocked results remain historical.
 Tracked changes are limited to this record and the new evidence file; product
 guidance, runtime, dependency declarations and CI configuration are unchanged.
-No known unresolved material finding remains in this scope. Before integration,
-verify exact-head branch CI, clean worktree, current main/protection state and
-fast-forward ancestry; then verify main CI and retain the closing record.
+No known unresolved material finding remains in this scope. Exact-head branch CI,
+clean worktree, current main/protection state and fast-forward ancestry were
+verified before non-forced integration; main CI then passed on the same commit.
 
 Local repository checks, bundle consistency, diff hygiene and evidence-identity
 checks pass. The evidence audit verified every recorded PASS against its actual
 exit code/output, current hashes and the unchanged baseline skill content.
+
+Integrated evidence commit: `4c6d46b07952eb84983ed5f2b4e02f9275a0306c`.
+[Branch CI 36523684407](https://github.com/zhenkun26/auto-coding/actions/runs/36523684407)
+and [main CI 36523853068](https://github.com/zhenkun26/auto-coding/actions/runs/36523853068)
+passed; branch logs confirm 108 tests plus lint/types/repository/bundle checks.
+These CI results are separate from the 11 official local validator results.
+The closing commit updates only this record and receives its own CI. All V1-V3
+outcomes are complete, with the retained local environment available for reuse.
+No additional implementation outcome is defined by this dependency closure.
