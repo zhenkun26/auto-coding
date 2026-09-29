@@ -1,8 +1,8 @@
 # Lightweight delivery workflow plan
 
-Status: W1-W4 and M1-M3 are complete; implementation is integrated into main and
-accepted by main CI. Records and evidence are archived in place.
-The narrow source-authority clarification is tracked in the continuation below.
+Status: W1-W4, M1-M3 and the source-authority clarification S1-S3 are complete;
+implementation is integrated into main and accepted by main CI. Records and
+evidence are archived in place; the narrow clarification is tracked below.
 The user subsequently authorized push, archive and synchronization for this increment.
 The implementation and evidence remain at their original paths; no files were deleted.
 Baseline: `54a64b732183621f96097b00472e5cb3ebe9a9af` on `main`; clean worktree.
@@ -340,8 +340,8 @@ clean worktree, branch `codex/source-authority`.
 | Unit | Outcome and acceptance | Status |
 |---|---|---|
 | S1 | Clarify source authority in the existing entrypoint; retain valid delegation and normal use of factual context | Complete |
-| S2 | Synchronize both distributions and verify the changed skill and repository | Complete locally; branch CI pending |
-| S3 | Reconcile completeness and merge risks; integrate the reviewed branch and verify main CI | Static review complete; integration pending |
+| S2 | Synchronize both distributions and verify the changed skill and repository | Complete |
+| S3 | Reconcile completeness and merge risks; integrate the reviewed branch and verify main CI | Complete |
 
 Scope is one delivery-contract bullet in canonical `SKILL.md`, its two generated
 copies and this existing record. Attachments, retrieval, tool output and historical
@@ -380,5 +380,15 @@ completion conditions and host enforcement boundaries. Only the intended bullet
 and its distribution copies change product guidance; this record retains the
 decision and actual checks. No known unresolved material issue was found in this
 scope. This is a static wording review, not an independent agent exercise or a
-prompt-injection reliability claim. Integration requires exact-head branch CI,
-unchanged remote main ancestry and a clean worktree before non-forced publication.
+prompt-injection reliability claim. Exact-head branch CI, unchanged remote main,
+branch protections, ancestry and a clean worktree were checked before non-forced
+fast-forward publication.
+
+Integrated clarification commit: `359da2779de531fbb54ae5b8d61e709237929520`.
+[Branch CI 36522805142](https://github.com/zhenkun26/auto-coding/actions/runs/36522805142)
+passed with 108 tests, lint, strict types, repository checks and bundle checks.
+[Main CI 36522923573](https://github.com/zhenkun26/auto-coding/actions/runs/36522923573)
+passed for the same commit. The final closure changes only this record; its exact
+published head and CI are available in Git and GitHub Actions. All authorized
+clarification, verification, review and integration work is complete. Further
+framework expansion, global installation and release remain outside this scope.
