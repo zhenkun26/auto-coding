@@ -1,6 +1,7 @@
 # Lightweight delivery workflow plan
 
-Status: W1-W4 remain archived; the newly authorized merge continuation below is active.
+Status: W1-W4 and M1-M3 are complete; implementation is integrated into main and
+accepted by main CI. Records and evidence are archived in place.
 The user subsequently authorized push, archive and synchronization for this increment.
 The implementation and evidence remain at their original paths; no files were deleted.
 Baseline: `54a64b732183621f96097b00472e5cb3ebe9a9af` on `main`; clean worktree.
@@ -260,8 +261,8 @@ scope, not a guarantee of zero defects or universal model reliability.
 | Unit | Outcome and acceptance | Status |
 |---|---|---|
 | M1 | Reconcile W1-W4 evidence, exercise exported-package and recovery behavior, resolve concrete review findings, and record merge risks/limits | Complete |
-| M2 | Verify current remote base and reviewed branch CI; integrate with preserved history under repository protection rules and publish `main` | Pending |
-| M3 | Check actual remote/main identity, merged CI and distribution consistency; retain final handoff without deleting branches or evidence | Pending |
+| M2 | Verify current remote base and reviewed branch CI; integrate with preserved history under repository protection rules and publish `main` | Complete |
+| M3 | Check actual remote/main identity, merged CI and distribution consistency; retain final handoff without deleting branches or evidence | Complete |
 
 The existing implementation commit, evidence and archived decisions remain
 historical records. New evidence supplements them; it does not relabel past
@@ -303,6 +304,26 @@ hashes and results are retained in
 | Residual limits | Single-writer state, non-transactional multi-file sync and bounded agent samples remain disclosed; no zero-risk guarantee |
 
 Pre-merge judgment: no known unresolved material issue in the reviewed scope.
-Proceed to M2 only after CI passes for the actual new commit and the remote base
-still matches the reviewed integration state. Then finish M3, including main CI.
-Do not stop at publishing another unintegrated feature branch.
+The exact implementation commit passed branch CI before its main publication;
+remote base, branch head, protections, ancestry and clean worktree were rechecked
+immediately before the non-forced fast-forward. Main CI then passed for that same
+commit. No merge conflict, rewritten history or branch deletion occurred.
+
+## Final integrated handoff
+
+- Integrated code commit: `354a03397adfb1a594d1f6e4e7aebe95ab273bf1`.
+- Before-merge CI: [36516322085](https://github.com/zhenkun26/auto-coding/actions/runs/36516322085), successful.
+- Main CI: [36516484190](https://github.com/zhenkun26/auto-coding/actions/runs/36516484190), successful.
+- Exact-head CI metadata and remote identity are retained in
+  [integration.json](evidence/lightweight-workflow/integration.json).
+- Final completeness: the original outcome plan, boundary management, recoverable
+  memory, actual integration, applicable verification, independent risk review,
+  preserved evidence and main delivery have each been reconciled. The observed
+  P2 finding is resolved; no known material finding or authorized implementation
+  remains outstanding.
+- The final closure commit contains only this plan and integration metadata.
+  Its document checks are run on the final content; prior code tests remain
+  applicable because code and toolchain are unchanged. The published final main
+  head receives CI as well; Git history and the delivery response identify it.
+- Further release, dependency installation or global plugin activation is not
+  part of this continuation. No additional product phase is invented.

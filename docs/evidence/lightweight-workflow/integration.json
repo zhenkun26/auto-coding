@@ -1,0 +1,233 @@
+{
+  "code_commit": "354a03397adfb1a594d1f6e4e7aebe95ab273bf1",
+  "integration": "Non-forced fast-forward from 54a64b732183621f96097b00472e5cb3ebe9a9af; original branch and commits retained.",
+  "remote_refs_at_acceptance": {
+    "refs/heads/codex/lightweight-delivery": "354a03397adfb1a594d1f6e4e7aebe95ab273bf1",
+    "refs/heads/main": "354a03397adfb1a594d1f6e4e7aebe95ab273bf1"
+  },
+  "ci": [
+    {
+      "conclusion": "success",
+      "databaseId": 36516322085,
+      "headBranch": "codex/lightweight-delivery",
+      "headSha": "354a03397adfb1a594d1f6e4e7aebe95ab273bf1",
+      "jobs": [
+        {
+          "completedAt": "2026-09-29T03:15:54Z",
+          "conclusion": "success",
+          "databaseId": 109239287204,
+          "name": "verify",
+          "startedAt": "2026-09-29T03:15:23Z",
+          "status": "completed",
+          "steps": [
+            {
+              "completedAt": "2026-09-29T03:15:28Z",
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "startedAt": "2026-09-29T03:15:27Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-09-29T03:15:29Z",
+              "conclusion": "success",
+              "name": "Run actions/checkout@v7",
+              "number": 2,
+              "startedAt": "2026-09-29T03:15:28Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-09-29T03:15:29Z",
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v7",
+              "number": 3,
+              "startedAt": "2026-09-29T03:15:29Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-09-29T03:15:35Z",
+              "conclusion": "success",
+              "name": "Install dependencies",
+              "number": 4,
+              "startedAt": "2026-09-29T03:15:29Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-09-29T03:15:38Z",
+              "conclusion": "success",
+              "name": "Lint and type-check own scripts",
+              "number": 5,
+              "startedAt": "2026-09-29T03:15:35Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-09-29T03:15:52Z",
+              "conclusion": "success",
+              "name": "Run unit tests",
+              "number": 6,
+              "startedAt": "2026-09-29T03:15:38Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-09-29T03:15:52Z",
+              "conclusion": "success",
+              "name": "Run repository checks",
+              "number": 7,
+              "startedAt": "2026-09-29T03:15:52Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-09-29T03:15:52Z",
+              "conclusion": "success",
+              "name": "Verify plugin and skills bundles are in sync",
+              "number": 8,
+              "startedAt": "2026-09-29T03:15:52Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-09-29T03:15:52Z",
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v7",
+              "number": 15,
+              "startedAt": "2026-09-29T03:15:52Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-09-29T03:15:52Z",
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v7",
+              "number": 16,
+              "startedAt": "2026-09-29T03:15:52Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-09-29T03:15:52Z",
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 17,
+              "startedAt": "2026-09-29T03:15:52Z",
+              "status": "completed"
+            }
+          ],
+          "url": "https://github.com/zhenkun26/auto-coding/actions/runs/36516322085/job/109239287204"
+        }
+      ],
+      "status": "completed",
+      "url": "https://github.com/zhenkun26/auto-coding/actions/runs/36516322085"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 36516484190,
+      "headBranch": "main",
+      "headSha": "354a03397adfb1a594d1f6e4e7aebe95ab273bf1",
+      "jobs": [
+        {
+          "completedAt": "2026-09-29T03:18:05Z",
+          "conclusion": "success",
+          "databaseId": 109239800130,
+          "name": "verify",
+          "startedAt": "2026-09-29T03:17:33Z",
+          "status": "completed",
+          "steps": [
+            {
+              "completedAt": "2026-09-29T03:17:34Z",
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "startedAt": "2026-09-29T03:17:34Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-09-29T03:17:35Z",
+              "conclusion": "success",
+              "name": "Run actions/checkout@v7",
+              "number": 2,
+              "startedAt": "2026-09-29T03:17:34Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-09-29T03:17:35Z",
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v7",
+              "number": 3,
+              "startedAt": "2026-09-29T03:17:35Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-09-29T03:17:43Z",
+              "conclusion": "success",
+              "name": "Install dependencies",
+              "number": 4,
+              "startedAt": "2026-09-29T03:17:35Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-09-29T03:17:46Z",
+              "conclusion": "success",
+              "name": "Lint and type-check own scripts",
+              "number": 5,
+              "startedAt": "2026-09-29T03:17:43Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-09-29T03:18:03Z",
+              "conclusion": "success",
+              "name": "Run unit tests",
+              "number": 6,
+              "startedAt": "2026-09-29T03:17:46Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-09-29T03:18:03Z",
+              "conclusion": "success",
+              "name": "Run repository checks",
+              "number": 7,
+              "startedAt": "2026-09-29T03:18:03Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-09-29T03:18:03Z",
+              "conclusion": "success",
+              "name": "Verify plugin and skills bundles are in sync",
+              "number": 8,
+              "startedAt": "2026-09-29T03:18:03Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-09-29T03:18:04Z",
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v7",
+              "number": 15,
+              "startedAt": "2026-09-29T03:18:03Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-09-29T03:18:04Z",
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v7",
+              "number": 16,
+              "startedAt": "2026-09-29T03:18:04Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-09-29T03:18:04Z",
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 17,
+              "startedAt": "2026-09-29T03:18:04Z",
+              "status": "completed"
+            }
+          ],
+          "url": "https://github.com/zhenkun26/auto-coding/actions/runs/36516484190/job/109239800130"
+        }
+      ],
+      "status": "completed",
+      "url": "https://github.com/zhenkun26/auto-coding/actions/runs/36516484190"
+    }
+  ],
+  "completion": "M1-M3 code integration and main CI acceptance passed. The closure commit changes only the retained plan and this integration evidence; it reuses unchanged code verification, runs current document checks and receives a final main CI run.",
+  "remaining_limitations": [
+    "Official quick_validate remains unavailable without PyYAML; distinct structural validation remains recorded.",
+    "No release, global plugin installation, production effects or statistical model-reliability claim."
+  ]
+}
