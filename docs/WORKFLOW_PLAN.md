@@ -550,3 +550,20 @@ The final archive commit only updates this record and its integration evidence;
 its own published identity and CI remain available in Git/GitHub Actions.
 All bounded repair outcomes are complete. This is not a v3 release or a claim
 that structural checks establish arbitrary application behavior.
+
+### Subsequent removal of the historical report
+
+The user explicitly requested deletion of the old root review report after the
+follow-up was integrated. This narrow authorization supersedes item 1's earlier
+in-place retention: remove `auto-coding-项目评审报告.md` from the current tree.
+Published Git history and the prior commit's evidence remain intact; this is not
+a history scrub or authorization to delete other files, fixtures or branches.
+
+Local acceptance passed: no pre-existing tracked-text references to the filename,
+repository and distribution checks, and diff hygiene. Scope/risk review found no
+known unresolved material issue in this two-file change. The historical evidence
+still describes the content checked
+at its recorded commit. No runtime or skill behavior changes, so new behavioral
+tests are unnecessary. Delivery uses the existing reviewed-branch and main CI
+process; exact commit identities and integration results are recorded in Git
+and GitHub Actions.
