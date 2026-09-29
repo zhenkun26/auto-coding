@@ -1,0 +1,227 @@
+{
+  "recorded_at_utc": "2026-09-29T04:52:34.364545+00:00",
+  "base_commit": "ed9cf4aa1fabfdf386a2cd0e050e2d4608337360",
+  "authorization": "User explicitly approved PyYAML in an independent retained validation directory; no skill runtime dependency.",
+  "before": {
+    "argv": [
+      "/Users/zhenkun/GitHub/auto-coding/.venv/bin/python",
+      "-I",
+      "-B",
+      "/Users/zhenkun/.codex/skills/.system/skill-creator/scripts/quick_validate.py",
+      "."
+    ],
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/zhenkun/.codex/skills/.system/skill-creator/scripts/quick_validate.py\", line 10, in <module>\n    import yaml\nModuleNotFoundError: No module named 'yaml'\n"
+  },
+  "validator": {
+    "path": "/Users/zhenkun/.codex/skills/.system/skill-creator/scripts/quick_validate.py",
+    "sha256": "ee6dba90f44d37171c5a6edb8095979c54919ff6822c1a907afca2e78c48738c",
+    "modified": false
+  },
+  "dependency": {
+    "name": "PyYAML",
+    "version": "6.0.3",
+    "metadata_url": "https://pypi.org/pypi/PyYAML/6.0.3/json",
+    "filename": "pyyaml-6.0.3-cp313-cp313-macosx_11_0_arm64.whl",
+    "url": "https://files.pythonhosted.org/packages/b1/16/95309993f1d3748cd644e02e38b75d50cbc0d9561d21f390a76242ce073f/pyyaml-6.0.3-cp313-cp313-macosx_11_0_arm64.whl",
+    "sha256": "2283a07e2c21a2aa78d9c4442724ec1eb15f5e42a723b99cb3d822d48f5f7ad1",
+    "size": 173252,
+    "requires_dist": null
+  },
+  "environment": {
+    "path": "/Users/zhenkun/GitHub/auto-coding/.venv/skill-validation-pyyaml-6.0.3",
+    "python": "/Users/zhenkun/GitHub/auto-coding/.venv/skill-validation-pyyaml-6.0.3/bin/python",
+    "setup": "Fresh no-pip venv; verified platform wheel extracted exclusively into site-packages without build hooks or cleanup. Wheel and PyPI metadata retained.",
+    "smoke": {
+      "argv": [
+        "/Users/zhenkun/GitHub/auto-coding/.venv/skill-validation-pyyaml-6.0.3/bin/python",
+        "-I",
+        "-B",
+        "-c",
+        "import importlib.metadata,json,sys,yaml; assert yaml.safe_load(\"name: example\\n\") == {\"name\":\"example\"}; print(json.dumps({\"version\":importlib.metadata.version(\"PyYAML\"),\"module\":yaml.__file__,\"python\":sys.version.split()[0],\"isolated\":sys.flags.isolated}))"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"version\": \"6.0.3\", \"module\": \"/Users/zhenkun/GitHub/auto-coding/.venv/skill-validation-pyyaml-6.0.3/lib/python3.13/site-packages/yaml/__init__.py\", \"python\": \"3.13.15\", \"isolated\": 1}\n",
+      "stderr": ""
+    }
+  },
+  "results": [
+    {
+      "argv": [
+        "/Users/zhenkun/GitHub/auto-coding/.venv/skill-validation-pyyaml-6.0.3/bin/python",
+        "-I",
+        "-B",
+        "/Users/zhenkun/.codex/skills/.system/skill-creator/scripts/quick_validate.py",
+        "."
+      ],
+      "exit_code": 0,
+      "stdout": "Skill is valid!\n",
+      "stderr": "",
+      "skill": "SKILL.md",
+      "sha256": "4d1d2b37022a2d596342b07ae03d4791b26ed38fbea9ba65d3cb3068de9ce294",
+      "result": "PASS"
+    },
+    {
+      "argv": [
+        "/Users/zhenkun/GitHub/auto-coding/.venv/skill-validation-pyyaml-6.0.3/bin/python",
+        "-I",
+        "-B",
+        "/Users/zhenkun/.codex/skills/.system/skill-creator/scripts/quick_validate.py",
+        "verify-evidence"
+      ],
+      "exit_code": 0,
+      "stdout": "Skill is valid!\n",
+      "stderr": "",
+      "skill": "verify-evidence/SKILL.md",
+      "sha256": "f1a5db88cad842bc8159d3ffc919b95feaf7f2c17fe75c79031ad9783781e2f2",
+      "result": "PASS"
+    },
+    {
+      "argv": [
+        "/Users/zhenkun/GitHub/auto-coding/.venv/skill-validation-pyyaml-6.0.3/bin/python",
+        "-I",
+        "-B",
+        "/Users/zhenkun/.codex/skills/.system/skill-creator/scripts/quick_validate.py",
+        "setup-auto-coding"
+      ],
+      "exit_code": 0,
+      "stdout": "Skill is valid!\n",
+      "stderr": "",
+      "skill": "setup-auto-coding/SKILL.md",
+      "sha256": "bf5d8aedda40a72662649eaa722a6cec4908770e00af83c27b21f810000245bb",
+      "result": "PASS"
+    },
+    {
+      "argv": [
+        "/Users/zhenkun/GitHub/auto-coding/.venv/skill-validation-pyyaml-6.0.3/bin/python",
+        "-I",
+        "-B",
+        "/Users/zhenkun/.codex/skills/.system/skill-creator/scripts/quick_validate.py",
+        "auto-coding-openspec"
+      ],
+      "exit_code": 0,
+      "stdout": "Skill is valid!\n",
+      "stderr": "",
+      "skill": "auto-coding-openspec/SKILL.md",
+      "sha256": "e33ca130413bf64cc1306d3b34ac339a5006b356c4075c0f1a5e9013a8f3b1bf",
+      "result": "PASS"
+    },
+    {
+      "argv": [
+        "/Users/zhenkun/GitHub/auto-coding/.venv/skill-validation-pyyaml-6.0.3/bin/python",
+        "-I",
+        "-B",
+        "/Users/zhenkun/.codex/skills/.system/skill-creator/scripts/quick_validate.py",
+        "skills/auto-coding"
+      ],
+      "exit_code": 0,
+      "stdout": "Skill is valid!\n",
+      "stderr": "",
+      "skill": "skills/auto-coding/SKILL.md",
+      "sha256": "4d1d2b37022a2d596342b07ae03d4791b26ed38fbea9ba65d3cb3068de9ce294",
+      "result": "PASS"
+    },
+    {
+      "argv": [
+        "/Users/zhenkun/GitHub/auto-coding/.venv/skill-validation-pyyaml-6.0.3/bin/python",
+        "-I",
+        "-B",
+        "/Users/zhenkun/.codex/skills/.system/skill-creator/scripts/quick_validate.py",
+        "skills/auto-coding-openspec"
+      ],
+      "exit_code": 0,
+      "stdout": "Skill is valid!\n",
+      "stderr": "",
+      "skill": "skills/auto-coding-openspec/SKILL.md",
+      "sha256": "e33ca130413bf64cc1306d3b34ac339a5006b356c4075c0f1a5e9013a8f3b1bf",
+      "result": "PASS"
+    },
+    {
+      "argv": [
+        "/Users/zhenkun/GitHub/auto-coding/.venv/skill-validation-pyyaml-6.0.3/bin/python",
+        "-I",
+        "-B",
+        "/Users/zhenkun/.codex/skills/.system/skill-creator/scripts/quick_validate.py",
+        "skills/setup-auto-coding"
+      ],
+      "exit_code": 0,
+      "stdout": "Skill is valid!\n",
+      "stderr": "",
+      "skill": "skills/setup-auto-coding/SKILL.md",
+      "sha256": "bf5d8aedda40a72662649eaa722a6cec4908770e00af83c27b21f810000245bb",
+      "result": "PASS"
+    },
+    {
+      "argv": [
+        "/Users/zhenkun/GitHub/auto-coding/.venv/skill-validation-pyyaml-6.0.3/bin/python",
+        "-I",
+        "-B",
+        "/Users/zhenkun/.codex/skills/.system/skill-creator/scripts/quick_validate.py",
+        "skills/verify-evidence"
+      ],
+      "exit_code": 0,
+      "stdout": "Skill is valid!\n",
+      "stderr": "",
+      "skill": "skills/verify-evidence/SKILL.md",
+      "sha256": "f1a5db88cad842bc8159d3ffc919b95feaf7f2c17fe75c79031ad9783781e2f2",
+      "result": "PASS"
+    },
+    {
+      "argv": [
+        "/Users/zhenkun/GitHub/auto-coding/.venv/skill-validation-pyyaml-6.0.3/bin/python",
+        "-I",
+        "-B",
+        "/Users/zhenkun/.codex/skills/.system/skill-creator/scripts/quick_validate.py",
+        "plugins/auto-coding/skills/auto-coding"
+      ],
+      "exit_code": 0,
+      "stdout": "Skill is valid!\n",
+      "stderr": "",
+      "skill": "plugins/auto-coding/skills/auto-coding/SKILL.md",
+      "sha256": "4d1d2b37022a2d596342b07ae03d4791b26ed38fbea9ba65d3cb3068de9ce294",
+      "result": "PASS"
+    },
+    {
+      "argv": [
+        "/Users/zhenkun/GitHub/auto-coding/.venv/skill-validation-pyyaml-6.0.3/bin/python",
+        "-I",
+        "-B",
+        "/Users/zhenkun/.codex/skills/.system/skill-creator/scripts/quick_validate.py",
+        "plugins/auto-coding/skills/setup-auto-coding"
+      ],
+      "exit_code": 0,
+      "stdout": "Skill is valid!\n",
+      "stderr": "",
+      "skill": "plugins/auto-coding/skills/setup-auto-coding/SKILL.md",
+      "sha256": "bf5d8aedda40a72662649eaa722a6cec4908770e00af83c27b21f810000245bb",
+      "result": "PASS"
+    },
+    {
+      "argv": [
+        "/Users/zhenkun/GitHub/auto-coding/.venv/skill-validation-pyyaml-6.0.3/bin/python",
+        "-I",
+        "-B",
+        "/Users/zhenkun/.codex/skills/.system/skill-creator/scripts/quick_validate.py",
+        "plugins/auto-coding/skills/verify-evidence"
+      ],
+      "exit_code": 0,
+      "stdout": "Skill is valid!\n",
+      "stderr": "",
+      "skill": "plugins/auto-coding/skills/verify-evidence/SKILL.md",
+      "sha256": "f1a5db88cad842bc8159d3ffc919b95feaf7f2c17fe75c79031ad9783781e2f2",
+      "result": "PASS"
+    }
+  ],
+  "summary": {
+    "passed": 11,
+    "failed": 0,
+    "canonical": 4,
+    "distributed": 7
+  },
+  "limitations": [
+    "Structural validation only; does not prove agent behavior.",
+    "Environment is local and ignored; package URL/hash and commands are retained for reconstruction.",
+    "Official validator comes from the local Codex skill-creator installation and is not run by repository CI."
+  ]
+}

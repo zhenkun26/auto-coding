@@ -3,6 +3,8 @@
 Status: W1-W4, M1-M3 and the source-authority clarification S1-S3 are complete;
 implementation is integrated into main and accepted by main CI. Records and
 evidence are archived in place; the narrow clarification is tracked below.
+The subsequently authorized official-validator dependency closure is in progress
+in the V1-V3 continuation below.
 The user subsequently authorized push, archive and synchronization for this increment.
 The implementation and evidence remain at their original paths; no files were deleted.
 Baseline: `54a64b732183621f96097b00472e5cb3ebe9a9af` on `main`; clean worktree.
@@ -392,3 +394,60 @@ passed for the same commit. The final closure changes only this record; its exac
 published head and CI are available in Git and GitHub Actions. All authorized
 clarification, verification, review and integration work is complete. Further
 framework expansion, global installation and release remain outside this scope.
+
+## Authorized continuation: official skill validation
+
+The user explicitly approved PyYAML in a separate retained validation environment
+after the missing dependency was explained. This approval covers the validator's
+dependency, official validation, acceptance records, review and main integration;
+it does not add a skill runtime dependency. Baseline:
+`ed9cf4aa1fabfdf386a2cd0e050e2d4608337360`, branch `codex/skill-validation`.
+
+| Unit | Outcome and acceptance | Status |
+|---|---|---|
+| V1 | Prepare a retained isolated environment with pinned PyYAML and verified package provenance | Complete |
+| V2 | Run the unmodified official validator on four canonical and seven distributed skills; preserve exact evidence | Complete |
+| V3 | Review completeness and merge risks, integrate the evidence and verify main CI | Review complete; integration pending |
+
+Historical BLOCKED records describe the environment at their execution time and
+remain intact. A subsequent PASS must identify the validator, dependency,
+interpreter, checked content and actual command results. Structural validation
+does not establish model behavior or general prompt-injection resistance.
+
+PyYAML 6.0.3 is retained in `.venv/skill-validation-pyyaml-6.0.3`, a separate
+no-pip virtual environment using Python 3.13.15. The macOS ARM64 wheel was obtained
+from [PyPI](https://pypi.org/project/PyYAML/6.0.3/), checked against its published
+SHA-256 and extracted into that environment with exclusive file creation. Its
+wheel and source metadata remain beside the environment. No build hooks or package
+cleanup ran; the primary project environment and global packages were unchanged.
+
+The unmodified official `quick_validate.py` now passes all 11 entrypoints: four
+canonical skills and seven distributed copies. The before/after results,
+interpreter, package provenance, validator hash, skill hashes and per-entrypoint
+commands/output are retained in
+[official-skill-validation.json](evidence/lightweight-workflow/official-skill-validation.json).
+The historical missing-PyYAML limitation is resolved for this verified local
+environment. Use its interpreter explicitly for future checks, for example:
+
+```bash
+.venv/skill-validation-pyyaml-6.0.3/bin/python -I -B \
+  "$HOME/.codex/skills/.system/skill-creator/scripts/quick_validate.py" .
+```
+
+The environment is ignored and local; it is not distributed or available on
+another host automatically. Repository CI remains independent of this Codex-local
+validator. Package URL/hash and validation commands support reconstruction, not
+a claim that Git stores the environment or that CI ran the official validator.
+
+Completeness and pre-merge risk review: the approved dependency is isolated,
+official validation has actually run, all 11 checked entrypoint hashes still
+match their current content, and earlier blocked results remain historical.
+Tracked changes are limited to this record and the new evidence file; product
+guidance, runtime, dependency declarations and CI configuration are unchanged.
+No known unresolved material finding remains in this scope. Before integration,
+verify exact-head branch CI, clean worktree, current main/protection state and
+fast-forward ancestry; then verify main CI and retain the closing record.
+
+Local repository checks, bundle consistency, diff hygiene and evidence-identity
+checks pass. The evidence audit verified every recorded PASS against its actual
+exit code/output, current hashes and the unchanged baseline skill content.
