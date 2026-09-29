@@ -1,6 +1,6 @@
 # Lightweight delivery workflow plan
 
-Status: archived in place after implementation, local acceptance and successful remote CI.
+Status: W1-W4 remain archived; the newly authorized merge continuation below is active.
 The user subsequently authorized push, archive and synchronization for this increment.
 The implementation and evidence remain at their original paths; no files were deleted.
 Baseline: `54a64b732183621f96097b00472e5cb3ebe9a9af` on `main`; clean worktree.
@@ -20,8 +20,9 @@ support, synchronized distributions, relevant automated checks, realistic
 forward tests, and a final completeness review. A local commit is authorized by
 the user's repository workflow. The later closeout approval authorizes publishing
 this task branch to `origin`, synchronizing its distribution bundles, and archiving
-this record in place. PR creation, merge, release, deployment, new dependencies,
-and filesystem deletion remain outside this increment.
+this record in place. The subsequent merge continuation below supersedes the
+earlier merge exclusion. Release, deployment, new dependencies and filesystem
+deletion remain outside the authorized scope.
 
 No OpenSpec requirement, new orchestration service, policy service, vector store,
 mandatory multi-agent workflow, fixed test counts, or mandatory process artifacts
@@ -245,4 +246,63 @@ observations only; they do not establish that Astra can never stop prematurely.
   Archival does not remove files, branches, test artifacts, or this conversation.
 - No additional in-scope implementation remains. Integration into `main`, plugin
   installation, and release are distinct future actions, not implied by this
-  closeout approval.
+  closeout approval. The subsequent user request authorizes integration after
+  risk review; see the continuation below.
+
+
+## Authorized continuation: completeness and main integration
+
+The user requested a fresh, evidence-based completeness/risk review, continuation
+of remaining authorized work, and merge to `main` once no material issue remains.
+"No risk" is evaluated as no known unresolved material finding within the reviewed
+scope, not a guarantee of zero defects or universal model reliability.
+
+| Unit | Outcome and acceptance | Status |
+|---|---|---|
+| M1 | Reconcile W1-W4 evidence, exercise exported-package and recovery behavior, resolve concrete review findings, and record merge risks/limits | Complete |
+| M2 | Verify current remote base and reviewed branch CI; integrate with preserved history under repository protection rules and publish `main` | Pending |
+| M3 | Check actual remote/main identity, merged CI and distribution consistency; retain final handoff without deleting branches or evidence | Pending |
+
+The existing implementation commit, evidence and archived decisions remain
+historical records. New evidence supplements them; it does not relabel past
+blocked checks or erase previous results. Only demonstrated in-scope defects
+justify extra implementation. This continuation does not install new dependencies,
+update global plugin installations, publish a release, or invent another product
+phase. The next defined outcome is verified integration into `main`.
+
+Resume baseline: task branch `1382784d97f38d1c2386d305cfa178316a61aa49` and
+remote main `54a64b732183621f96097b00472e5cb3ebe9a9af`, with a clean worktree.
+All 27 implementation/test-input hashes and 18 canonical guidance hashes still
+match prior evidence. The official quick validator remains unavailable without
+PyYAML; separate YAML/field validation is retained as distinct evidence.
+
+M1 acceptance: complete. A reproduced P2 distribution gap (executable-bit drift
+was invisible to byte-only checking) was repaired and independently reviewed.
+The diagnostic mode edit was restored in its retained fixture. The final suite
+passes 108 tests, with lint, strict types, repository checks and bundle checks
+also passing. [merge-verification.json](evidence/lightweight-workflow/merge-verification.json)
+retains exact outputs, changed-content hashes, the finding, independent review,
+and the planned integration safeguards.
+
+Both exported channels ran their detector, Python contract checker and state CLI
+from unrelated working directories. A fresh independent agent resumed only from
+retained files, corrected the actual CLI behavior, verified empty input, preserved
+unrelated content and the previous evidence, and completed the same state record.
+The lead replayed its three tests and sample CLI output. Seed files, final files,
+hashes and results are retained in
+[package-smoke.json](evidence/lightweight-workflow/package-smoke.json).
+
+| Merge concern | Evidence / disposition |
+|---|---|
+| Unfinished authorized behavior | Original W1-W4 matrix reconciled; additional package/recovery checks pass |
+| Undetected distribution drift | P2 repaired; both directions of executable drift tested; independent fix review found no remaining material issue |
+| State/data loss and compatibility | Existing 34 state tests remain passing; completion preservation and standalone consumer calls rechecked; v3 breaking clear/init semantics remain documented |
+| Unrelated effects or authority expansion | No new dependencies, global plugin changes, file deletions, tags, release or deployment; current user authorization covers main integration |
+| Evidence quality | Source hashes retained; original blocked official validator remains blocked and distinct from independently passed YAML checks |
+| Integration conflict or overwritten work | Current main is an ancestor; recheck exact heads, clean tree, protections and CI immediately before non-forced fast-forward publication |
+| Residual limits | Single-writer state, non-transactional multi-file sync and bounded agent samples remain disclosed; no zero-risk guarantee |
+
+Pre-merge judgment: no known unresolved material issue in the reviewed scope.
+Proceed to M2 only after CI passes for the actual new commit and the remote base
+still matches the reviewed integration state. Then finish M3, including main CI.
+Do not stop at publishing another unintegrated feature branch.

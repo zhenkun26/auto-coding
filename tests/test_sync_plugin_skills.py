@@ -3,6 +3,8 @@
 import sys
 from pathlib import Path
 
+import pytest
+
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
 
 from sync_plugin_skills import RUNTIME_FILES, synchronize
@@ -49,6 +51,27 @@ def test_unexpected_content_blocks_all_writes_and_is_preserved(tmp_path: Path) -
     assert any("unexpected destination" in problem for problem in problems)
     assert target.read_bytes() == before
     assert extra.read_text() == "user content\n"
+
+
+@pytest.mark.parametrize("source_mode,bundle_mode", [(0o755, 0o644), (0o644, 0o755)])
+def test_check_detects_executable_drift_and_sync_repairs_it(
+    tmp_path: Path, source_mode: int, bundle_mode: int
+) -> None:
+    root = canonical(tmp_path)
+    source = root / "scripts/manage_state.py"
+    source.chmod(source_mode)
+    assert synchronize(root) == []
+    target = root / "skills/auto-coding/scripts/manage_state.py"
+    target.chmod(bundle_mode)
+    content = target.read_bytes()
+
+    assert synchronize(root, check=True)
+    assert target.stat().st_mode & 0o111 == bundle_mode & 0o111
+    assert target.read_bytes() == content
+    assert synchronize(root) == []
+    assert target.stat().st_mode & 0o111 == source_mode & 0o111
+    assert target.read_bytes() == content
+    assert synchronize(root, check=True) == []
 
 
 def test_destination_symlink_cannot_write_outside_bundle(tmp_path: Path) -> None:

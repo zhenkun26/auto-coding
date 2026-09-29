@@ -1,0 +1,402 @@
+{
+  "root": "/tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46",
+  "runtime": "3.13.15 (main, Aug 25 2026, 13:50:12) [Clang 22.1.3 ]",
+  "consumer_smoke": [
+    {
+      "channel": "skills",
+      "export": "/tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46/skills",
+      "cwd": "/tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46/skills-consumer",
+      "checks": [
+        {
+          "argv": [
+            "/Users/zhenkun/GitHub/auto-coding/.venv/bin/python",
+            "-B",
+            "/tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46/skills/scripts/detect_project.py",
+            "/tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46/skills-consumer"
+          ],
+          "expected_exit": 0,
+          "exit_code": 0,
+          "stdout": "{\n  \"root\": \"/private/tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46/skills-consumer\",\n  \"templates\": [\n    \"python\"\n  ],\n  \"ci\": [],\n  \"openspec\": false,\n  \"git\": false,\n  \"codebase\": {\n    \"source_root\": \"src\",\n    \"source_roots\": [\n      \"src\"\n    ],\n    \"state\": \"brownfield\",\n    \"source_files\": 1\n  },\n  \"tools\": {\n    \"bash\": true,\n    \"git\": true,\n    \"mypy\": false,\n    \"pytest\": false,\n    \"ruff\": false\n  },\n  \"configs\": {\n    \"mypy\": false,\n    \"ruff\": false,\n    \"pytest\": false,\n    \"eslint\": false\n  }\n}\n",
+          "stderr": ""
+        },
+        {
+          "argv": [
+            "/Users/zhenkun/GitHub/auto-coding/.venv/bin/python",
+            "-B",
+            "/tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46/skills/scripts/check_python_contracts.py",
+            "--spec",
+            "/tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46/skills-consumer/contract.md",
+            "--source",
+            "/tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46/skills-consumer/src"
+          ],
+          "expected_exit": 0,
+          "exit_code": 0,
+          "stdout": "[contract_check] Spec: /tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46/skills-consumer/contract.md\n[contract_check] Source: /tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46/skills-consumer/src\n\n[contract_check] Type parser found only 0 contracts. Trying Gherkin fallback...\n\n[contract_check] Gherkin fallback found no endpoints either. Spec may use an unsupported format.\nAll 0 contracts structurally verified.\n",
+          "stderr": ""
+        },
+        {
+          "argv": [
+            "/Users/zhenkun/GitHub/auto-coding/.venv/bin/python",
+            "-B",
+            "/tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46/skills/scripts/manage_state.py",
+            "init",
+            "/tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46/skills-consumer/state.json",
+            "--route",
+            "Standard"
+          ],
+          "expected_exit": 0,
+          "exit_code": 0,
+          "stdout": "initialized /tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46/skills-consumer/state.json (route=Standard)\n",
+          "stderr": ""
+        },
+        {
+          "argv": [
+            "/Users/zhenkun/GitHub/auto-coding/.venv/bin/python",
+            "-B",
+            "/tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46/skills/scripts/manage_state.py",
+            "update",
+            "/tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46/skills-consumer/state.json",
+            "--set",
+            "objective=Verify exported helpers",
+            "--set",
+            "boundary=Isolated local fixture only",
+            "--set",
+            "remaining=[\"Acceptance checks\"]"
+          ],
+          "expected_exit": 0,
+          "exit_code": 0,
+          "stdout": "updated /tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46/skills-consumer/state.json: objective, boundary, remaining\n",
+          "stderr": ""
+        },
+        {
+          "argv": [
+            "/Users/zhenkun/GitHub/auto-coding/.venv/bin/python",
+            "-B",
+            "/tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46/skills/scripts/manage_state.py",
+            "complete",
+            "/tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46/skills-consumer/state.json",
+            "--summary",
+            "Premature"
+          ],
+          "expected_exit": 2,
+          "exit_code": 2,
+          "stdout": "",
+          "stderr": "error: completion requires explicit empty remaining and blockers lists, and an unblocked status\n"
+        },
+        {
+          "argv": [
+            "/Users/zhenkun/GitHub/auto-coding/.venv/bin/python",
+            "-B",
+            "/tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46/skills/scripts/manage_state.py",
+            "update",
+            "/tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46/skills-consumer/state.json",
+            "--set",
+            "completed=[\"Package scripts ran outside repository\"]",
+            "--set",
+            "remaining=[]",
+            "--set",
+            "evidence=[\"Detector and structural check outputs retained in package-smoke.json\"]"
+          ],
+          "expected_exit": 0,
+          "exit_code": 0,
+          "stdout": "updated /tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46/skills-consumer/state.json: completed, remaining, evidence\n",
+          "stderr": ""
+        },
+        {
+          "argv": [
+            "/Users/zhenkun/GitHub/auto-coding/.venv/bin/python",
+            "-B",
+            "/tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46/skills/scripts/manage_state.py",
+            "complete",
+            "/tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46/skills-consumer/state.json",
+            "--summary",
+            "Exported helper smoke passed"
+          ],
+          "expected_exit": 0,
+          "exit_code": 0,
+          "stdout": "completed /tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46/skills-consumer/state.json; recorded evidence still requires semantic acceptance\n",
+          "stderr": ""
+        },
+        {
+          "argv": [
+            "/Users/zhenkun/GitHub/auto-coding/.venv/bin/python",
+            "-B",
+            "/tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46/skills/scripts/manage_state.py",
+            "init",
+            "/tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46/skills-consumer/state.json",
+            "--route",
+            "Fast"
+          ],
+          "expected_exit": 2,
+          "exit_code": 2,
+          "stdout": "",
+          "stderr": "error: /tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46/skills-consumer/state.json already exists; read it or choose a new task path\n"
+        }
+      ],
+      "final_state": {
+        "route": "Standard",
+        "phase": "handoff",
+        "current_task": "",
+        "current_file": "",
+        "self_heal_round": 0,
+        "escape_hatches": [],
+        "started_at": "2026-09-29T03:10:54+00:00",
+        "last_update": "2026-09-29T03:10:54+00:00",
+        "resume_hint": "",
+        "status": "completed",
+        "objective": "Verify exported helpers",
+        "boundary": "Isolated local fixture only",
+        "plan_ref": "",
+        "completed": [
+          "Package scripts ran outside repository"
+        ],
+        "remaining": [],
+        "blockers": [],
+        "evidence": [
+          "Detector and structural check outputs retained in package-smoke.json"
+        ],
+        "completion_summary": "Exported helper smoke passed"
+      }
+    },
+    {
+      "channel": "plugin",
+      "export": "/tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46/plugin",
+      "cwd": "/tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46/plugin-consumer",
+      "checks": [
+        {
+          "argv": [
+            "/Users/zhenkun/GitHub/auto-coding/.venv/bin/python",
+            "-B",
+            "/tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46/plugin/scripts/detect_project.py",
+            "/tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46/plugin-consumer"
+          ],
+          "expected_exit": 0,
+          "exit_code": 0,
+          "stdout": "{\n  \"root\": \"/private/tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46/plugin-consumer\",\n  \"templates\": [\n    \"python\"\n  ],\n  \"ci\": [],\n  \"openspec\": false,\n  \"git\": false,\n  \"codebase\": {\n    \"source_root\": \"src\",\n    \"source_roots\": [\n      \"src\"\n    ],\n    \"state\": \"brownfield\",\n    \"source_files\": 1\n  },\n  \"tools\": {\n    \"bash\": true,\n    \"git\": true,\n    \"mypy\": false,\n    \"pytest\": false,\n    \"ruff\": false\n  },\n  \"configs\": {\n    \"mypy\": false,\n    \"ruff\": false,\n    \"pytest\": false,\n    \"eslint\": false\n  }\n}\n",
+          "stderr": ""
+        },
+        {
+          "argv": [
+            "/Users/zhenkun/GitHub/auto-coding/.venv/bin/python",
+            "-B",
+            "/tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46/plugin/scripts/check_python_contracts.py",
+            "--spec",
+            "/tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46/plugin-consumer/contract.md",
+            "--source",
+            "/tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46/plugin-consumer/src"
+          ],
+          "expected_exit": 0,
+          "exit_code": 0,
+          "stdout": "[contract_check] Spec: /tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46/plugin-consumer/contract.md\n[contract_check] Source: /tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46/plugin-consumer/src\n\n[contract_check] Type parser found only 0 contracts. Trying Gherkin fallback...\n\n[contract_check] Gherkin fallback found no endpoints either. Spec may use an unsupported format.\nAll 0 contracts structurally verified.\n",
+          "stderr": ""
+        },
+        {
+          "argv": [
+            "/Users/zhenkun/GitHub/auto-coding/.venv/bin/python",
+            "-B",
+            "/tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46/plugin/scripts/manage_state.py",
+            "init",
+            "/tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46/plugin-consumer/state.json",
+            "--route",
+            "Standard"
+          ],
+          "expected_exit": 0,
+          "exit_code": 0,
+          "stdout": "initialized /tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46/plugin-consumer/state.json (route=Standard)\n",
+          "stderr": ""
+        },
+        {
+          "argv": [
+            "/Users/zhenkun/GitHub/auto-coding/.venv/bin/python",
+            "-B",
+            "/tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46/plugin/scripts/manage_state.py",
+            "update",
+            "/tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46/plugin-consumer/state.json",
+            "--set",
+            "objective=Verify exported helpers",
+            "--set",
+            "boundary=Isolated local fixture only",
+            "--set",
+            "remaining=[\"Acceptance checks\"]"
+          ],
+          "expected_exit": 0,
+          "exit_code": 0,
+          "stdout": "updated /tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46/plugin-consumer/state.json: objective, boundary, remaining\n",
+          "stderr": ""
+        },
+        {
+          "argv": [
+            "/Users/zhenkun/GitHub/auto-coding/.venv/bin/python",
+            "-B",
+            "/tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46/plugin/scripts/manage_state.py",
+            "complete",
+            "/tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46/plugin-consumer/state.json",
+            "--summary",
+            "Premature"
+          ],
+          "expected_exit": 2,
+          "exit_code": 2,
+          "stdout": "",
+          "stderr": "error: completion requires explicit empty remaining and blockers lists, and an unblocked status\n"
+        },
+        {
+          "argv": [
+            "/Users/zhenkun/GitHub/auto-coding/.venv/bin/python",
+            "-B",
+            "/tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46/plugin/scripts/manage_state.py",
+            "update",
+            "/tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46/plugin-consumer/state.json",
+            "--set",
+            "completed=[\"Package scripts ran outside repository\"]",
+            "--set",
+            "remaining=[]",
+            "--set",
+            "evidence=[\"Detector and structural check outputs retained in package-smoke.json\"]"
+          ],
+          "expected_exit": 0,
+          "exit_code": 0,
+          "stdout": "updated /tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46/plugin-consumer/state.json: completed, remaining, evidence\n",
+          "stderr": ""
+        },
+        {
+          "argv": [
+            "/Users/zhenkun/GitHub/auto-coding/.venv/bin/python",
+            "-B",
+            "/tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46/plugin/scripts/manage_state.py",
+            "complete",
+            "/tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46/plugin-consumer/state.json",
+            "--summary",
+            "Exported helper smoke passed"
+          ],
+          "expected_exit": 0,
+          "exit_code": 0,
+          "stdout": "completed /tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46/plugin-consumer/state.json; recorded evidence still requires semantic acceptance\n",
+          "stderr": ""
+        },
+        {
+          "argv": [
+            "/Users/zhenkun/GitHub/auto-coding/.venv/bin/python",
+            "-B",
+            "/tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46/plugin/scripts/manage_state.py",
+            "init",
+            "/tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46/plugin-consumer/state.json",
+            "--route",
+            "Fast"
+          ],
+          "expected_exit": 2,
+          "exit_code": 2,
+          "stdout": "",
+          "stderr": "error: /tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46/plugin-consumer/state.json already exists; read it or choose a new task path\n"
+        }
+      ],
+      "final_state": {
+        "route": "Standard",
+        "phase": "handoff",
+        "current_task": "",
+        "current_file": "",
+        "self_heal_round": 0,
+        "escape_hatches": [],
+        "started_at": "2026-09-29T03:10:54+00:00",
+        "last_update": "2026-09-29T03:10:54+00:00",
+        "resume_hint": "",
+        "status": "completed",
+        "objective": "Verify exported helpers",
+        "boundary": "Isolated local fixture only",
+        "plan_ref": "",
+        "completed": [
+          "Package scripts ran outside repository"
+        ],
+        "remaining": [],
+        "blockers": [],
+        "evidence": [
+          "Detector and structural check outputs retained in package-smoke.json"
+        ],
+        "completion_summary": "Exported helper smoke passed"
+      }
+    }
+  ],
+  "resume_fixture": "/tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46/resume",
+  "resume_seed": {
+    "cart.py": "import argparse\nimport json\nfrom pathlib import Path\n\n\ndef total_cents(items):\n    return sum(item[\"price_cents\"] * item[\"quantity\"] for item in items)\n\n\ndef main():\n    parser = argparse.ArgumentParser()\n    parser.add_argument(\"source\", type=Path)\n    args = parser.parse_args()\n    items = json.loads(args.source.read_text())\n    print(sum(item[\"price_cents\"] for item in items))\n\n\nif __name__ == \"__main__\":\n    main()\n",
+    "test_cart.py": "import unittest\nfrom cart import total_cents\n\nclass TotalTests(unittest.TestCase):\n    def test_quantities(self):\n        self.assertEqual(total_cents([{\"price_cents\":120,\"quantity\":3}]),360)\n",
+    "task.json": "{\n  \"route\": \"Standard\",\n  \"phase\": \"implement\",\n  \"last_update\": \"2026-09-29T00:00:00Z\",\n  \"status\": \"active\",\n  \"objective\": \"The CLI prints the total price in integer cents, including each line quantity. Preserve one-integer-per-line output.\",\n  \"boundary\": \"Edit cart.py and relevant tests, retain evidence, update this task record. No dependencies, external effects, Git changes or deletion. Preserve keep.txt and sample.json.\",\n  \"completed\": [\n    \"Quantity-aware helper implemented and unit-tested\"\n  ],\n  \"remaining\": [\n    \"Connect the user-facing CLI to quantity-aware behavior and verify its actual output, including empty input\"\n  ],\n  \"blockers\": [],\n  \"evidence\": [\n    \"baseline.json: helper unit test only; not CLI acceptance\"\n  ],\n  \"resume_hint\": \"Complete the remaining CLI outcome using the recorded scope and inspect existing evidence applicability.\"\n}\n",
+    "baseline.json": "{\n  \"scope\": \"Helper unit test only; CLI integration not accepted\",\n  \"argv\": [\n    \"/Users/zhenkun/GitHub/auto-coding/.venv/bin/python\",\n    \"-B\",\n    \"-m\",\n    \"unittest\",\n    \"-v\"\n  ],\n  \"exit_code\": 0,\n  \"stdout\": \"\",\n  \"stderr\": \"test_quantities (test_cart.TotalTests.test_quantities) ... ok\\n\\n----------------------------------------------------------------------\\nRan 1 test in 0.000s\\n\\nOK\\n\",\n  \"cart_sha256\": \"85770de905cf178d0b8dce4d7646a9b7e4f4b3944801f427a10a69280a5f8b12\"\n}\n",
+    "sample.json": "[{\"price_cents\":120,\"quantity\":3},{\"price_cents\":50,\"quantity\":2}]\n",
+    "keep.txt": "Unrelated user content; preserve exactly.\n",
+    "AGENTS.md": "This is an isolated local fixture. task.json is the single task-state authority. Use the existing helper in ../skills/scripts/manage_state.py. No dependency installation, Git operations, network, deletion, or edits outside this directory. No bytecode writes: PYTHONDONTWRITEBYTECODE=1. Preserve unrelated files and record truthful evidence.\n"
+  },
+  "limits": "Isolated distribution-consumer and fresh-agent recovery checks, not a global installation or production environment test.",
+  "resume_outcome": {
+    "acceptance": "PASS for the bounded resumed CLI task, not a reliability benchmark",
+    "lead_checks": [
+      {
+        "argv": [
+          "/Users/zhenkun/GitHub/auto-coding/.venv/bin/python",
+          "-B",
+          "-m",
+          "unittest",
+          "-v"
+        ],
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": "test_empty_cart (test_cart.CliTests.test_empty_cart) ... ok\ntest_quantities (test_cart.CliTests.test_quantities) ... ok\ntest_quantities (test_cart.TotalTests.test_quantities) ... ok\n\n----------------------------------------------------------------------\nRan 3 tests in 0.039s\n\nOK\n"
+      },
+      {
+        "argv": [
+          "/Users/zhenkun/GitHub/auto-coding/.venv/bin/python",
+          "-B",
+          "cart.py",
+          "sample.json"
+        ],
+        "exit_code": 0,
+        "stdout": "460\n",
+        "stderr": ""
+      }
+    ],
+    "preserved_files": [
+      "AGENTS.md",
+      "keep.txt",
+      "sample.json",
+      "baseline.json"
+    ],
+    "final_files": {
+      "AGENTS.md": {
+        "sha256": "4c87f639360dc7059903613443b3d32ef8a731198f059ade5e71c9fbfa27b957",
+        "content": "This is an isolated local fixture. task.json is the single task-state authority. Use the existing helper in ../skills/scripts/manage_state.py. No dependency installation, Git operations, network, deletion, or edits outside this directory. No bytecode writes: PYTHONDONTWRITEBYTECODE=1. Preserve unrelated files and record truthful evidence.\n"
+      },
+      "baseline.json": {
+        "sha256": "4de7396cf2681b561d9566b8bd5e5187accd4e8fef85b31ce1384b82ea0994fe",
+        "content": "{\n  \"scope\": \"Helper unit test only; CLI integration not accepted\",\n  \"argv\": [\n    \"/Users/zhenkun/GitHub/auto-coding/.venv/bin/python\",\n    \"-B\",\n    \"-m\",\n    \"unittest\",\n    \"-v\"\n  ],\n  \"exit_code\": 0,\n  \"stdout\": \"\",\n  \"stderr\": \"test_quantities (test_cart.TotalTests.test_quantities) ... ok\\n\\n----------------------------------------------------------------------\\nRan 1 test in 0.000s\\n\\nOK\\n\",\n  \"cart_sha256\": \"85770de905cf178d0b8dce4d7646a9b7e4f4b3944801f427a10a69280a5f8b12\"\n}\n"
+      },
+      "cart.py": {
+        "sha256": "89b26ac3c8e2dc18c0b6ca1ac6421ca8dbc73d62450d2757bc60a83957ee42fa",
+        "content": "import argparse\nimport json\nfrom pathlib import Path\n\n\ndef total_cents(items):\n    return sum(item[\"price_cents\"] * item[\"quantity\"] for item in items)\n\n\ndef main():\n    parser = argparse.ArgumentParser()\n    parser.add_argument(\"source\", type=Path)\n    args = parser.parse_args()\n    items = json.loads(args.source.read_text())\n    print(total_cents(items))\n\n\nif __name__ == \"__main__\":\n    main()\n"
+      },
+      "empty-cart.json": {
+        "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "content": "[]\n"
+      },
+      "keep.txt": {
+        "sha256": "d86347c87c7a8be5b7dbb236b1e9289b052f1a06333dabbed4e8d862874f1a8e",
+        "content": "Unrelated user content; preserve exactly.\n"
+      },
+      "resume-evidence.json": {
+        "sha256": "1a082a2080da8391bfa2badc7d9bdec3757c069baf6a9acc216002f7e20ede64",
+        "content": "{\n  \"scope\": \"Resume CLI integration acceptance, including quantities and empty cart.\",\n  \"environment\": {\n    \"python\": \"3.9.6 (default, May 22 2026, 11:13:45) \\n[Clang 21.0.0 (clang-2100.1.1.101)]\",\n    \"executable\": \"/Applications/Xcode.app/Contents/Developer/usr/bin/python3\",\n    \"platform\": \"macOS-26.5-arm64-arm-64bit\",\n    \"PYTHONDONTWRITEBYTECODE\": \"1\"\n  },\n  \"initial_sha256\": {\n    \"AGENTS.md\": \"4c87f639360dc7059903613443b3d32ef8a731198f059ade5e71c9fbfa27b957\",\n    \"baseline.json\": \"4de7396cf2681b561d9566b8bd5e5187accd4e8fef85b31ce1384b82ea0994fe\",\n    \"cart.py\": \"85770de905cf178d0b8dce4d7646a9b7e4f4b3944801f427a10a69280a5f8b12\",\n    \"keep.txt\": \"d86347c87c7a8be5b7dbb236b1e9289b052f1a06333dabbed4e8d862874f1a8e\",\n    \"sample.json\": \"f649da80cb2770af218c2759a04807015c9cc63a9bd4582a77dc0647970f84f5\",\n    \"task.json\": \"1345fa4f643e8d0aee5aad4e51fa8fb95e05b5f0c7a56bf64f40a3364aaf37e1\",\n    \"test_cart.py\": \"e14f9d615ba4e320ed44e4199e4c8626da4e8b26001dd060abc318e990ecec2f\"\n  },\n  \"initial_sources\": {\n    \"cart.py\": \"import argparse\\nimport json\\nfrom pathlib import Path\\n\\n\\ndef total_cents(items):\\n    return sum(item[\\\"price_cents\\\"] * item[\\\"quantity\\\"] for item in items)\\n\\n\\ndef main():\\n    parser = argparse.ArgumentParser()\\n    parser.add_argument(\\\"source\\\", type=Path)\\n    args = parser.parse_args()\\n    items = json.loads(args.source.read_text())\\n    print(sum(item[\\\"price_cents\\\"] for item in items))\\n\\n\\nif __name__ == \\\"__main__\\\":\\n    main()\\n\",\n    \"test_cart.py\": \"import unittest\\nfrom cart import total_cents\\n\\nclass TotalTests(unittest.TestCase):\\n    def test_quantities(self):\\n        self.assertEqual(total_cents([{\\\"price_cents\\\":120,\\\"quantity\\\":3}]),360)\\n\"\n  },\n  \"initial_task\": {\n    \"route\": \"Standard\",\n    \"phase\": \"implement\",\n    \"last_update\": \"2026-09-29T00:00:00Z\",\n    \"status\": \"active\",\n    \"objective\": \"The CLI prints the total price in integer cents, including each line quantity. Preserve one-integer-per-line output.\",\n    \"boundary\": \"Edit cart.py and relevant tests, retain evidence, update this task record. No dependencies, external effects, Git changes or deletion. Preserve keep.txt and sample.json.\",\n    \"completed\": [\n      \"Quantity-aware helper implemented and unit-tested\"\n    ],\n    \"remaining\": [\n      \"Connect the user-facing CLI to quantity-aware behavior and verify its actual output, including empty input\"\n    ],\n    \"blockers\": [],\n    \"evidence\": [\n      \"baseline.json: helper unit test only; not CLI acceptance\"\n    ],\n    \"resume_hint\": \"Complete the remaining CLI outcome using the recorded scope and inspect existing evidence applicability.\"\n  },\n  \"prior_evidence_applicability\": {\n    \"cart_identity_matches_baseline\": true,\n    \"scope\": \"Helper unit test only; does not establish CLI acceptance.\"\n  },\n  \"before_checks\": [\n    {\n      \"name\": \"existing_helper_unit_test\",\n      \"argv\": [\n        \"/Applications/Xcode.app/Contents/Developer/usr/bin/python3\",\n        \"-B\",\n        \"-m\",\n        \"unittest\",\n        \"-v\"\n      ],\n      \"cwd\": \"/private/tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46/resume\",\n      \"exit_code\": 0,\n      \"stdout\": \"\",\n      \"stderr\": \"test_quantities (test_cart.TotalTests) ... ok\\n\\n----------------------------------------------------------------------\\nRan 1 test in 0.000s\\n\\nOK\\n\",\n      \"expected_stdout\": null,\n      \"status\": \"PASS\"\n    },\n    {\n      \"name\": \"sample_cli_before_fix\",\n      \"argv\": [\n        \"/Applications/Xcode.app/Contents/Developer/usr/bin/python3\",\n        \"-B\",\n        \"cart.py\",\n        \"sample.json\"\n      ],\n      \"cwd\": \"/private/tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46/resume\",\n      \"exit_code\": 0,\n      \"stdout\": \"170\\n\",\n      \"stderr\": \"\",\n      \"expected_stdout\": \"460\\n\",\n      \"status\": \"FAIL\"\n    }\n  ],\n  \"final_checks\": [\n    {\n      \"name\": \"unit_and_cli_regression_suite\",\n      \"argv\": [\n        \"/Applications/Xcode.app/Contents/Developer/usr/bin/python3\",\n        \"-B\",\n        \"-m\",\n        \"unittest\",\n        \"-v\"\n      ],\n      \"cwd\": \"/private/tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46/resume\",\n      \"exit_code\": 0,\n      \"stdout\": \"\",\n      \"stderr\": \"test_empty_cart (test_cart.CliTests) ... ok\\ntest_quantities (test_cart.CliTests) ... ok\\ntest_quantities (test_cart.TotalTests) ... ok\\n\\n----------------------------------------------------------------------\\nRan 3 tests in 0.060s\\n\\nOK\\n\",\n      \"expected_stdout\": null,\n      \"status\": \"PASS\"\n    },\n    {\n      \"name\": \"sample_cli_acceptance\",\n      \"argv\": [\n        \"/Applications/Xcode.app/Contents/Developer/usr/bin/python3\",\n        \"-B\",\n        \"cart.py\",\n        \"sample.json\"\n      ],\n      \"cwd\": \"/private/tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46/resume\",\n      \"exit_code\": 0,\n      \"stdout\": \"460\\n\",\n      \"stderr\": \"\",\n      \"expected_stdout\": \"460\\n\",\n      \"status\": \"PASS\"\n    },\n    {\n      \"name\": \"empty_cli_acceptance\",\n      \"argv\": [\n        \"/Applications/Xcode.app/Contents/Developer/usr/bin/python3\",\n        \"-B\",\n        \"cart.py\",\n        \"empty-cart.json\"\n      ],\n      \"cwd\": \"/private/tmp/auto-coding-merge-eval-505155eca03145c4b367f83565059e46/resume\",\n      \"exit_code\": 0,\n      \"stdout\": \"0\\n\",\n      \"stderr\": \"\",\n      \"expected_stdout\": \"0\\n\",\n      \"status\": \"PASS\"\n    }\n  ],\n  \"final_checked_sha256\": {\n    \"cart.py\": \"89b26ac3c8e2dc18c0b6ca1ac6421ca8dbc73d62450d2757bc60a83957ee42fa\",\n    \"test_cart.py\": \"c610a766ba33804bf79b1acdaef52c32504a30c55a6e808c539cf2453382b76a\",\n    \"sample.json\": \"f649da80cb2770af218c2759a04807015c9cc63a9bd4582a77dc0647970f84f5\",\n    \"empty-cart.json\": \"37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570\"\n  },\n  \"protected_files_unchanged\": {\n    \"AGENTS.md\": true,\n    \"baseline.json\": true,\n    \"sample.json\": true,\n    \"keep.txt\": true\n  },\n  \"review_diff\": \"--- before/cart.py\\n+++ after/cart.py\\n@@ -12,7 +12,7 @@\\n     parser.add_argument(\\\"source\\\", type=Path)\\n     args = parser.parse_args()\\n     items = json.loads(args.source.read_text())\\n-    print(sum(item[\\\"price_cents\\\"] for item in items))\\n+    print(total_cents(items))\\n \\n \\n if __name__ == \\\"__main__\\\":\\n--- before/test_cart.py\\n+++ after/test_cart.py\\n@@ -1,6 +1,30 @@\\n+import subprocess\\n+import sys\\n import unittest\\n+from pathlib import Path\\n+\\n from cart import total_cents\\n+\\n \\n class TotalTests(unittest.TestCase):\\n     def test_quantities(self):\\n         self.assertEqual(total_cents([{\\\"price_cents\\\":120,\\\"quantity\\\":3}]),360)\\n+\\n+\\n+class CliTests(unittest.TestCase):\\n+    def assert_cli_output(self, source, expected):\\n+        root = Path(__file__).resolve().parent\\n+        result = subprocess.run(\\n+            [sys.executable, \\\"-B\\\", str(root / \\\"cart.py\\\"), str(root / source)],\\n+            capture_output=True,\\n+            text=True,\\n+        )\\n+        self.assertEqual(result.returncode, 0, result.stderr)\\n+        self.assertEqual(result.stdout, expected)\\n+        self.assertEqual(result.stderr, \\\"\\\")\\n+\\n+    def test_quantities(self):\\n+        self.assert_cli_output(\\\"sample.json\\\", \\\"460\\\\n\\\")\\n+\\n+    def test_empty_cart(self):\\n+        self.assert_cli_output(\\\"empty-cart.json\\\", \\\"0\\\\n\\\")\\n\",\n  \"bytecode_artifacts\": [],\n  \"limitations\": [\n    \"Verification covers the authorized valid JSON cart inputs and existing CLI output contract; new malformed-input validation is outside scope.\",\n    \"No Git operations performed, as prohibited by the fixture instructions.\"\n  ],\n  \"completion_review\": {\n    \"kind\": \"Self-review against initial_sources retained in this evidence file.\",\n    \"result\": \"PASS\",\n    \"findings\": [],\n    \"rationale\": \"The CLI now delegates to the existing quantity-aware helper. The preserved integer-cent contract is verified with exact stdout and empty stderr for nonempty and empty carts. The regression suite exercises the actual subprocess entrypoint. Only authorized source, test, fixture, evidence and task-state files were changed or added.\"\n  },\n  \"acceptance_status\": \"PASS\"\n}\n"
+      },
+      "sample.json": {
+        "sha256": "f649da80cb2770af218c2759a04807015c9cc63a9bd4582a77dc0647970f84f5",
+        "content": "[{\"price_cents\":120,\"quantity\":3},{\"price_cents\":50,\"quantity\":2}]\n"
+      },
+      "task.json": {
+        "sha256": "d881685b3381bbc012d43e4c42459aee7703adca1fe87753a29b6d84647c1551",
+        "content": "{\n  \"route\": \"Standard\",\n  \"phase\": \"handoff\",\n  \"last_update\": \"2026-09-29T03:13:53+00:00\",\n  \"status\": \"completed\",\n  \"objective\": \"The CLI prints the total price in integer cents, including each line quantity. Preserve one-integer-per-line output.\",\n  \"boundary\": \"Edit cart.py and relevant tests, retain evidence, update this task record. No dependencies, external effects, Git changes or deletion. Preserve keep.txt and sample.json.\",\n  \"completed\": [\n    \"Quantity-aware helper implemented and unit-tested\",\n    \"CLI connected to the quantity-aware helper.\",\n    \"Actual CLI outputs verified: sample cart 460 and empty cart 0, each followed by one newline.\",\n    \"Three unit/CLI regression tests passed; protected files unchanged; self-review found no material issues.\"\n  ],\n  \"remaining\": [],\n  \"blockers\": [],\n  \"evidence\": [\n    \"baseline.json: helper unit test only; not CLI acceptance\",\n    \"resume-evidence.json sha256=1a082a2080da8391bfa2badc7d9bdec3757c069baf6a9acc216002f7e20ede64: retained baseline failure, final command results, environment, source/test/input identities, reviewed diff, and protected-file checks.\"\n  ],\n  \"resume_hint\": \"Authorized outcome completed and verified. Retain this historical record; no remaining work in scope.\",\n  \"completion_summary\": \"The CLI prints quantity-aware totals in integer cents, preserving exactly one integer per output line. Sample and empty-cart CLI acceptance plus all three regression tests passed.\"\n}\n"
+      },
+      "test_cart.py": {
+        "sha256": "c610a766ba33804bf79b1acdaef52c32504a30c55a6e808c539cf2453382b76a",
+        "content": "import subprocess\nimport sys\nimport unittest\nfrom pathlib import Path\n\nfrom cart import total_cents\n\n\nclass TotalTests(unittest.TestCase):\n    def test_quantities(self):\n        self.assertEqual(total_cents([{\"price_cents\":120,\"quantity\":3}]),360)\n\n\nclass CliTests(unittest.TestCase):\n    def assert_cli_output(self, source, expected):\n        root = Path(__file__).resolve().parent\n        result = subprocess.run(\n            [sys.executable, \"-B\", str(root / \"cart.py\"), str(root / source)],\n            capture_output=True,\n            text=True,\n        )\n        self.assertEqual(result.returncode, 0, result.stderr)\n        self.assertEqual(result.stdout, expected)\n        self.assertEqual(result.stderr, \"\")\n\n    def test_quantities(self):\n        self.assert_cli_output(\"sample.json\", \"460\\n\")\n\n    def test_empty_cart(self):\n        self.assert_cli_output(\"empty-cart.json\", \"0\\n\")\n"
+      }
+    },
+    "distinction": "Agent worked from the exported skill and retained files without prior chat context. Existing helper-only PASS was not mistaken for CLI acceptance; one existing state authority was used."
+  }
+}

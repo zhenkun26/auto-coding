@@ -90,7 +90,11 @@ def synchronize(root: Path, *, check: bool = False) -> list[str]:
     for destination, expected in bundles.items():
         for relative, source in sorted(expected.items()):
             target = destination / relative
-            if not target.exists() or target.read_bytes() != source.read_bytes():
+            if (
+                not target.exists()
+                or target.read_bytes() != source.read_bytes()
+                or (target.stat().st_mode & 0o111) != (source.stat().st_mode & 0o111)
+            ):
                 if check:
                     problems.append(f"bundle drift: {target.relative_to(root)}")
                 else:

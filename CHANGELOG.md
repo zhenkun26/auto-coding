@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Next-major development contract (`3.0.0-dev`): concise, outcome-based planning and completion replace fixed question counts, test counts, repair limits and keyword-based risk escalation. Native verification and authorization boundaries remain.
 - Current project status is the task authority; optional standalone memory preserves completion and reconciles evidence against content/environment rather than invalidating all evidence on every resume.
 - State `init` refuses overwrite. `complete --summary` preserves delivery fields and refuses known unfinished/blocked records; deprecated `clear` no longer empties state. Legacy records remain readable; completion requires enrichment.
-- Distribution synchronization preflights both channels, refuses unexpected content, and never deletes directories. CI uses read-only `--check`; pytest uses retained fixture directories.
+- Distribution synchronization preflights both channels, refuses unexpected content, checks file content and executable permissions, and never deletes directories. CI uses read-only `--check`; pytest uses retained fixture directories.
 - Setup and OpenSpec companions follow the same scope, evidence and memory contract. Added conditional completion and simplification references, realistic skill forward tests, and a completeness review in `docs/WORKFLOW_PLAN.md`.
 
 - CI actions bumped to the Node 24 runtime line: `actions/checkout@v7`, `actions/setup-python@v7`, and `softprops/action-gh-release@v3`, clearing the Node 20 deprecation annotation from workflow runs.
