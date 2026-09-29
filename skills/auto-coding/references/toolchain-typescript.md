@@ -12,21 +12,20 @@ runner) over the defaults below.
 
 | Purpose | Command |
 |---|---|
-| L0 import check | `node -e "require('./dist/<file>')"` |
-| L1 behavior check | `node <file>.js` / the project's demo entry |
-| Immediate type check (per task) | `tsc --noEmit` |
-| Layer checkpoint | `tsc --noEmit` over the whole project |
-| Static gate — Critical | `tsc --noEmit` |
-| Static gate — Standard | `eslint <modified files>` |
-| Runtime — Mode A | `jest --coverage` (or vitest equivalent) |
+| Import check | Use the configured module/build entry after checking import side effects |
+| Behavior check | `node <file>.js` / the project's demo entry |
+| Configured type check | `tsc --noEmit` |
+| Project type check | `tsc --noEmit` over the whole project |
+| Type check | `tsc --noEmit` |
+| Lint | `eslint <modified files>` |
+| Behavior tests / configured coverage | `jest --coverage` (or vitest equivalent) |
 
 ## Notes
 
 - The structural contract checker (`scripts/check_python_contracts.py`) is
-  Python-only. For TypeScript contracts, do the manual L2 five-item
-  comparison in [implementation.md](implementation.md).
+  Python-only. For TypeScript, use compiler checks and the relevant behavioral
+  contract comparison in [implementation.md](implementation.md).
 - Debug leftovers to scan for at the Standard gate: `console.log`,
   `debugger`.
-- Degradation follows [adaptive.md](adaptive.md): configured-but-missing
-  tsc/eslint/jest → show the install command and halt; no config → `BLOCKED`
-  + alternative evidence.
+- Unavailable checks follow [adaptive.md](adaptive.md): preserve required
+  BLOCKED results, use labeled safe alternatives, and continue independent work.

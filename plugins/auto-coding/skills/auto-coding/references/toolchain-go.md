@@ -13,8 +13,8 @@ real verification scope.
 
 | Purpose | Command |
 |---|---|
-| L0 compile/import check | `go test ./<affected-package> -run '^$'` |
-| L1 focused behavior check | `go test ./<affected-package> -run '<TestName>'` |
+| Compile/import check | `go test ./<affected-package> -run '^$'` |
+| Focused behavior check | `go test ./<affected-package> -run '<TestName>'` |
 | Format gate | `gofmt -l <modified-go-files>` (output must be empty) |
 | Static gate | `go vet ./<affected-packages>` |
 | Package regression | `go test ./<affected-packages>` |
@@ -29,7 +29,7 @@ real verification scope.
   supports it; an unavailable detector is `BLOCKED`, not a normal test pass.
 - Do not run `go get`, `go mod tidy`, or dependency upgrades automatically;
   they can change `go.mod` and `go.sum` and require the task's authority.
-- Perform the manual L2 contract comparison from
+- Perform the behavioral contract comparison from
   [implementation.md](implementation.md); the bundled structural checker is
   Python-only.
 

@@ -19,10 +19,8 @@ jobs:
           ruff check scripts/ tests/
           mypy scripts/
       - name: Run unit tests
-        run: python -m pytest tests/ -q
+        run: python -B scripts/run_tests.py
       - name: Run repository checks
         run: python scripts/check_repo.py
       - name: Verify plugin and skills bundles are in sync
-        run: |
-          bash scripts/sync_plugin_skills.sh
-          git diff --exit-code -- plugins/ skills/
+        run: python -B scripts/sync_plugin_skills.py --check

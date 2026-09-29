@@ -1,0 +1,12 @@
+Baseline: 54a64b7
+Python 3.13.15; pytest 9.1.1; ruff 0.16.2; mypy 2.3.0
+Initial baseline attempts: BLOCKED by deletion audit (pytest fd capture and tmp_path current-symlink housekeeping). No deletion occurred. Second attempt: 14 passed, 65 fixture setup errors, 1 deselected; not product failures.
+Safe alternative: memory capture; retained tmp_path fixture; no cache or bytecode; deletion audit enabled.
+Excluded: legacy clear-to-empty test until completion semantics are replaced.
+Retained fixtures: /tmp/auto-coding-baseline-cf24c27f6f9c434196d56e8521e1852c
+Exit: 0
+........................................................................ [ 91%]
+.......                                                                  [100%]
+79 passed, 1 deselected in 4.84s
+
+Baseline check_repo, ruff, mypy: PASS (4 script files).

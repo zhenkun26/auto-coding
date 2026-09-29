@@ -1,76 +1,30 @@
 ---
 name: sedimentation
-description: Optional knowledge sedimentation for auto-coding — the ERROR_MEMORY standing artifact, escape-hatch records, TECH_NOTES, and ponytail debt tracking. Read when a self-heal, escape hatch, or Critical failure occurred.
+description: Retain verified, non-obvious project knowledge when it prevents recurrence or substantial rediscovery.
 ---
 
-# Sedimentation
+# Useful Project Knowledge
 
-Default: **no sedimentation**. Process files are not created for ordinary
-runs. Only two artifacts may persist, and only on the conditions below.
+Prefer existing decision and knowledge records. Read relevant entries when
+working in that area. Code, tests, configuration, and Git already preserve much
+of the useful context; do not duplicate readily discoverable facts.
 
-## ERROR_MEMORY.md (the one standing artifact)
+Record a lesson when verified work reveals a reason or constraint that a future
+agent would otherwise likely miss, causing recurrence, material risk, or substantial
+rediscovery. Routine self-heals, transient tool errors, and work summaries stay
+in task evidence. A speculative diagnosis is not durable knowledge.
 
-Location: `ai_pipeline/ERROR_MEMORY.md`. It exists to make the next run
-smarter — read it at task entry when present.
+A useful entry names the context, evidence, cause/decision, prevention, and when
+it should be reconsidered. A mechanical recurring mistake is often better
+prevented by a focused test or existing linter than another prompt rule.
 
-**Append an entry immediately when any of these occurs** (never batch at the
-end; at most one entry may be lost to a crash):
+Existing `ai_pipeline/ERROR_MEMORY.md` or `TECH_NOTES.md` can remain knowledge
+sources. Do not create them automatically or establish a competing record when
+the repository already has one. Keep unresolved type/validation debt visible in
+current task state and delivery; preserve a long-term entry only when useful.
 
-- A self-heal happened (any layer, any round).
-- An escape hatch was taken (`[ESCAPE_HATCH]`).
-- A Critical failure, `[BLOCKED]`, or ⚠️ release-with-warning occurred.
-
-Entry format:
-
-```markdown
-- [ISO timestamp] <task/node> <layer>: <error description>, fix: <what fixed it>, prevention: <how to avoid next time>
-```
-
-Escape-hatch format:
-
-```markdown
-- [ISO timestamp] [ESCAPE_HATCH] <task> <layer>: <original error>, workaround: <Any/type:ignore/cast>, risk: <what type safety was lost>
-```
-
-Group entries under a run header (`## YYYY-MM-DD — <change summary>`), oldest
-first. Append via read → concatenate → write, or atomically:
-
-```bash
-printf '%s\n\n%s' "$(cat ai_pipeline/ERROR_MEMORY.md 2>/dev/null)" "$entry" > ai_pipeline/ERROR_MEMORY.md
-```
-
-**Feedback loop**: when the same file or module accumulates escape hatches
-across runs, review that module before implementing in it next time.
-
-### Compaction cap
-
-ERROR_MEMORY.md is a rule base, not a log pile. When it exceeds ~100
-entries, distill it: promote recurring patterns into prevention rules,
-merge near-duplicates, and prune resolved issues. Compaction is itself a
-reported action — announce what was merged or dropped before rewriting;
-never silently rewrite memory.
-
-## TECH_NOTES.md (optional, High-risk or on request)
-
-For High-risk work, or when the user asks for durable rationale, distill the
-run into `ai_pipeline/TECH_NOTES.md`:
-
-- §1 Implementation decisions (ADR): background / approach / rationale /
-  impact, one per significant decision.
-- §2 Known issues and pitfalls: severity-sorted, including every
-  release-with-warning item and escape hatch.
-
-Do not duplicate functional specs — this file records *why*, not *what*.
-
-## Ponytail debt (optional)
-
-Deliberate simplifications marked `# ponytail: <limit>, <upgrade path>` in the
-source can be collected at wrap-up:
-
-```bash
-grep -rn "ponytail:" src/
-```
-
-Append findings as `<file>:<line> | <limit> | <upgrade path>` to
-`ai_pipeline/PONYTAIL_DEBT.md` when the user wants a debt ledger. Do not
-create the ledger unasked.
+Maintain knowledge when verified facts change: update the canonical decision,
+mark superseded conclusions with a successor pointer, and preserve significant
+rationale. Consolidation is a scoped, disclosed edit; never delete files or
+silently discard unrelated decisions. Global assistant memory follows its own
+explicit-write authorization and is not granted by this skill.

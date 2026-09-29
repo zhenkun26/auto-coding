@@ -1,0 +1,30 @@
+{
+  "official_quick_validate": {
+    "result": "BLOCKED",
+    "exit_code": 1,
+    "reason": "PyYAML is absent in project and bundled Python environments; no new dependency installed."
+  },
+  "independent_structural_check": {
+    "result": "PASS",
+    "runtime": "Ruby 2.6.10 with system Psych YAML parser",
+    "argv": [
+      "/usr/bin/ruby",
+      "-e",
+      "require \"yaml\"\nARGV.each do |path|\n text = File.read(path)\n match = text.match(/\\A---\\n(.*?)\\n---/m)\n raise \"Invalid frontmatter: #{path}\" unless match\n meta = YAML.safe_load(match[1])\n raise \"Not a mapping\" unless meta.is_a?(Hash)\n raise \"Unknown fields\" unless (meta.keys - %w[name description license allowed-tools metadata]).empty?\n name = meta['name']; desc = meta['description']\n raise \"Invalid name\" unless name.is_a?(String) && name.match?(/\\A[a-z0-9]+(?:-[a-z0-9]+)*\\z/) && name.length <= 64\n raise \"Invalid description\" unless desc.is_a?(String) && !desc.empty? && desc.length <= 1024 && !desc.match?(/[<>]/) && !desc.start_with?('[TODO:')\n raise \"Unfinished placeholder\" if text.match?(/^\\s*\\[TODO:[^\\n]*\\]\\s*$/)\n puts \"PASS #{path}: parsed YAML, supported keys, name/description constraints, no scaffold placeholder\"\nend\n",
+      "SKILL.md",
+      "verify-evidence/SKILL.md",
+      "setup-auto-coding/SKILL.md",
+      "auto-coding-openspec/SKILL.md"
+    ],
+    "exit_code": 0,
+    "stdout": "PASS SKILL.md: parsed YAML, supported keys, name/description constraints, no scaffold placeholder\nPASS verify-evidence/SKILL.md: parsed YAML, supported keys, name/description constraints, no scaffold placeholder\nPASS setup-auto-coding/SKILL.md: parsed YAML, supported keys, name/description constraints, no scaffold placeholder\nPASS auto-coding-openspec/SKILL.md: parsed YAML, supported keys, name/description constraints, no scaffold placeholder\n",
+    "stderr": "",
+    "content_sha256": {
+      "SKILL.md": "93e4d4143dcc7e05f4eb00a4b2825aa4049c0e145306597cc14529efa55cb97c",
+      "verify-evidence/SKILL.md": "f1a5db88cad842bc8159d3ffc919b95feaf7f2c17fe75c79031ad9783781e2f2",
+      "setup-auto-coding/SKILL.md": "bf5d8aedda40a72662649eaa722a6cec4908770e00af83c27b21f810000245bb",
+      "auto-coding-openspec/SKILL.md": "e33ca130413bf64cc1306d3b34ac339a5006b356c4075c0f1a5e9013a8f3b1bf"
+    }
+  },
+  "limitation": "This separately executed structural check is not an official quick_validate.py pass and does not establish model behavior."
+}

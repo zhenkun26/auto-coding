@@ -91,14 +91,12 @@ def test_should_refuse_update_on_empty_state(tmp_path: Path, capsys: pytest.Capt
     assert "run init first" in capsys.readouterr().err
 
 
-def test_should_clear_state_to_empty_object(tmp_path: Path) -> None:
-    """Given clear, the state file becomes {} and is not deleted."""
+def test_should_refuse_unqualified_clear_without_changing_record(tmp_path: Path) -> None:
+    """Legacy clear calls cannot erase recovery information."""
     path = init_state(tmp_path)
-
-    assert manage_state.main(["clear", str(path)]) == 0
-
-    assert path.exists()
-    assert read_json(path) == {}
+    original = path.read_bytes()
+    assert manage_state.main(["clear", str(path)]) == 2
+    assert path.read_bytes() == original
 
 
 def test_should_read_back_breakpoint_summary(tmp_path: Path, capsys: pytest.CaptureFixture) -> None:
@@ -182,3 +180,118 @@ def test_should_reject_json_array_with_non_string_items(
     assert excinfo.value.code == 2
     assert "JSON array of strings" in capsys.readouterr().err
     assert read_json(path)["escape_hatches"] == []
+
+
+def ready_state(tmp_path: Path) -> Path:
+    path = init_state(tmp_path)
+    assert manage_state.main([
+        "update", str(path), "--set", "objective=Expose the existing behavior via CLI",
+        "--set", "boundary=Local source changes only; no push",
+        "--set", 'completed=["CLI behavior implemented"]',
+        "--set", 'evidence=["Acceptance command and output: docs/checks.txt"]',
+        "--set", "resume_hint=Report local delivery",
+    ]) == 0
+    return path
+
+
+@pytest.mark.parametrize("command", ["complete", "clear"])
+def test_completion_preserves_record_and_rejects_overwrite(tmp_path: Path, command: str) -> None:
+    path = ready_state(tmp_path)
+    before = read_json(path)
+    assert manage_state.main([command, str(path), "--summary", "CLI acceptance passed"]) == 0
+    completed = read_json(path)
+    assert completed["status"] == "completed"
+    assert completed["phase"] == "handoff"
+    for key in ("boundary", "completed", "evidence", "resume_hint", "started_at"):
+        assert completed[key] == before[key]
+    original = path.read_bytes()
+    assert manage_state.main(["init", str(path), "--route", "Fast"]) == 2
+    assert manage_state.main(["update", str(path), "--set", "status=active"]) == 2
+    assert manage_state.main(["complete", str(path), "--summary", "Again"]) == 2
+    assert path.read_bytes() == original
+
+
+@pytest.mark.parametrize("pair", [
+    'remaining=["Wire CLI"]', 'blockers=["Environment unavailable"]', "status=blocked",
+    "objective=", "boundary= ", "completed=[]", "evidence=[]",
+])
+def test_completion_rejects_incomplete_record(tmp_path: Path, pair: str) -> None:
+    path = ready_state(tmp_path)
+    assert manage_state.main(["update", str(path), "--set", pair]) == 0
+    original = path.read_bytes()
+    assert manage_state.main(["complete", str(path), "--summary", "Done"]) == 2
+    assert path.read_bytes() == original
+
+
+@pytest.mark.parametrize("pair", [
+    "route=unknown", "phase=done", "status=completed", "completion_summary=Done",
+    "self_heal_round=-1", 'evidence=[" "]',
+])
+def test_invalid_multi_update_is_all_or_nothing(tmp_path: Path, pair: str) -> None:
+    path = init_state(tmp_path)
+    original = path.read_bytes()
+    assert manage_state.main(["update", str(path), "--set", "current_task=changed", "--set", pair]) == 2
+    assert path.read_bytes() == original
+
+
+def test_init_preserves_active_record(tmp_path: Path) -> None:
+    path = ready_state(tmp_path)
+    original = path.read_bytes()
+    assert manage_state.main(["init", str(path), "--route", "Fast"]) == 2
+    assert path.read_bytes() == original
+
+
+def test_legacy_record_remains_readable_and_can_be_enriched(tmp_path: Path) -> None:
+    path = tmp_path / "legacy.json"
+    path.write_text(json.dumps({"route": "Standard", "phase": "verify", "last_update": "2026-09-01"}))
+    assert manage_state.main(["read", str(path)]) == 0
+    assert manage_state.main(["complete", str(path), "--summary", "Done"]) == 2
+    assert manage_state.main(["update", str(path), "--set", "self_heal_round=8"]) == 0
+    assert read_json(path)["self_heal_round"] == 8
+
+
+@pytest.mark.parametrize("field", ["remaining", "blockers"])
+def test_completion_does_not_assume_missing_legacy_work_fields_are_empty(tmp_path: Path, field: str) -> None:
+    path = ready_state(tmp_path)
+    state = read_json(path)
+    state.pop(field)
+    path.write_text(json.dumps(state))
+    original = path.read_bytes()
+    assert manage_state.main(["complete", str(path), "--summary", "Done"]) == 2
+    assert path.read_bytes() == original
+    assert manage_state.main(["update", str(path), "--set", f"{field}=[]"]) == 0
+    assert manage_state.main(["complete", str(path), "--summary", "Done"]) == 0
+
+
+def test_failed_replace_preserves_original_and_recovery_file(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    path = ready_state(tmp_path)
+    original = path.read_bytes()
+
+    def fail_replace(*args: object) -> None:
+        raise OSError("simulated destination failure")
+
+    monkeypatch.setattr(manage_state.os, "replace", fail_replace)
+    with pytest.raises(OSError, match="simulated destination failure"):
+        manage_state.main(["update", str(path), "--set", "current_task=next"])
+    assert path.read_bytes() == original
+    recovery = list(path.parent.glob("*.tmp"))
+    assert len(recovery) == 1
+    assert read_json(recovery[0])["current_task"] == "next"
+
+
+def test_symlink_destination_is_not_replaced(tmp_path: Path) -> None:
+    path = ready_state(tmp_path)
+    link = tmp_path / "linked.json"
+    link.symlink_to(path)
+    original = path.read_bytes()
+    with pytest.raises(OSError, match="symlink"):
+        manage_state.main(["update", str(link), "--set", "current_task=next"])
+    assert link.is_symlink()
+    assert path.read_bytes() == original
+
+
+def test_reference_schema_tracks_runtime_fields() -> None:
+    schema = read_json(Path(manage_state.__file__).with_name("state_schema.json"))
+    assert set(schema["properties"]) == manage_state.SCHEMA_FIELDS
+    for key, choices in manage_state.ENUM_FIELDS.items():
+        assert set(schema["properties"][key]["enum"]) == choices

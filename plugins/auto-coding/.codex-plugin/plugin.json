@@ -1,7 +1,7 @@
 {
   "name": "auto-coding",
-  "version": "2.0.0",
-  "description": "Risk-aware coding delivery for Codex: route by risk, plan proportionally, reuse before writing, verify with evidence, hand off safely.",
+  "version": "3.0.0-dev",
+  "description": "Lightweight complete delivery: plan outcomes, preserve boundaries and memory, verify behavior, and finish authorized work.",
   "author": {
     "name": "auto-coding contributors"
   },
@@ -16,8 +16,8 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Auto Coding",
-    "shortDescription": "Risk-aware delivery: plan, implement, verify, hand off.",
-    "longDescription": "auto-coding is a risk-aware coding delivery skill for Codex. It routes every task to Fast, Standard, or High-risk execution by uncertainty and operational risk; plans only to the depth the route requires; enforces reuse over new code; verifies with the project's own toolchain under explicit PASS/FAIL/BLOCKED/NOT_APPLICABLE evidence states; and requires authorization for spec initialization, installs, commits, deployments, and destructive operations.",
+    "shortDescription": "Plan, implement, verify, and complete authorized outcomes.",
+    "longDescription": "A concise delivery framework for capable coding agents. It selects depth by actual risk, uses existing project plans and memory, completes required integration and in-scope repairs, and reconciles outcomes with verification evidence before stopping. Skills coordinate judgment; host and project rules control permissions. OpenSpec remains optional.",
     "developerName": "auto-coding contributors",
     "category": "Productivity",
     "capabilities": [

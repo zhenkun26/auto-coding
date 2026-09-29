@@ -13,8 +13,8 @@ and MSRV rather than silently selecting a newer compiler.
 
 | Purpose | Command |
 |---|---|
-| L0 compile check | `cargo check -p <affected-package>` |
-| L1 focused behavior check | `cargo test -p <affected-package> <test-name>` |
+| Compile check | `cargo check -p <affected-package>` |
+| Focused behavior check | `cargo test -p <affected-package> <test-name>` |
 | Format gate | `cargo fmt --all --check` |
 | Static gate | `cargo clippy --workspace --all-targets -- -D warnings` |
 | Package regression | `cargo test -p <affected-package>` |
@@ -30,7 +30,7 @@ and MSRV rather than silently selecting a newer compiler.
   repository configures it and the command actually runs.
 - Do not run `cargo add`, `cargo update`, or toolchain installation
   automatically; manifest, lockfile, and compiler changes require authority.
-- Perform the manual L2 contract comparison from
+- Perform the behavioral contract comparison from
   [implementation.md](implementation.md); the bundled structural checker is
   Python-only.
 

@@ -1,0 +1,122 @@
+{
+  "base_commit": "54a64b732183621f96097b00472e5cb3ebe9a9af",
+  "working_branch": "codex/lightweight-delivery",
+  "runtime": "3.13.15 (main, Aug 25 2026, 13:50:12) [Clang 22.1.3 ]",
+  "tool_versions": {
+    "pytest": "9.1.1",
+    "ruff": "0.16.2",
+    "mypy": "2.3.0"
+  },
+  "scope": "Local macOS checks with the existing .venv. No dependency installation. Linux/Python 3.12 CI not executed in this session.",
+  "executed_checks": [
+    {
+      "argv": [
+        "/Users/zhenkun/GitHub/auto-coding/.venv/bin/python",
+        "-B",
+        "scripts/run_tests.py"
+      ],
+      "result": "PASS",
+      "exit_code": 0,
+      "stdout": "Retained test artifacts: /var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-tests-07fb11a873234184bfe60cb22f23d640\n........................................................................ [ 67%]\n..................................                                       [100%]\n106 passed in 5.63s\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        ".venv/bin/ruff",
+        "check",
+        "--no-cache",
+        "scripts/",
+        "tests/"
+      ],
+      "result": "PASS",
+      "exit_code": 0,
+      "stdout": "All checks passed!\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        ".venv/bin/mypy",
+        "--cache-dir=/dev/null",
+        "scripts/"
+      ],
+      "result": "PASS",
+      "exit_code": 0,
+      "stdout": "Success: no issues found in 6 source files\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/zhenkun/GitHub/auto-coding/.venv/bin/python",
+        "-B",
+        "scripts/sync_plugin_skills.py"
+      ],
+      "result": "PASS",
+      "exit_code": 0,
+      "stdout": "Distribution bundles synchronized without deletion.\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/zhenkun/GitHub/auto-coding/.venv/bin/python",
+        "-B",
+        "scripts/sync_plugin_skills.py",
+        "--check"
+      ],
+      "result": "PASS",
+      "exit_code": 0,
+      "stdout": "Distribution bundles match canonical sources.\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/zhenkun/GitHub/auto-coding/.venv/bin/python",
+        "-B",
+        "scripts/check_repo.py"
+      ],
+      "result": "PASS",
+      "exit_code": 0,
+      "stdout": "check_repo: links, skill licenses, README headings, toolchain routes, and version consistency OK\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "result": "PASS",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "content_sha256": {
+    "pyproject.toml": "f57687d8232a56e670563c4af133daf0226ebbdd045342e6955f5e272aa78a2a",
+    "scripts/check_python_contracts.py": "6220b9503b37b82e6177a77308f2a6b567666cf72872555c179d0b1956145841",
+    "scripts/check_repo.py": "09c23cef70087177c4d00c1a499e929adf4bfc9ff100863417fccf8bce13b13b",
+    "scripts/detect_project.py": "fbf3d5c85c9df777e222a160f901c62afde15548977dd74624fea83e9ed65e72",
+    "scripts/manage_state.py": "5f6d5d49eaa5568d10a05ab2426171b9a4bf84c5e285e88d383aa2aa7bca0886",
+    "scripts/run_tests.py": "fd37eb2b6bdb8f8469dd8be8ba47ae3e687a05f5104279997fff49b4ecaef666",
+    "scripts/state_schema.json": "a485dd9cb2e4f499e5a769f3fee127f1035b51fcb365b95a57d0a9462324e93f",
+    "scripts/sync_plugin_skills.py": "e8444583ac3c7bdb8dcbe677bbdb41e89175fc2e6cebedff4e25d1003910836d",
+    "tests/fixtures/adversarial/README.md": "9cd5bcb8eb032dbc4c02ab48df5d4f715496bfd6ef4b2e4ef8bed81af82a28fb",
+    "tests/fixtures/adversarial/contract_mismatch/spec.md": "a67cfee9d918fc347e19a2147eb5932abc21ce06fcc1fdb5c9940ac2da970e3c",
+    "tests/fixtures/adversarial/contract_mismatch/src/service.py": "df8240809382b0c23a1952cb8314d7c64051d2f76ec7b841b135e1d188f4d8b9",
+    "tests/fixtures/adversarial/corrupt_state/state.json": "e5625e45d5e2a3a1a50f7d62f1bec337097cba3906d7bacc3b2495470a32bd03",
+    "tests/fixtures/adversarial/false_pass_return_types/spec.md": "0220c6a049c338fcd02b505069520b617d88b78a7a28ba296d8f767e07cc181b",
+    "tests/fixtures/adversarial/false_pass_return_types/src/math_ops.py": "7197dce5b5167e3dbba3aec5ac3ad3e4ca1ce4d43ed129d537b7e4f4b53da5aa",
+    "tests/fixtures/adversarial/multi_source_root/src/app.py": "9e26bf369911c45c243c684147b23fc9e1dcfcf257d299a1c632016a6fcd33f4",
+    "tests/fixtures/adversarial/multi_source_root/src/lib.py": "f469842763db3981070764f968bbc779cb0779f326e386b99bbe3431f8f30c49",
+    "tests/fixtures/adversarial/prose_trap/spec.md": "b0d69abdf5bde850264d01d990ffe9fff80830b12c25ed095c5628d4d3db8ba8",
+    "tests/fixtures/adversarial/prose_trap/src/report.py": "dc93159296300d96deaa9371e970728d5317b2817f9c284f0e986c9459f11d5e",
+    "tests/fixtures/adversarial/stale_tests_dir/pyproject.toml": "c1d0c148fdfa27189f5d87a599e62c04444a30464a2dc6f1e750d9c7359c9ab9",
+    "tests/fixtures/adversarial/valid_project/spec.md": "db90326f5bcb8fc97af79dc749ca553867b796ca671cf99c93898aacdf4177f0",
+    "tests/fixtures/adversarial/valid_project/src/users.py": "ff164b6fa13feadafc8855afb7a63e126fa9d88221a41b5ee9aa1fd4092656a8",
+    "tests/test_adversarial_fixtures.py": "5272835909d12aeaac9b87c59f7f11414b7263ffb75b0fa2dc9a4dbfc6b3362d",
+    "tests/test_check_repo.py": "25fd2405fe49fe386f70ea3865f518d62277b29ae5172dac0bd7c0668afcedfe",
+    "tests/test_contract_check.py": "801c5c4cedc63100849c071c2998675e4850766d3aaf0ac4843cb7e053fb1789",
+    "tests/test_detect_project.py": "ed20acf8544bf6cf3e7b8e86e4ffb2a93839060782667da160331ecff4b492d4",
+    "tests/test_manage_state.py": "b5a21e7d7f5f4c718d3d26c46556d04a3a70ac1b78eb534b1a067896010f3e06",
+    "tests/test_sync_plugin_skills.py": "6bf9648e4d84f8b0e11022c9a84a8c4cbfbcab412fc59072a4a4d22528de8497"
+  }
+}

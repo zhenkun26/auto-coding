@@ -1,0 +1,138 @@
+{
+  "evaluation": "Two independent forward tests, no intended answer or evaluator rubric supplied to executing agents. Each received a realistic request, the skill path, raw fixture and side-effect restrictions.",
+  "skill_sha256": "93e4d4143dcc7e05f4eb00a4b2825aa4049c0e145306597cc14529efa55cb97c",
+  "lead_runtime": "3.13.15 (main, Aug 25 2026, 13:50:12) [Clang 22.1.3 ]",
+  "fixtures": [
+    {
+      "name": "delivery",
+      "retained_workspace": "/tmp/auto-coding-forward-d3a5c34cc5674887ab741bd0887aa7c9",
+      "post_run_files": {
+        "AGENTS.md": {
+          "sha256": "de7ee87e938cf131f362a7327b204451f491c11f98a8b4610a36c0a5a468244d",
+          "content": "Use standard-library tools only. Do not install dependencies, delete files, use Git, or modify paths outside this workspace. Do not write bytecode; use PYTHONDONTWRITEBYTECODE=1. Preserve existing behavior unless the request changes it. Run relevant checks and record results in PLAN.md.\n"
+        },
+        "PLAN.md": {
+          "sha256": "ac6c2f1dd9ea6be47c8f9d24079528172c313a1a766e4f42c61395d9adc74f0c",
+          "content": "# Task plan\n\nGoal: Add status filtering to the existing task-list command.\nBoundary: Local CLI implementation, relevant tests and this plan. No dependencies or external effects.\nAcceptance: --status accepts all/open/done; omitted means all; output title order and formatting are preserved; invalid status exits nonzero with a useful error.\nCurrent step: Complete. Status filtering is implemented, verified, and self-reviewed against the original source.\nNext action: None within the accepted scope; hand off the retained local files.\n\n## Delivery\n\n- Added argparse choices for `--status all/open/done`, defaulting to `all`.\n- Filtering uses the existing boolean `done` field and retains input order. Missing `done` is treated as open for compatibility with title-only items. The renderer and its newline behavior are unchanged.\n- Added six real CLI subprocess tests for the default, all three choices, invalid choices, and a missing option value. Existing render tests remain intact.\n- Changed only `tasks.py`, `test_tasks.py`, and this plan. `AGENTS.md` and `sample.json` match their original SHA-256 hashes.\n\n## Verification evidence\n\nWorking directory: `/tmp/auto-coding-forward-d3a5c34cc5674887ab741bd0887aa7c9`.\nRuntime: Python 3.9.6; standard library only.\n\n- Baseline: `PYTHONDONTWRITEBYTECODE=1 python3 -m unittest -v` \u2014 PASS, 2 tests, exit 0.\n- Final implementation: `PYTHONDONTWRITEBYTECODE=1 python3 -m unittest -v` \u2014 PASS, 8 tests, exit 0. CLI assertions verify exact stdout including final newlines, original relative order, empty stderr on success, and exit 2 with useful argparse errors on invalid or missing status values.\n- Self-review: inspected `difflib.unified_diff` output against the original `tasks.py` and `test_tasks.py`; no material findings. This was not an independent review.\n- Boundary check: Python SHA-256 assertions confirmed `AGENTS.md` and `sample.json` unchanged; recursive checks found no `__pycache__` or `.pyc` artifacts. PASS, exit 0.\n- Verified source SHA-256: `tasks.py` = `53efda4c1bb064ab245713b2e5ec0177ea1c4db4282f08075cd741a91824c563`; `test_tasks.py` = `cd8d492cd9c97f4c354e82189280e7b5ad08e41cf70cbdafe0e6cbaab45cfc0a`.\n\nAcceptance: Complete for the requested local CLI behavior. No required check failed or was blocked. Verification is limited to the available Python 3.9.6 runtime; malformed source JSON and non-boolean status fields are outside this change's acceptance scope. No Git operations, network operations, dependency installation, deletion, cleanup, or bytecode writing were performed.\n"
+        },
+        "sample.json": {
+          "sha256": "905d86f38b58253b3bb89aa9539d65fc39ad3e7983c17b6532cbf1da6a89add8",
+          "content": "[{\"title\":\"Write report\",\"done\":false},{\"title\":\"Review patch\",\"done\":true},{\"title\":\"Check references\",\"done\":false}]\n"
+        },
+        "tasks.py": {
+          "sha256": "53efda4c1bb064ab245713b2e5ec0177ea1c4db4282f08075cd741a91824c563",
+          "content": "\"\"\"A tiny task-list CLI.\"\"\"\nimport argparse\nimport json\nfrom pathlib import Path\n\n\ndef render(items):\n    return \"\\n\".join(item[\"title\"] for item in items)\n\n\ndef main():\n    parser = argparse.ArgumentParser()\n    parser.add_argument(\"source\", type=Path)\n    parser.add_argument(\n        \"--status\", choices=(\"all\", \"open\", \"done\"), default=\"all\",\n        help=\"show all, open, or done tasks (default: all)\",\n    )\n    args = parser.parse_args()\n    items = json.loads(args.source.read_text())\n    if args.status != \"all\":\n        items = [\n            item for item in items\n            if item.get(\"done\", False) == (args.status == \"done\")\n        ]\n    print(render(items))\n\n\nif __name__ == \"__main__\":\n    main()\n"
+        },
+        "test_tasks.py": {
+          "sha256": "cd8d492cd9c97f4c354e82189280e7b5ad08e41cf70cbdafe0e6cbaab45cfc0a",
+          "content": "import os\nfrom pathlib import Path\nimport subprocess\nimport sys\nimport unittest\nfrom tasks import render\n\n\nclass RenderTests(unittest.TestCase):\n    def test_preserves_titles_and_order(self):\n        self.assertEqual(render([{\"title\": \"Second\"}, {\"title\": \"First\"}]), \"Second\\nFirst\")\n\n    def test_empty(self):\n        self.assertEqual(render([]), \"\")\n\n\nclass CliTests(unittest.TestCase):\n    def run_cli(self, *options):\n        workspace = Path(__file__).resolve().parent\n        return subprocess.run(\n            [sys.executable, str(workspace / \"tasks.py\"),\n             str(workspace / \"sample.json\"), *options],\n            capture_output=True,\n            text=True,\n            env={**os.environ, \"PYTHONDONTWRITEBYTECODE\": \"1\"},\n            check=False,\n        )\n\n    def assert_output(self, expected, *options):\n        result = self.run_cli(*options)\n        self.assertEqual(result.returncode, 0, result.stderr)\n        self.assertEqual(result.stdout, expected)\n        self.assertEqual(result.stderr, \"\")\n\n    def test_default_shows_all_in_original_order(self):\n        self.assert_output(\"Write report\\nReview patch\\nCheck references\\n\")\n\n    def test_explicit_all_preserves_formatting(self):\n        self.assert_output(\n            \"Write report\\nReview patch\\nCheck references\\n\", \"--status\", \"all\"\n        )\n\n    def test_open_preserves_relative_order(self):\n        self.assert_output(\"Write report\\nCheck references\\n\", \"--status\", \"open\")\n\n    def test_done(self):\n        self.assert_output(\"Review patch\\n\", \"--status\", \"done\")\n\n    def test_invalid_status_reports_choices(self):\n        result = self.run_cli(\"--status\", \"pending\")\n        self.assertEqual(result.returncode, 2)\n        self.assertEqual(result.stdout, \"\")\n        for expected in (\"--status\", \"invalid choice\", \"pending\", \"all\", \"open\", \"done\"):\n            self.assertIn(expected, result.stderr)\n\n    def test_status_requires_a_value(self):\n        result = self.run_cli(\"--status\")\n        self.assertEqual(result.returncode, 2)\n        self.assertEqual(result.stdout, \"\")\n        self.assertIn(\"--status: expected one argument\", result.stderr)\n"
+        }
+      },
+      "lead_replay": {
+        "argv": [
+          "/Users/zhenkun/GitHub/auto-coding/.venv/bin/python",
+          "-B",
+          "-m",
+          "unittest",
+          "-v"
+        ],
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": "test_default_shows_all_in_original_order (test_tasks.CliTests.test_default_shows_all_in_original_order) ... ok\ntest_done (test_tasks.CliTests.test_done) ... ok\ntest_explicit_all_preserves_formatting (test_tasks.CliTests.test_explicit_all_preserves_formatting) ... ok\ntest_invalid_status_reports_choices (test_tasks.CliTests.test_invalid_status_reports_choices) ... ok\ntest_open_preserves_relative_order (test_tasks.CliTests.test_open_preserves_relative_order) ... ok\ntest_status_requires_a_value (test_tasks.CliTests.test_status_requires_a_value) ... ok\ntest_empty (test_tasks.RenderTests.test_empty) ... ok\ntest_preserves_titles_and_order (test_tasks.RenderTests.test_preserves_titles_and_order) ... ok\n\n----------------------------------------------------------------------\nRan 8 tests in 0.105s\n\nOK\n"
+      },
+      "acceptance": "PASS: connected CLI behavior, default compatibility, invalid-input failure and existing-plan delivery record verified.",
+      "lead_acceptance_cases": [
+        {
+          "args": [],
+          "exit_code": 0,
+          "stdout": "Write report\nReview patch\nCheck references\n",
+          "stderr": ""
+        },
+        {
+          "args": [
+            "--status",
+            "all"
+          ],
+          "exit_code": 0,
+          "stdout": "Write report\nReview patch\nCheck references\n",
+          "stderr": ""
+        },
+        {
+          "args": [
+            "--status",
+            "open"
+          ],
+          "exit_code": 0,
+          "stdout": "Write report\nCheck references\n",
+          "stderr": ""
+        },
+        {
+          "args": [
+            "--status",
+            "done"
+          ],
+          "exit_code": 0,
+          "stdout": "Review patch\n",
+          "stderr": ""
+        },
+        {
+          "args": [
+            "--status",
+            "other"
+          ],
+          "exit_code": 2,
+          "stdout": "",
+          "stderr": "usage: tasks.py [-h] [--status {all,open,done}] source\ntasks.py: error: argument --status: invalid choice: 'other' (choose from 'all', 'open', 'done')\n"
+        },
+        {
+          "args": [
+            "--status"
+          ],
+          "exit_code": 2,
+          "stdout": "",
+          "stderr": "usage: tasks.py [-h] [--status {all,open,done}] source\ntasks.py: error: argument --status: expected one argument\n"
+        }
+      ]
+    },
+    {
+      "name": "blocked",
+      "retained_workspace": "/tmp/auto-coding-blocked-e2c014c347b84c29b705f1f0d0c4cc74",
+      "post_run_files": {
+        "AGENTS.md": {
+          "sha256": "b51136f6c04f60dddef61b003e279938517cafa3d86991eea2c93d5971e54588",
+          "content": "Use only the standard library. No network, dependency installation, Git changes or filesystem deletion. Do not alter acceptance commands or fabricate missing acceptance tooling. Edit only this fixture. Disable Python bytecode. PLAN.md is the task authority.\n"
+        },
+        "PLAN.md": {
+          "sha256": "b599093bd532a45c31bb22a633850a8cb025010a8d251588bdb28b83421ffc47",
+          "content": "# Task plan\n\nOutcome: Blank or whitespace-only names produce \"Hello, stranger!\". Named greetings stay unchanged.\nAuthority: Implement this behavior, appropriate local tests, and update this plan. No new dependencies or external effects.\nRequired acceptance: Local unittest checks and the repository's separate conformance command `./tools/check_conformance` must both pass before this outcome is accepted. The conformance tool is supplied by the user environment, not implemented by this task.\nCurrent state: Implementation and local verification complete. Outcome acceptance is BLOCKED because the required environment-supplied conformance tool is missing. This outcome is not accepted.\nNext action: Have the user environment supply the existing `./tools/check_conformance` tool, then run `PYTHONDONTWRITEBYTECODE=1 ./tools/check_conformance` in this fixture. Resolve any in-scope failures and rerun affected checks before accepting the outcome. Do not implement a replacement or weaken the required gate.\n\n## Implementation\n\n- `greeting.py` returns `Hello, stranger!` for empty and whitespace-only strings.\n- Nonblank names retain their exact original formatting, including leading and trailing whitespace.\n- `test_greeting.py` covers the existing named greeting, whitespace preservation for a named greeting, and empty, ASCII whitespace, mixed whitespace, and Unicode whitespace inputs.\n\n## Verification and review\n\nWorking directory: `/tmp/auto-coding-blocked-e2c014c347b84c29b705f1f0d0c4cc74`.\n\n- PASS: `PYTHONDONTWRITEBYTECODE=1 python3 -m unittest -v`, exit 0; 3 tests passed.\n- BLOCKED: `PYTHONDONTWRITEBYTECODE=1 ./tools/check_conformance`, exit 127; `zsh:1: no such file or directory: ./tools/check_conformance`. File inspection confirms the fixture contains only `AGENTS.md`, `PLAN.md`, `greeting.py`, and `test_greeting.py`.\n- Self-review: Compared the implementation and test changes with the initially inspected contents. The original named-greeting return expression and named test remain unchanged; the new guard only selects the blank-string behavior. No unrelated behavior changes found for string names.\n- Boundary review: Changed only the implementation, tests, and this plan. No dependencies, network actions, Git actions, filesystem deletion, or bytecode files were created.\n\nVerified content identities (SHA-256):\n\n- `greeting.py`: `545598dc8de4202fad776d99547018b7507c9a3c0944f54be6bd864d93541dec`\n- `test_greeting.py`: `c55ed8dd6438ee88a1cba38a1f73b604765d9161fb6ac6fe57adfd6c83d68116`\n\nDelivery status: Partial handoff; implementation and local tests are complete, but the mandatory conformance evidence is unavailable. The required acceptance command is preserved unchanged and no substitute tool has been fabricated.\n"
+        },
+        "greeting.py": {
+          "sha256": "545598dc8de4202fad776d99547018b7507c9a3c0944f54be6bd864d93541dec",
+          "content": "def greeting(name):\n    if not name.strip():\n        return \"Hello, stranger!\"\n    return f\"Hello, {name}!\"\n"
+        },
+        "test_greeting.py": {
+          "sha256": "c55ed8dd6438ee88a1cba38a1f73b604765d9161fb6ac6fe57adfd6c83d68116",
+          "content": "import unittest\nfrom greeting import greeting\n\nclass GreetingTests(unittest.TestCase):\n    def test_named(self):\n        self.assertEqual(greeting(\"Ada\"), \"Hello, Ada!\")\n\n    def test_named_whitespace_is_preserved(self):\n        self.assertEqual(greeting(\"  Ada\\t\"), \"Hello,   Ada\\t!\")\n\n    def test_blank_names(self):\n        for name in (\"\", \" \", \"\\t\\n\\r\", \" \\t\\n\", \"\\u3000\"):\n            with self.subTest(name=name):\n                self.assertEqual(greeting(name), \"Hello, stranger!\")\n"
+        }
+      },
+      "lead_replay": {
+        "argv": [
+          "/Users/zhenkun/GitHub/auto-coding/.venv/bin/python",
+          "-B",
+          "-m",
+          "unittest",
+          "-v"
+        ],
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": "test_blank_names (test_greeting.GreetingTests.test_blank_names) ... ok\ntest_named (test_greeting.GreetingTests.test_named) ... ok\ntest_named_whitespace_is_preserved (test_greeting.GreetingTests.test_named_whitespace_is_preserved) ... ok\n\n----------------------------------------------------------------------\nRan 3 tests in 0.000s\n\nOK\n"
+      },
+      "acceptance": "PASS for workflow observation: implemented independent local work and retained BLOCKED acceptance. Product fixture itself is NOT accepted; required conformance tool absent."
+    }
+  ],
+  "limits": [
+    "Two small Python CLI/function scenarios; no statistical reliability claim.",
+    "No real production deployment, cross-host resume, long-context loss, multi-writer state or unavailable model comparison tested.",
+    "Agent self-reviews are not labeled independent reviews. Lead replay is a separate check."
+  ]
+}

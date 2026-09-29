@@ -13,13 +13,13 @@ the contract checker.
 
 | Purpose | Command |
 |---|---|
-| L0 import check | `python -c "from <pkg> import <symbol>"` |
-| L1 behavior check | `python -c "from <mod> import demo; demo()"` / `python <file>.py` / `python -m doctest <file>.py` |
-| Immediate type check (per task) | `mypy --strict <file>` (or `pyright <file>` when configured) |
-| Layer checkpoint | `mypy --strict <all files written so far>` |
-| Static gate — Critical | `mypy --strict <modified files>` |
-| Static gate — Standard | `ruff check <modified files>` |
-| Runtime — Mode A | `pytest --cov=<src_dir> --cov-report=term -v` |
+| Import check | `python -c "from <pkg> import <symbol>"` |
+| Behavior check | `python -c "from <mod> import demo; demo()"` / `python <file>.py` / `python -m doctest <file>.py` |
+| Configured type check | `mypy --strict <file>` (or `pyright <file>` when configured) |
+| Project type check | `mypy --strict <all files written so far>` |
+| Type check | `mypy --strict <modified files>` |
+| Lint | `ruff check <modified files>` |
+| Behavior tests / configured coverage | `pytest --cov=<src_dir> --cov-report=term -v` |
 | Structural contract pre-check | `python scripts/check_python_contracts.py --spec <spec.md> --source <src_dir>` |
 
 ## Contract checker
@@ -29,7 +29,7 @@ the contract checker.
 Gherkin endpoint contracts (`WHEN POST /path`) as a fallback — and compares
 them against actual source via AST. Exit code 0 = structural match.
 
-- Run it before the manual L2 five-item comparison; fix structural issues
+- Run it before the relevant behavioral contract comparison; fix structural issues
   first.
 - Empty contract (no supported symbols) → it reports nothing checkable;
   **never** present that as contract verification — do the manual comparison
@@ -37,8 +37,8 @@ them against actual source via AST. Exit code 0 = structural match.
 - It covers structural checks only; error codes and side effects still
   require manual review.
 
-## Degradation
+## Unavailable checks
 
-Per [adaptive.md](adaptive.md): configured-but-missing mypy/ruff/pytest →
-show the install command and halt; no config → `BLOCKED` + alternative
-evidence (IDE diagnostics / code review / behavior self-check).
+Follow [adaptive.md](adaptive.md). Preserve configured checks as BLOCKED when
+unavailable, identify the prerequisite, and continue independent work. Use existing
+behavioral checks when no framework is configured; do not install or invent gates.

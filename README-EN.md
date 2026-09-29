@@ -1,167 +1,158 @@
-# auto-coding — risk-aware coding delivery skill for AI agents
+# auto-coding — complete delivery with a lightweight framework
 
-🌐 Language / 语言：[简体中文](README.md) · [English](README-EN.md)
+🌐 Language / 语言: [简体中文](README.md) · [English](README-EN.md)
 
 [![CI](https://github.com/zhenkun26/auto-coding/actions/workflows/ci.yml/badge.svg)](https://github.com/zhenkun26/auto-coding/actions/workflows/ci.yml)
-[![Release](https://img.shields.io/github/v/release/zhenkun26/auto-coding)](https://github.com/zhenkun26/auto-coding/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-A **risk-aware delivery skill** for AI coding agents: select execution depth by uncertainty and operational risk, plan proportionally, change minimally, verify with the project's own toolchain, and deliver on evidence.
+Give a capable coding agent room to choose its methods. Keep the outcome,
+protected behavior, authority, verification, memory, and completion conditions clear.
 
-## What it is
+## What it does
 
-auto-coding helps a coding agent, when modifying code, to first identify risks and constraints, then plan, implement, verify, and hand off at a depth proportionate to the task. It is a restructuring of a parallel development system distilled through repeated trial and error during vibe coding (OpenSpec planning + Pipeline execution + Ponytail code minimization + grill-me decision interviews) — every practical mechanism is preserved, on a more restrained structure:
+A short [entry skill](SKILL.md) coordinates planning, implementation, verification,
+and delivery. Detailed references load only when relevant. Small tasks need no
+process files. Existing plans and status records remain authoritative; OpenSpec
+and other specification systems are optional.
 
-- **The main file holds only the contract**: `SKILL.md` defines the execution contract; all detail lives in 12 on-demand references;
-- **Zero process files by default**: no more TASK_PLAN / LOCATE_MAP / RUN_LOG pipelines — a single state file exists only for long tasks;
-- **Clear authorization boundaries**: dependency installs, commits, deployments, migrations, and deletions all require explicit authorization;
-- **Pluggable spec systems**: the core contract treats any existing planning workflow with a single rule; OpenSpec support is an optional companion skill (`auto-coding-openspec/`), and the four-state evidence discipline ships as a standalone `verify-evidence` skill.
+The workflow targets observable premature stopping: delivering a scaffold instead
+of working behavior, omitting integration, declaring success after a weaker check,
+or returning routine in-scope repairs as optional next steps. It cannot guarantee
+agent compliance or independently certify agent-written evidence.
 
-## Core ideas
+## Working flow
 
-Not every change needs to go through the same heavy pipeline. This skill selects execution depth by uncertainty, blast radius, and operational risk, following the principle that **risk overrides change size** — even a one-line authorization or money change is High-risk.
+1. Inspect instructions, current changes, consumers, and the authorized outcome.
+2. Resolve consequential uncertainty; decide routine technical choices independently.
+3. Plan complete outcomes in dependency order, with acceptance and boundaries.
+4. Implement through required integration and in-scope repairs.
+5. Verify affected behavior with native project checks; repair and recheck failures.
+6. Reconcile the request, final diff, evidence, and remaining work before completion.
+7. Preserve the delivery record, commit when authorized, and report genuine limitations.
 
-This skill follows the principle of the **smallest complete change**: reuse existing implementations, the standard library, and installed dependencies first (reuse > stdlib > installed dependency > new code), avoiding unrelated refactoring, process-file bloat, and unauthorized side effects. Verification evidence strictly distinguishes `PASS` / `FAIL` / `BLOCKED` / `NOT_APPLICABLE`, and `BLOCKED` is never treated as `PASS`.
+A plan or progress message is not completion. Continue until the authorized
+outcome is complete, the user pauses it, or an actual dependency/permission block
+prevents progress. Continue independent authorized work when another part is blocked.
 
-## Positioning
+## Planning depth and boundaries
 
-auto-coding is not a process owner — it is a delivery-fidelity tool:
+| Route | Appropriate depth |
+|:---|:---|
+| Fast | Clear, local, reversible result: inspect, edit, and check the affected behavior |
+| Standard | Meaningful uncertainty or connected behavior: concise outcome plan, consumer-aware changes and verification |
+| High-risk | Actual consequential effects on data, privileges, money, external contracts or operations: explicit invariants, recovery and applicable risk checks |
 
-| | spec-kit / OpenSpec / GSD | mattpocock/skills | auto-coding |
-|:---|:---|:---|:---|
-| Niche | Spec-driven development flow | Alignment, planning & design workflows | Delivery fidelity: risk routing + evidence discipline |
-| State lives in | Spec dirs / change dirs | Issue tracker, CONTEXT.md, ADRs | The repository itself + one optional state file |
-| Onboarding cost | Learn the spec ceremony first | Low | Low (zero process files by default) |
-| Best for | Teams needing formal specs | Everyday engineering alignment | Individuals & small teams who require unfakeable verification evidence |
+Route by consequences and uncertainty, not keywords or file counts. No fixed
+number of questions, tests, or repair rounds is imposed. Repeated failures call
+for diagnosis and replanning; they do not make ordinary repair the user's job.
 
-## Three routes
+Authorization is action-specific. Existing permission persists within its scope;
+readiness and broad task approval do not override explicit restrictions or authorize
+push, release, deployment, new dependencies, or unrelated work. The host and project
+rules enforce permissions; the skill is not a sandbox or independent runtime.
 
-| Route | Typical use | Required depth |
-|:---|:---|:---|
-| **Fast** | Localized, clear, low-risk, easily reversible | Inspect, minimal edit, import/behavior self-check |
-| **Standard** | Multi-file behavior, interface change, or meaningful uncertainty | Concise plan, caller-aware implementation, static checks and tests |
-| **High-risk** | FINANCE / AUTH / MIGRATION / STATE_MACHINE / EXTERNAL_API / ENV_OPS, concurrency, or destructive behavior | Written invariants and rollback plan, staged implementation, risk-specific verification |
+An explicitly requested cleanup audit uses [evidence-based simplification](references/simplification.md):
+read-only discovery, independently challenged candidates, scoped GO, bounded
+experiments, restoration, and final review. This is a conditional branch, not the
+default process for ordinary edits.
 
-Greenfield/brownfield state does not change the route — only planning and location depth (greenfield has no existing code to locate; files are created directly).
+## Memory and evidence
 
-## How it works
+Keep three kinds of information distinct without requiring three new files:
 
-1. Read repository instructions, CI, and working-tree state; optionally probe the project read-only via `scripts/detect_project.py`.
-2. Establish the execution boundary: if the repository already has a planning workflow (OpenSpec, spec-kit, an issue flow), its artifacts are the planning authority; otherwise plan inline; an unbounded request stops before implementation.
-3. Select the Fast / Standard / High-risk route.
-4. Plan to the route's depth; with ≥3 unresolved design decisions, run the decision-grilling pass.
-5. Implement along the reuse ladder; every task runs the three-pass self-check (imports load → behavior asserts → contract match), with layer-level type checkpoints and escape-hatch detection.
-6. Verify with the project's own commands in focused-regression → adjacent-contract → broader-gate order; behavior changes invalidate earlier evidence. Missing tools follow the adaptive rules and are reported honestly as `BLOCKED`.
-7. Report changes, verification evidence, escape hatches, assumptions, and follow-ups; a planning workflow's task checklist is checked only after scoped acceptance evidence passes (facts first), while commits and other follow-ups remain authorization-gated.
+- **Project knowledge:** stable decisions and verified lessons worth retaining.
+- **Current task state:** one existing plan/status authority with the boundary,
+  completed and remaining work, blockers, evidence pointers, and next action.
+- **Verification evidence:** checked content, command, environment, result, and
+  applicability. Include relevant uncommitted work in the content identity.
 
-Conflicts defer to facts: requirement existence defers to specs, code reuse follows the reuse ladder, spec defects stop implementation and trigger an honest defect report, and task lists defer to facts.
+If standalone long-running work lacks an existing state authority,
+`scripts/manage_state.py` offers an optional single-writer JSON record. `init`
+refuses existing files; `complete --summary ...` preserves the record and rejects
+known remaining work, blockers, or missing delivery fields. The deprecated `clear`
+alias now follows completion semantics and never empties a record. Legacy records
+remain readable and can be enriched. Structural validation does not prove a claim true.
 
-## Safety boundaries
+Use `PASS`, `FAIL`, `BLOCKED`, and `NOT_APPLICABLE` precisely. A required unavailable
+check is blocked, not inapplicable. On resume, reconcile evidence with the current
+content and environment; rerun affected or untraceable checks. A session change alone
+does not invalidate unchanged, traceable evidence. See [memory design](docs/MEMORY_STRATEGY.md).
 
-By default, this skill does not automatically perform the following:
+## Installation and use
 
-- initializes OpenSpec or any other specification system
-- installs dependencies
-- commits, pushes, publishes, or deploys
-- deletes files, runs data migrations, or modifies remote services
-- reports a check it could not execute as passed
-
-All of the above require explicit user authorization. Checks that cannot run are marked `BLOCKED` and reported separately from alternative evidence.
-
-## Sedimentation and recovery
-
-- **No process files by default.** The only standing artifact is `ai_pipeline/ERROR_MEMORY.md`, appended solely when a self-heal, escape hatch, or Critical failure occurs (see [references/sedimentation.md](references/sedimentation.md)).
-- **Breakpoint recovery**: only long or interruption-prone tasks use the single state file `ai_pipeline/state.json`, read and written atomically via `scripts/manage_state.py` (see [references/recovery.md](references/recovery.md)). The next invocation prints the exact breakpoint and asks whether to resume or restart.
-
-## Repository layout
-
-```text
-├── SKILL.md                     # Control: core contract, routing, workflow, resource map
-├── references/                  # 12 on-demand references
-│   ├── routing.md               #   Fast/Standard/High-risk routing and risk flags
-│   ├── planning.md              #   Proportional planning, atomic decomposition, decision-grilling
-│   ├── implementation.md        #   Reuse ladder, location method, three-pass self-check, escape hatches
-│   ├── verification.md          #   Static/runtime gates, repository-first thresholds and fallbacks
-│   ├── risk-controls.md         #   Non-degradable controls for the six risk flags
-│   ├── adaptive.md              #   Toolchain adaptation and degradation rules
-│   ├── sedimentation.md         #   ERROR_MEMORY / TECH_NOTES (optional)
-│   ├── recovery.md              #   Cross-session breakpoint recovery (incl. evidence shelf life)
-│   └── toolchain-python.md / toolchain-typescript.md / toolchain-go.md / toolchain-rust.md
-├── auto-coding-openspec/        # Optional companion skill for repos already using OpenSpec (separate install)
-├── verify-evidence/             # Standalone skill: four-state evidence discipline for any workflow
-├── setup-auto-coding/           # Standalone skill: one-time setup (/setup-auto-coding)
-├── skills/                      # Distribution directory for the skills.sh / npx channel (generated by the sync script)
-├── scripts/
-│   ├── detect_project.py         # Read-only project detection (language/CI/spec system/greenfield)
-│   ├── manage_state.py           # Atomically reads/writes the single state file
-│   ├── check_python_contracts.py # Python structural contract checker (AST + Gherkin fallback)
-│   ├── state_schema.json         # State-file reference schema
-│   ├── check_repo.py             # Repository mechanical checks (links/licenses/README/toolchain routes/version)
-│   └── sync_plugin_skills.sh     # Plugin bundle sync (repo root is the single source of truth)
-├── pyproject.toml               # Single version source + ruff / mypy (strict) configuration for CI self-checks
-├── plugins/auto-coding/         # Codex plugin bundle (generated from the repo root by the sync script)
-├── docs/                        # Decision records, memory strategy, acceptance report
-└── tests/                       # pytest suite (including adversarial trap fixtures under fixtures/adversarial)
-```
-
-## Installation
-
-Distributed as a Codex plugin + marketplace; the repo-local marketplace lives at `.agents/plugins/marketplace.json`.
+The existing Codex plugin channel ships `auto-coding`, `verify-evidence`, and
+`setup-auto-coding`. The skills.sh channel also offers `auto-coding-openspec`.
 
 ```bash
-# Install from GitHub
 codex plugin marketplace add zhenkun26/auto-coding
 codex plugin add auto-coding@auto-coding
 
-# Or use the skills.sh installer (also covers Claude Code and other agents;
-# pick skills interactively — ordinary, editable files are written into your repo)
+# Alternative installer; choose only the skills you need
 npx skills@latest add zhenkun26/auto-coding
 
-# Local development install
+# Local development source
 codex plugin marketplace add /path/to/this/repo
 codex plugin add auto-coding@auto-coding
-
-# Update / uninstall
-codex plugin marketplace upgrade
-codex plugin remove auto-coding@auto-coding
 ```
-
-The plugin ships three skills: `auto-coding` (the main skill), `verify-evidence` (the evidence discipline, usable on its own), and `setup-auto-coding` (one-time setup). Repositories already using OpenSpec additionally install the companion skill by copying `auto-coding-openspec/` into their skills directory.
-
-After changing skill content, run `bash scripts/sync_plugin_skills.sh` before releasing to re-sync the plugin bundle; CI re-runs the script and fails on any drift between the bundle and the repository root.
-
-## Usage
-
-For a first run in a target repository, do the one-time setup: `/setup-auto-coding` asks for a strictness profile (strict / default / light), primary language, and evidence thresholds, then writes an `## auto-coding` section into `AGENTS.md` that every future session reads automatically.
 
 ```text
-Use $auto-coding to implement this change with risk-aware routing and verification.
+Use $auto-coding to complete this feature, including integration and verification.
 ```
 
-Or describe the task directly and let the skill handle routing automatically. If the repository already has a planning workflow (OpenSpec, spec-kit, issues), point at its artifacts directly, e.g. `Implement <plan-dir>/<change>/ with auto-coding`; completion requires passing scoped acceptance evidence.
+Setup is optional. `$setup-auto-coding` records only useful repository-specific
+pointers and boundaries in the existing instruction file. It does not require a
+profile questionnaire or fabricate thresholds. `$verify-evidence` works independently.
+The OpenSpec companion is for an applicable existing OpenSpec task and never
+initializes a specification system merely to use this workflow.
 
-## Environment requirements
+The working tree is the next-major development version; this does not publish a
+release or update installed copies. Install/update commands have external effects
+and are run only under the applicable authorization.
 
-| Dependency | Required? | When missing |
-|:---|:---|:---|
-| bash (POSIX sh) | Required | No fallback — bash is the execution environment |
-| git | Required for commits | Code written but uncommitted, labeled honestly |
-| Python 3.10+ | Contract checker / detection scripts | Contract check degrades to the manual contract-comparison checklist |
-| mypy / ruff / pytest | Python template | Configured but missing → install prompt and halt; no config → degrade to alternative evidence marked `BLOCKED` |
-| tsc / eslint / jest | TS template | Same as above |
-| go | Go template | Preserve repository tags/platform constraints; halt when missing, without installing tools or changing module dependencies |
-| cargo | Rust template | Preserve toolchain/MSRV and feature constraints; halt when missing, without installing tools or updating dependencies |
-| OpenSpec CLI | Optional (companion skill) | Repos using OpenSpec install `auto-coding-openspec`; otherwise inline planning, never auto-initialized |
+## Repository and maintenance
 
-## Quality assurance
+| Path | Responsibility |
+|:---|:---|
+| `SKILL.md`, `references/` | Canonical contract and conditional guidance |
+| `verify-evidence/`, `setup-auto-coding/`, `auto-coding-openspec/` | Canonical companion skills |
+| `scripts/detect_project.py` | Read-only project/toolchain discovery |
+| `scripts/check_python_contracts.py` | Python structural precheck; not behavioral proof |
+| `scripts/manage_state.py`, `scripts/state_schema.json` | Optional recovery record |
+| `scripts/sync_plugin_skills.py` | Non-deleting distribution synchronization and read-only drift check |
+| `scripts/check_repo.py`, `scripts/run_tests.py`, `tests/` | Repository checks and retained-fixture tests |
+| `skills/`, `plugins/auto-coding/skills/` | Generated distributions; edit canonical sources |
+| `docs/WORKFLOW_PLAN.md` | Current implementation plan, research decisions and acceptance record |
 
-- Three-pass self-check (imports / behavior / contract) + hard gates: type check Critical (failure halts while preserving diagnostics), lint Standard (self-heal ≤3 rounds); coverage uses repository/CI thresholds first and labeled fallback values only when absent.
-- Adjacent-contract checks select relevant default, override, missing/invalid-input, failure-cleanup, and compatibility paths; two repair rounds that consecutively introduce new acceptance or preserved-contract failures trip the semantic fuse and force root-cause replanning.
-- Layer-level type checkpoints: after each topological layer, the type checker runs over every file written so far, catching cross-file type errors.
-- Escape-hatch detection: self-heals that pass only via `Any` / `# type: ignore` / `cast()` are recorded as `[ESCAPE_HATCH]` quality debt and listed at handoff.
-- Automated contract checking: AST comparison of spec signatures against actual code, with spec extraction scoped to fenced code blocks (prose that merely looks like a signature is ignored), namespace-aware (`ClassName.method`); empty contracts never report a false pass.
-- Repository self-checks: the full pytest suite (including deterministic trap assertions over adversarial fixtures), ruff and mypy (strict) over the repository's own scripts, a plugin-bundle drift check, markdown link integrity, license-header scan, Chinese/English README structure parity, and complete detector-template-to-toolchain routing — all in CI (`.github/workflows/ci.yml`).
+Python 3.10+ runs the stdlib helpers. Bash is needed only for the compatibility
+sync wrapper. Target projects use their own available toolchains; no default tool
+installation or invented coverage threshold is required. Configured unavailable
+checks remain visible as blocked while independent work continues.
 
-## Third-party components and license
+For repository development, use an environment with the tools declared in CI:
 
-MIT License. The reuse ladder is adapted from Ponytail (MIT); earlier releases bundled OpenSpec skills and grill-me. See [THIRD_PARTY.md](THIRD_PARTY.md) and [CHANGELOG.md](CHANGELOG.md).
+```bash
+python -B scripts/run_tests.py
+ruff check --no-cache scripts/ tests/
+mypy --cache-dir=/dev/null scripts/
+python -B scripts/sync_plugin_skills.py
+python -B scripts/sync_plugin_skills.py --check
+python -B scripts/check_repo.py
+```
+
+The test runner retains unique fixture directories and disables automatic pytest
+cleanup; it is not a subprocess sandbox. Sync preflights both bundles, preserves
+unexpected files and refuses to proceed until the user reconciles them. `--check`
+does not write. Interrupted multi-file synchronization is detectable, not transactional.
+No automatic cleanup of retained files is provided.
+
+## Verification limits and attribution
+
+Mechanical checks cover links, license declarations, README heading parity,
+language-reference routing, versions, helper behavior and distribution fidelity.
+Behavioral skill tests exercise bounded scenarios; they are not a reliability
+benchmark. Neither Markdown rules nor a state file prevents every premature stop.
+See the [current plan and evidence](docs/WORKFLOW_PLAN.md) for actual results and
+limitations; historical acceptance reports describe their historical versions.
+
+MIT for original project content. See [THIRD_PARTY.md](THIRD_PARTY.md),
+[decision records](docs/DECISIONS.md), and [CHANGELOG.md](CHANGELOG.md).

@@ -1,178 +1,65 @@
 ---
 name: implementation
-description: Implementation protocol for auto-coding — reuse ladder, brownfield location method, per-task loop with immediate type checks and layer checkpoints, escape-hatch recording, and the three-pass self-check (imports, behavior, contract). Read for every implementation task.
+description: Implement complete behavior, preserve consumers, and repair failures within the agreed boundary.
 ---
 
-# Implementation
+# Implement the Agreed Result
 
-Understand first, modify second. The shortest working diff wins — but only
-when you actually traced what the change touches.
+Inspect relevant definitions, callers, tests, and configuration before editing.
+Read enough to understand behavior, including error paths and side effects;
+line counts and symbol-search hits do not substitute for this understanding.
+Resolve routine naming or location ambiguity through inspection.
 
-## The reuse ladder
+Prefer existing code, standard-library/native facilities, and installed
+components before new code or dependencies. Preserve abstractions that carry
+compatibility, policy, lifecycle, observability, or test boundaries. A single
+implementation or fewer lines is not sufficient reason to remove one. The reuse
+principle is adapted from Ponytail; attribution lives in the repository's
+THIRD_PARTY.md. Any dependency or deletion follows the applicable authority.
 
-Stop at the first rung that holds:
+## Complete the behavior
 
-1. Does this feature really need to exist? (YAGNI — if speculative, say so in
-   one sentence and skip)
-2. Already in the codebase? → reuse
-3. Can the standard library do it? → stdlib
-4. Does a native platform feature cover it? → native
-5. Can an installed dependency solve it? → use what exists
-6. Can it be done in one line? → one line
-7. Last resort: minimal working code
+Build a coherent slice including required consumers, configuration, entrypoints,
+and failure handling. Keep speculative extensions out. Preserve trust-boundary
+validation, data-loss protection, security, accessibility, and supported contracts.
+A stub, TODO, mock-only path, or unconnected helper is incomplete when the user
+requested working behavior.
 
-Rules:
+Use a tight project-native feedback loop. Reproduce bugs and add meaningful
+regression protection where warranted. Choose checks by the affected behavior,
+not a fixed number of assertions or checks after every edit. Imports can execute
+side effects; inspect them before using import-as-verification.
 
-- No unrequested abstractions: no single-implementation interfaces, no
-  factories for one product, no config that never changes.
-- Deletion over addition. Boring over clever.
-- Never add a dependency when the repository or standard library already
-  provides a suitable solution without documenting the tradeoff.
-- Mark deliberate simplifications with `# ponytail: <limit>, <upgrade path>`
-  comments so they read as intent, not ignorance. (Ladder adapted from the
-  Ponytail skill, MIT — see THIRD_PARTY.md.)
-- **Bug fixes = root cause, not symptom.** Grep every caller of the function
-  you are about to modify; fix once, where all callers converge.
+## Repair and continue
 
-**No-laziness boundaries** — never simplify away: input validation at trust
-boundaries, error handling that prevents data loss, security measures,
-accessibility basics, anything explicitly required.
+A failed check is input to diagnosis. Fix an in-scope defect and re-run affected
+checks; do not stop simply because lint, type checking, or tests failed. Separate
+baseline defects, new defects, unavailable environments, and unresolved causes
+using evidence. Never weaken tests or validation to obtain a pass.
 
-**Money rule**: any code involving amounts, prices, billing, or financial
-calculations uses Decimal/Fixed-Point arithmetic — float/double is forbidden.
+If repairs repeat a failure or introduce material regressions, stop patching
+symptoms, preserve diagnostic evidence, and revisit the root cause. Resume with
+an evidence-supported approach within scope. Stop the affected unit only when
+further safe progress needs missing information, authority, or a wider boundary;
+continue independent authorized work. Do not impose arbitrary retry counts or
+continue the same unproductive loop indefinitely.
 
-## Brownfield location
+Inspect the diff before recovery. Reverse only the task's own changes with a
+reviewed, permitted edit; preserve unrelated work. Recovery, generated artifacts,
+and test cleanup are subject to the same deletion/effect restrictions.
 
-For MODIFY/DELETE tasks in an existing codebase, locate before editing:
+## Contracts and debt
 
-1. Infer candidate paths from the task's target file/symbol and directory
-   conventions; use `rg` for class/function names.
-2. Pin the symbol: AST/LSP where available, otherwise `rg -n` for exact lines.
-   ADD tasks need an insertion point (end of file/class or after the most
-   relevant symbol).
-3. Read enough context around the target (≈15 lines each side) to understand
-   the modification point.
-4. Uniqueness check (hard gate): the same symbol name in multiple files with
-   no way to decide → `[CONFLICT]`, halt and ask. Target symbol not found →
-   `[NOT_FOUND]`, halt and ask. Located name differs from the task's name →
-   annotate `[APPROXIMATE_MATCH]` and re-verify before implementing.
-5. Line numbers drift after each edit — re-confirm the current position of the
-   target symbol before every subsequent task.
+Prefer repository-native machine-readable contracts, then an applicable plan,
+then the agreed behavior. Check relevant signatures, return shapes, failure
+semantics, side effects, and consumers. Compilers cover structural checks for
+TypeScript, Go, and Rust. For an explicit supported Python contract, the bundled
+`scripts/check_python_contracts.py` adds a structural pre-check; an empty contract
+or a successful AST match does not prove behavior.
 
-Greenfield: skip location entirely; every file is new.
-
-## Per-task loop
-
-Execute tasks serially, in topological order:
-
-1. Update the state file (when in use — see [recovery.md](recovery.md)) with
-   the current task/file.
-2. Generate complete code in the project's existing style, with complete type
-   annotations and necessary imports. For values requiring precise computation
-   or complex regexes, get deterministic results by running a one-liner
-   instead of hand-writing them.
-3. Inject in place with the editing tool; confirm scope with `git diff`
-   afterwards so unrelated changes are never included.
-4. **Immediate type check** (Python: `mypy --strict <file>`; TypeScript:
-   `tsc --noEmit`). On error: fix and re-run, at most 3 rounds. Still failing
-   after round 3 → halt, preserve the failed working state, report the exact
-   errors and affected task files, and ask for human intervention. Never use
-   version-control restore commands automatically: they cannot distinguish the
-   task's edits from pre-existing user changes in the same file.
-5. **Layer-level checkpoint**: after each topological layer (models, services,
-   api...), run the type checker over **all files written so far** — per-file
-   checks miss cross-file type errors. Fix before entering the next layer;
-   never defer to the verification stage.
-6. **Escape-hatch detection**: a self-heal that "passes" via `Any`,
-   `# type: ignore`, `cast()`, or `Callable[..., Any]` as a last resort is not
-   a true pass. Record it immediately (see
-   [sedimentation.md](sedimentation.md)) as `[ESCAPE_HATCH]` with the original
-   error, the workaround, and the type safety lost. It does not block, but it
-   is quality debt and must surface in the handoff report.
-7. Run the three-pass self-check below and the task's scoped acceptance
-   checks. Only when all required evidence passes is the task complete.
-8. When a planning workflow tracks tasks (e.g. a tasks.md checklist), check
-   off an entry only after that evidence passes — facts first at wrap-up:
-   factually complete work is checked without warning; genuinely incomplete
-   work is reported as incomplete.
-
-Hard constraint: code with type errors must never leave implementation.
-
-## Repair-regression fuse
-
-The three-round cap bounds any one self-heal loop. Stop earlier when two
-consecutive repair rounds in the same bounded task introduce a new failure in
-a declared acceptance path or preserved contract. This is a material repair
-regression, not an ordinary syntax correction.
-
-On trigger:
-
-1. stop adding patches and preserve the current diagnostic state;
-2. record the original reproduction, governing invariant, each introduced
-   regression, and the test or observation that exposed it;
-3. review the root cause and caller boundary;
-4. split or replan the task by independently accepted outcome before resuming.
-
-Do not keep alternating symptom fixes until the generic round cap is exhausted.
-
-## Three-pass self-check
-
-After each task's code injection:
-
-### Pass 1 — syntax and imports
-
-| Property | Value |
-|---|---|
-| Command | Python: `python -c "from <pkg> import <symbol>"`; TS: `node -e "require('./dist/<file>')"` |
-| Timeout | ≤ 5 s |
-| Pass | Exit code 0, no Import/Syntax/ModuleNotFound errors |
-| Self-heal | typos / missing imports / circular imports, ≤ 3 rounds |
-| Limit exceeded | `[BLOCKED: import]` — skip this task, finish the others, then request human intervention |
-| Skip | Pure config/docs, no code change |
-
-### Pass 2 — behavior self-check
-
-| Property | Value |
-|---|---|
-| Form | `demo()`, `__main__`, doctest, or plain asserts — run it |
-| Timeout | ≤ 30 s |
-| Pass | All asserts pass, exit code 0 |
-| Self-heal | read the stack, fix, re-run, ≤ 3 rounds |
-| Limit exceeded | `[BLOCKED: behavior]` with input/expected/actual/stack |
-| Skip | Trivial code → `[TRIVIAL: no self-check]` |
-
-Coverage baseline: per-task requirements are defined in
-[planning.md](planning.md) (self-check requirement table).
-
-### Pass 3 — interface contract comparison
-
-Compare against the contract baseline — machine-readable contracts in the
-repository (OpenAPI, GraphQL schema, protobuf, Gherkin) are preferred, then
-spec-system artifacts, then the inline contract from planning. Five items:
-① name matches; ② parameters (name/type/required) match; ③ return structure
-matches; ④ error codes match; ⑤ side effects match.
-
-- Type mismatch → Critical; fix the code.
-- Extra field in code not in contract → `[EXTRA_FIELD]` (concise addition,
-  non-blocking) or `[COMPAT_FIELD]` (deliberate compatibility field; record
-  the reason and suggest updating the spec).
-- Code correct but contract wrong → stop and report the defect: the spec's
-  intent wins over blind implementation. Roll back the affected change, output
-  a defect report, and resume after the user updates it. A structural defect
-  falls back immediately; an omission completes current work first; an
-  optimization note is recorded and execution continues.
-- Pure refactor with unchanged interface → `[REFACTOR: contract unchanged]`.
-
-**Automated structural pre-check** (Python): run
-`python scripts/check_python_contracts.py --spec <spec.md> --source <src_dir>`
-before the manual comparison to catch missing functions, parameter-count
-mismatches, and missing return annotations. Fix structural issues first, then
-do the manual five-item comparison (error codes and side effects still require
-review). Never claim contract verification when the contract contains no
-supported symbols. This pre-check is Python-only by design, not by omission:
-TypeScript, Go, and Rust get structural verification from their compilers
-(`tsc --noEmit`, `go build` + `go vet`, `cargo check`) — do not port it there.
-
-Report each pass exactly: `import: PASS`, `behavior: PASS, N asserts`,
-`contract: 5/5 matched` — or the corresponding `FAIL` / `BLOCKED` /
-`NOT_APPLICABLE`.
+Record deliberate limitations and any newly weakened type/validation boundary.
+`Any`, `cast`, and suppressions require contextual judgment: their presence alone
+is not a defect, but using them to hide an unresolved material issue prevents
+completion. When the required contract is wrong or ambiguous, resolve the
+material decision before building dependent behavior; do not silently accept a
+new requirement or force an invalid implementation.

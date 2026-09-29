@@ -1,62 +1,30 @@
 ---
 name: risk-controls
-description: Mandatory controls for High-risk changes in auto-coding — per-flag controls for FINANCE / AUTH / MIGRATION / STATE_MACHINE / EXTERNAL_API / ENV_OPS, and the non-degradable verification baseline. Read whenever any risk flag is present.
+description: Select invariants, isolation, failure and recovery checks for actual high-impact behavior.
 ---
 
-# Risk Controls
+# High-Risk Effects
 
-Read this file whenever [routing.md](routing.md) assigns the High-risk route.
-Risk overrides size: these controls apply even to a one-line change. A
-High-risk task never degrades to a lighter route; when the environment blocks
-a control, execute the alternative evidence and label it `BLOCKED` — never
-skip silently.
+Before high-risk edits, record the relevant invariants, failure modes,
+permitted effects, recovery approach, and acceptance evidence in the existing
+plan or task record. Use only controls that apply to the actual change.
 
-## Per-flag controls
-
-| Flag | Mandatory controls |
+| Behavior | Evidence and controls |
 |---|---|
-| **FINANCE** | Decimal/Fixed-Point arithmetic enforced; float/double forbidden. ≥2 self-check asserts per calculation (normal + boundary precision). Escape hatches on money paths classify as `HIGH_RISK`. |
-| **AUTH** | Static type check must run — this is the one case where a missing configured tool still halts for install, and an unconfigured project requires line-by-line review as alternative evidence. Never weaken validation, token expiry, or error handling to make a check pass. |
-| **MIGRATION** | Dry-run verification before execution; a written rollback script or recovery approach before editing; never run against production-like data without explicit authorization. |
-| **STATE_MACHINE** | Self-check asserts = one per legal transition + one per illegal transition rejected. Transition table reviewed against the contract before implementation. |
-| **EXTERNAL_API** | Runtime verification must include integration coverage: real integration tests, or — when the external system is unavailable/unmockable — ① unit tests over the calling logic, ② contract tests over request/response formats, ③ review of error-handling paths, labeled `[SKIP_INTEGRATION: external environment unavailable]` / `BLOCKED`. A clean unit test never proves an external integration works. |
-| **ENV_OPS** | Mode D environment verification (see [verification.md](verification.md)): dependency readiness, startup liveness, crash-restart drill, exit-code/log probing. No real environment → dry-run + process-logic unit tests + restart-path review, labeled `[SKIP_ENV: no environment]` / `BLOCKED`. |
+| Money | Preserve required precision/rounding; exercise normal and boundary calculations with an appropriate exact representation |
+| Authentication/authorization | Check allowed and denied paths, validation, expiry, and relevant failure modes; retain configured static and behavioral checks |
+| Persistent data/migrations | Preserve compatibility and recovery; dry-run on isolated data; live execution requires authority |
+| Consequential state transitions/concurrency | Check valid and invalid transitions, ordering, shared state, and recovery under relevant failures |
+| External API behavior | Check requests, responses, errors, and actual integration when required; mocked tests alone do not establish external success |
+| Service lifecycle | Check relevant startup, dependency readiness, failure/restart and shutdown behavior in an authorized isolated environment |
 
-## Non-degradable baseline
+Trace relevant entry-to-effect paths and shared resources so tests cannot
+silently reach real users, services, notifications, or persistent data. Use
+existing factories, fixtures, and test seams. Crash drills and process actions
+need the same authority as ordinary execution; a risk label never authorizes
+those effects.
 
-Regardless of project configuration, the following verifications must execute
-(in real or alternative-evidence form):
-
-- Authentication/authorization/encryption changes → static type check.
-- Data-persistence changes → runtime verification.
-- External API calls → integration coverage (see EXTERNAL_API above).
-- Service startup/keep-alive/process management → environment verification.
-
-## Before editing
-
-For High-risk tasks, record in writing before the first edit:
-
-1. **Invariants** that must hold before, during, and after the change.
-2. **Failure modes** the change can introduce.
-3. **Rollback or recovery approach** (which files, which commands, which data).
-4. **Acceptance evidence** that will demonstrate safety.
-
-## Pre-code rehearsal
-
-Run this rehearsal before editing when any of these applies: the task is
-High-risk, it can reach an external side effect, or it is being handed across
-sessions/models. Ordinary Fast work with none of these triggers does not need
-the rehearsal.
-
-Record:
-
-1. exact file touchpoints and why they are sufficient for the bounded outcome;
-2. the entry-to-effect call chain for every network, process, notification,
-   migration, persistent user-data write, or irreversible action;
-3. factories, fixtures, registries, singletons, caches, environment writes,
-   and other shared mutable state involved;
-4. how automated tests block each real external effect and restore shared state;
-5. likely implementation mistakes and the specific test or observation that
-   detects each one;
-6. the exact contradiction, missing dependency, scope expansion, or unsafe
-   effect that requires implementation to stop.
+When a required runtime/control is unavailable, preserve that BLOCKED result,
+perform safe useful alternatives, and explain the acceptance consequence.
+Unrelated outcomes can continue. Plan recovery without destructive resets or
+prohibited filesystem cleanup. Do not weaken a control merely to finish.

@@ -1,0 +1,42 @@
+{
+  "base_commit": "54a64b732183621f96097b00472e5cb3ebe9a9af",
+  "canonical_sha256": {
+    "SKILL.md": "93e4d4143dcc7e05f4eb00a4b2825aa4049c0e145306597cc14529efa55cb97c",
+    "auto-coding-openspec/SKILL.md": "e33ca130413bf64cc1306d3b34ac339a5006b356c4075c0f1a5e9013a8f3b1bf",
+    "references/adaptive.md": "300be15090c27edba613ff2b8e5ad33ff900be559183184caf79e57d46f5244e",
+    "references/completion.md": "f8b4a6b66e609479cde48c62c0b5cd89048932210803af82c7ed8daabdbd6f10",
+    "references/implementation.md": "a02feb15a2cc6852ebaa0a930ecececbac909aa9bf2192913e7bb4686426fa2f",
+    "references/planning.md": "a4e78fcf52616e60c1344973a095e2d019533020cf7c1199edef2fd5c8447e42",
+    "references/recovery.md": "9d045e0f7a4980bb25d3285d136a9c5539093770a958d82f95eea4a601a5d33d",
+    "references/risk-controls.md": "3d2afa0ffbfa37b338148ef4aac73595078d5e180fc8907919cad303cbb05bf7",
+    "references/routing.md": "bd9b8dba4cce641e91f5f7230f5445dede831adf51dc20a8a6d72bb1b830cb8d",
+    "references/sedimentation.md": "95c013cdce3c25e654dbf99666d38e0abd4cd5e5fc5888dac5bfb38bf90e25ab",
+    "references/simplification.md": "fcf9ee89c94ed3d5356e1c2f97d6413ef21badb181c2c82a37d695b3ef009f23",
+    "references/toolchain-go.md": "d6e5b5a7e6fbb172f7e5748110ddc4a444f1c72c724d1b9effcae3019106a5fa",
+    "references/toolchain-python.md": "d6cbfcb6b48e24fb279233223b1a29d229a3feb1439c3309cbbaf5d84ac14293",
+    "references/toolchain-rust.md": "2149970cd19984005cb6f538969155743f62f87939d250c4667cf2ca81ee02ed",
+    "references/toolchain-typescript.md": "3657b859c89f0989f894796923b3b7aa9661517b471985c9cd9cd157d71c9984",
+    "references/verification.md": "3db59dddb46d6b908df08dddd9d99b9b574178f0f42de783dd89950a208dbb17",
+    "setup-auto-coding/SKILL.md": "bf5d8aedda40a72662649eaa722a6cec4908770e00af83c27b21f810000245bb",
+    "verify-evidence/SKILL.md": "f1a5db88cad842bc8159d3ffc919b95feaf7f2c17fe75c79031ad9783781e2f2"
+  },
+  "review": "Independent source review found one P3 obsolete TypeScript instruction; corrected and rechecked. Independent closure review verified evidence consistency. Lead then tightened legacy completion to require explicit empty work/blocker lists and added two tests; independent focused review found no remaining material issue.",
+  "review_scope_and_limits": {
+    "base_commit": "54a64b732183621f96097b00472e5cb3ebe9a9af",
+    "included": "Canonical skills/references, companion skills, scripts, tests, new files, generated distributions, plan and final evidence.",
+    "reviewer_executed": [
+      "sync_plugin_skills.py --check",
+      "check_repo.py",
+      "ruff check --no-cache scripts/ tests/",
+      "git diff --check"
+    ],
+    "reviewer_did_not_execute": "Full test suite and forward fixtures; those results were checked against retained execution records and hashes.",
+    "initial_finding": {
+      "severity": "P3",
+      "file": "references/toolchain-typescript.md",
+      "issue": "Obsolete L2 fixed-five reference",
+      "resolution": "Replaced with compiler and relevant behavioral contract comparison; both bundles synchronized."
+    },
+    "focused_followup": "Missing legacy remaining/blockers rejected, preservation/enrichment cases added, 106-test final evidence and content hashes verified."
+  }
+}
