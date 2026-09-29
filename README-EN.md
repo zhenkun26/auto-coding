@@ -159,6 +159,20 @@ unexpected files and refuses to proceed until the user reconciles them. `--check
 does not write. Interrupted multi-file synchronization is detectable, not transactional.
 No automatic cleanup of retained files is provided.
 
+Each run prints a `Retained test artifacts:` path. Inspect its size with
+`du -sh <that-path>`, or point `TMPDIR` at an authorized retention directory to
+group runs. Keep failure artifacts and directories still referenced by acceptance
+evidence until useful evidence is archived and no task or process depends on them;
+the user then manages them under their retention rules. A dependency attempting
+cleanup produces `filesystem deletion is disabled` with the operation/path.
+Inspect that dependency's temporary-file lifecycle; do not report the failed run
+as passing or simply disable the guard.
+
+Repository CI runs these checks on Python 3.10, 3.11, 3.12 and 3.13. The release
+workflow runs only for `v*` tags and uses generated release notes.
+`docs/RELEASE_NOTES_v2.md` remains historical documentation rather than the fixed
+body for future releases. A commit or merge does not authorize publishing a tag.
+
 ### Skill structure validation
 
 Skill maintainers can use `quick_validate.py` from Codex `skill-creator` to check

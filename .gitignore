@@ -10,6 +10,8 @@ __pycache__/
 .coverage
 coverage.json
 
+# Retained local trials from earlier workflows; keep them out of older checkouts too.
+# These paths need not exist in a fresh clone.
 # Sandbox test code (not part of skill)
 sandbox_test/
 

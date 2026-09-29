@@ -485,3 +485,131 @@ def test_should_pass_1000_concurrent_invocations(tmp_path: Path) -> None:
 
     assert len(results) == 1000
     assert all(result.returncode == 0 for result in results)
+
+
+@pytest.mark.parametrize(
+    ("spec_text", "source_text"),
+    [
+        ("target(value: int) -> int\n", "def outer():\n    def target(value: int) -> int:\n        return value\n"),
+        ("target(value: int) -> int\n", "class Service:\n    def target(self, value: int) -> int:\n        return value\n"),
+        (
+            "Service:\n    target(value: int) -> int\n",
+            "def outer():\n    class Service:\n        def target(self, value: int) -> int:\n            return value\n",
+        ),
+    ],
+)
+def test_scope_does_not_promote_nested_bindings(
+    tmp_path: Path, diagnostics: contract_check.DiagnosticCollector, spec_text: str, source_text: str
+) -> None:
+    """Local functions/classes and bare methods cannot satisfy module-level contracts."""
+    spec = write(tmp_path / "spec.md", spec_text)
+    write(tmp_path / "src/module.py", source_text)
+
+    passes, failures = contract_check.run_check(str(spec), str(tmp_path / "src"), diagnostics)
+
+    assert passes == []
+    assert len(failures) == 1 and failures[0].startswith("MISSING:")
+
+
+def test_scope_local_function_does_not_shadow_module_contract(
+    tmp_path: Path, diagnostics: contract_check.DiagnosticCollector
+) -> None:
+    """A local helper with a different signature cannot overwrite the public symbol."""
+    spec = write(tmp_path / "spec.md", "target(value: int) -> int\n")
+    write(
+        tmp_path / "src/module.py",
+        "def target(value: int) -> int:\n    return value\n"
+        "def outer():\n    def target(left: int, right: int) -> int:\n        return left + right\n",
+    )
+
+    passes, failures = contract_check.run_check(str(spec), str(tmp_path / "src"), diagnostics)
+
+    assert len(passes) == 1 and failures == []
+
+
+def test_scope_supports_async_functions_and_qualified_methods(
+    tmp_path: Path, diagnostics: contract_check.DiagnosticCollector
+) -> None:
+    """Async public definitions keep the same namespace rules as synchronous ones."""
+    spec = write(tmp_path / "spec.md", "fetch(value: int) -> int\nService:\n    fetch(value: int) -> int\n")
+    write(
+        tmp_path / "src/module.py",
+        "async def fetch(value: int) -> int:\n    return value\n"
+        "class Service:\n    async def fetch(self, value: int) -> int:\n        return value\n",
+    )
+
+    passes, failures = contract_check.run_check(str(spec), str(tmp_path / "src"), diagnostics)
+
+    assert len(passes) == 2 and failures == []
+
+
+def test_scope_preserves_conditional_public_definitions(
+    tmp_path: Path, diagnostics: contract_check.DiagnosticCollector
+) -> None:
+    """Control-flow blocks do not introduce a new Python binding scope."""
+    spec = write(tmp_path / "spec.md", "target() -> int\nService:\n    target() -> int\n")
+    write(
+        tmp_path / "src/module.py",
+        "if enabled:\n    def target() -> int:\n        return 1\n"
+        "class Service:\n    if enabled:\n        def target(self) -> int:\n            return 1\n",
+    )
+
+    passes, failures = contract_check.run_check(str(spec), str(tmp_path / "src"), diagnostics)
+
+    assert len(passes) == 2 and failures == []
+
+
+def test_acceptance_function_contract_rejects_a_class(
+    tmp_path: Path, diagnostics: contract_check.DiagnosticCollector
+) -> None:
+    """A same-named class is not a function definition."""
+    spec = write(tmp_path / "spec.md", "target()\n")
+    write(tmp_path / "src/module.py", "class target:\n    pass\n")
+
+    passes, failures = contract_check.run_check(str(spec), str(tmp_path / "src"), diagnostics)
+
+    assert passes == []
+    assert failures[0].startswith("TYPE_MISMATCH:")
+
+
+def test_acceptance_checks_explicit_zero_parameters(
+    tmp_path: Path, diagnostics: contract_check.DiagnosticCollector
+) -> None:
+    """An explicit empty parameter list cannot match a required argument."""
+    spec = write(tmp_path / "spec.md", "target() -> int\n")
+    write(tmp_path / "src/module.py", "def target(value: int) -> int:\n    return value\n")
+
+    passes, failures = contract_check.run_check(str(spec), str(tmp_path / "src"), diagnostics)
+
+    assert passes == []
+    assert failures[0].startswith("PARAM_COUNT:")
+
+
+def test_acceptance_unsupported_contract_is_not_success(tmp_path: Path, capsys: pytest.CaptureFixture) -> None:
+    """A document with no checkable contracts has no successful acceptance result."""
+    spec = write(tmp_path / "spec.md", "This document has no supported contract.\n")
+    write(tmp_path / "src/module.py", "def target() -> int:\n    return 1\n")
+
+    exit_code = contract_check.main(["--spec", str(spec), "--source", str(tmp_path / "src")])
+    output = capsys.readouterr()
+
+    assert exit_code == 2
+    assert "No supported contracts" in output.out
+    assert "structurally verified" not in output.out
+
+
+@pytest.mark.parametrize("broken_source", [b"def broken(:\n", b"\xff\xfe\x00"])
+def test_acceptance_source_diagnostics_prevent_success(
+    tmp_path: Path, capsys: pytest.CaptureFixture, broken_source: bytes
+) -> None:
+    """Partial source inspection cannot claim complete structural verification."""
+    spec = write(tmp_path / "spec.md", "target() -> int\n")
+    write(tmp_path / "src/module.py", "def target() -> int:\n    return 1\n")
+    (tmp_path / "src/broken.py").write_bytes(broken_source)
+
+    exit_code = contract_check.main(["--spec", str(spec), "--source", str(tmp_path / "src")])
+    output = capsys.readouterr()
+
+    assert exit_code == 1
+    assert "DIAGNOSTICS" in output.out
+    assert "structurally verified" not in output.out

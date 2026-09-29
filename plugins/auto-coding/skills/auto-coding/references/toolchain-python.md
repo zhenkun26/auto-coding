@@ -27,11 +27,20 @@ the contract checker.
 `check_python_contracts.py` parses typed signatures from a spec file
 (`name(a: int, b: int) -> int`, class-prefixed methods supported) — or
 Gherkin endpoint contracts (`WHEN POST /path`) as a fallback — and compares
-them against actual source via AST. Exit code 0 = structural match.
+them against actual source via AST. Exit code 0 = supported contracts match;
+1 = mismatch, invalid input or incomplete source inspection; 2 = no supported
+contracts to check. An empty contract is not successful verification.
+
+Module functions (including async functions) and qualified class methods keep
+their binding scope; function-local definitions cannot satisfy public contracts.
+The checker compares symbol kinds, basic positional counts (including zero) and
+return annotation presence. Imports/re-exports, advanced argument forms, exact
+type equivalence, cross-module name disambiguation and runtime availability of
+conditional definitions/routes remain outside this pre-check's scope.
 
 - Run it before the relevant behavioral contract comparison; fix structural issues
   first.
-- Empty contract (no supported symbols) → it reports nothing checkable;
+- Empty contract (no supported symbols) → it exits 2 and reports nothing checkable;
   **never** present that as contract verification — do the manual comparison
   and say so.
 - It covers structural checks only; error codes and side effects still

@@ -480,3 +480,60 @@ this documentation-only change. The complete three-file diff has no known
 unresolved material finding; delivery follows the existing reviewed-branch and
 main CI process, with the published commit and exact-head results recorded by
 Git and GitHub Actions. No runtime, skill, dependency or installer change is made.
+
+## External review follow-up
+
+The external report against `591c2e566aba96d5a80eda874840deca4663205a` is
+review input, not authority to remove retained files/branches or publish a release.
+Branch: `codex/review-followups`. Independently reproduced findings determine
+this bounded maintenance increment; the review score and release-readiness
+conclusion are not adopted as verification evidence.
+
+| Review item | Disposition |
+|---|---|
+| 1. Old report and local path | Mark the existing report historical and redact its local checkout path in place; preserve its dated observations and Git history |
+| 2. Fixed v2 release body | Keep automatic release notes and remove the fixed body input; retain the historical v2 document and tag-only trigger |
+| 3. Python support coverage | Run the existing declared checks/dependencies on Python 3.10, 3.11, 3.12 and 3.13 |
+| 4. Merged branches | Preserve under the user's existing retention rule; branch cleanup is not required for correctness |
+| 5. Contract checker | Fix reproduced false acceptance, with regressions; retain existing CLI argument conventions rather than changing them solely for style |
+| 6. Retained fixtures | Explain location, size inspection, evidence lifetime and cleanup-denial diagnosis; retain the deletion guard |
+| 7. Historical ignores | Explain retained local-trial exclusions; do not expose possible older-checkout artifacts by removing rules |
+
+| Unit | Acceptance | Status |
+|---|---|---|
+| R1 | Bound and correct historical report, release configuration, CI coverage and retention guidance | Implemented; remote matrix pending |
+| R2 | Reproduce and reject false contract acceptance; retain valid functions/methods and add meaningful tests | Complete |
+| R3 | Verify local checks and remote matrix, review final scope/risk, integrate and verify main | Local acceptance/review complete; remote gates pending |
+
+Baseline experiments reproduced exit 0 with a structural-success claim for a
+nested function, a bare class method, an explicit zero-parameter mismatch, an
+unsupported empty contract, and a source tree containing an unparseable file.
+These additional checker findings are directly related to the reported false-pass
+path. No new dependency or service is required. Release behavior is checked
+statically against the action's documented inputs; no release/tag is authorized.
+
+Local acceptance: 119 tests pass (11 added regression cases failed before the
+fix and now pass), with ruff, strict mypy, repository checks and bundle drift
+checks passing. Eighteen CLI replays from an unrelated working directory cover
+the five reproduced failures and a valid control in all three distributed/source
+script locations. Parsed YAML checks confirm the four Python versions and
+unchanged tag-only release trigger/permissions; Python 3.10 grammar is checked
+locally, while actual interpreter compatibility awaits the CI matrix.
+
+[external-review-followup.json](evidence/lightweight-workflow/external-review-followup.json)
+retains baseline failures, actual post-fix outputs, commands, content identities
+and limitations. The new status-2 unsupported-contract outcome and failure on
+source diagnostics are intentional changes to prevent false success; existing
+CLI argument conventions stay intact. Import/re-export handling, advanced
+argument forms, cross-module name disambiguation and runtime availability remain
+outside this structural pre-check and require other evidence.
+
+Lead completeness/risk review: preserved history, explicit redaction scope,
+no broadened release trigger/permissions, no new dependencies, meaningful negative
+and positive regressions, unchanged valid-consumer behavior, faithful generated
+copies and matched bilingual documentation were checked. No known unresolved
+material finding remains in the bounded repair scope. Current-tree redaction
+does not remove the old path from published Git history. Merged branches, retained
+fixtures and legacy local-trial ignores remain by design. Publication still needs
+successful exact-head matrix CI, unchanged remote base/protection/ancestry and a
+clean worktree before non-forced integration; main CI must then be verified.

@@ -1,8 +1,10 @@
-# auto-coding 项目评审报告
+# auto-coding 项目评审报告（历史记录）
+
+> 历史范围：以下是 2026-08-07 的外部评审，文件行数、测试数量和问题描述均对应当时版本，不代表当前实现或验收结论。第三方本地路径已脱敏，其余历史判断保留。当前状态见[工作流方案与验收记录](docs/WORKFLOW_PLAN.md)。
 
 - **评审对象**：[zhenkun26/auto-coding](https://github.com/zhenkun26/auto-coding)
 - **评审日期**：2026-08-07
-- **评审方式**：克隆仓库（本地路径 `/Users/yuzheng/Documents/kimi/workspace/auto-coding`），通读全部核心文件，实际运行测试套件与仓库自检
+- **评审方式**：克隆仓库（本地路径 `<local-review-checkout>`），通读全部核心文件，实际运行测试套件与仓库自检
 - **总体评分**：**8 / 10** —— 明显高于同类「AI 编码 skill」仓库的平均水平
 
 ---

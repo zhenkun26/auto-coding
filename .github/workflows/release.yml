@@ -17,4 +17,3 @@ jobs:
         uses: softprops/action-gh-release@v3
         with:
           generate_release_notes: true
-          body_path: docs/RELEASE_NOTES_v2.md

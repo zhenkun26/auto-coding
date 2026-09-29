@@ -12,9 +12,9 @@ manual contract-comparison checklist from the auto-coding skill instead.
 Parses the spec for interface contract blocks (§2.x sections with type signatures),
 extracts actual function/class signatures from source via AST, and reports mismatches.
 
-Covers ~80% of the structural contract checks: function exists, param count, type
-annotations present. Does NOT cover semantic checks (return value correctness,
-business logic).
+Checks supported symbol names/kinds, positional parameter counts and return
+annotation presence. Does not establish runtime availability, exact type
+compatibility, return value correctness or business logic.
 """
 
 import ast
@@ -143,8 +143,35 @@ def parse_spec_contracts(spec_path: str, diagnostics: DiagnosticCollector) -> li
     return symbols
 
 
+def scope_symbols(tree: ast.AST, fpath: str, prefix: str = "") -> list[ActualSymbol]:
+    """Collect bindings without descending into function-local scopes.
+
+    Control-flow blocks keep their containing scope. Class members receive a
+    qualified name, including nested classes, rather than also appearing as
+    module-level functions.
+    """
+    symbols: list[ActualSymbol] = []
+    pending = [(node, prefix) for node in reversed(list(ast.iter_child_nodes(tree)))]
+    while pending:
+        node, prefix = pending.pop()
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            params = [a.arg for a in node.args.args if not (prefix and a.arg == "self")]
+            ret = ast.unparse(node.returns) if node.returns else ""
+            symbols.append(ActualSymbol(
+                name=f"{prefix}{node.name}", kind="method" if prefix else "function",
+                params=params, return_type=ret, file=fpath, line=node.lineno,
+            ))
+            continue
+        elif isinstance(node, ast.ClassDef):
+            name = f"{prefix}{node.name}"
+            symbols.append(ActualSymbol(name=name, kind="class", file=fpath, line=node.lineno))
+            prefix = f"{name}."
+        pending.extend((child, prefix) for child in reversed(list(ast.iter_child_nodes(node))))
+    return symbols
+
+
 def extract_source_symbols(src_dir: str, diagnostics: DiagnosticCollector) -> list[ActualSymbol]:
-    """Extract all function/class/method signatures from Python source files."""
+    """Extract module functions and qualified class members from Python files."""
     symbols: list[ActualSymbol] = []
 
     for root, _dirs, files in os.walk(src_dir):
@@ -162,27 +189,7 @@ def extract_source_symbols(src_dir: str, diagnostics: DiagnosticCollector) -> li
                 diagnostics.record(f"read error ({fpath}): {exc}")
                 continue
 
-            for node in ast.walk(tree):
-                if isinstance(node, ast.FunctionDef):
-                    params = [a.arg for a in node.args.args]
-                    ret = ast.unparse(node.returns) if node.returns else ""
-                    symbols.append(ActualSymbol(
-                        name=node.name, kind="function", params=params,
-                        return_type=ret, file=fpath, line=node.lineno,
-                    ))
-                elif isinstance(node, ast.ClassDef):
-                    symbols.append(ActualSymbol(
-                        name=node.name, kind="class", file=fpath, line=node.lineno,
-                    ))
-                    # Also extract methods
-                    for item in node.body:
-                        if isinstance(item, ast.FunctionDef):
-                            params = [a.arg for a in item.args.args if a.arg != "self"]
-                            ret = ast.unparse(item.returns) if item.returns else ""
-                            symbols.append(ActualSymbol(
-                                name=f"{node.name}.{item.name}", kind="method",
-                                params=params, return_type=ret, file=fpath, line=item.lineno,
-                            ))
+            symbols.extend(scope_symbols(tree, fpath))
 
     return symbols
 
@@ -295,17 +302,17 @@ def run_check(
         act = actual_map[exp.name]
 
         # Check kind
-        if exp.kind != "function" and exp.kind != act.kind:
+        if exp.kind != act.kind:
             failures.append(
                 f"TYPE_MISMATCH: '{exp.name}' — spec says {exp.kind}, code has {act.kind} "
                 f"({act.file}:{act.line})"
             )
             continue
 
-        # Check param count (if spec has params defined)
+        # An explicit empty parameter list is a zero-parameter contract too.
         # Strip 'self' from actual params — spec never includes self, AST always does for methods
         act_params = [p for p in act.params if p != "self"]
-        if exp.params and len(exp.params) != len(act_params):
+        if len(exp.params) != len(act_params):
             failures.append(
                 f"PARAM_COUNT: '{exp.name}' — spec expects {len(exp.params)} params ({exp.params}), "
                 f"code has {len(act_params)} ({act_params}) ({act.file}:{act.line})"
@@ -388,13 +395,16 @@ def run_cli(spec_path: str, src_dir: str) -> int:
         print(f"FAILED ({len(failures)}):")
         for f in failures:
             print(f"  {f}")
-        return 1
-    print(f"All {len(passes)} contracts structurally verified.")
-
     if diagnostics.messages:
         print(f"DIAGNOSTICS ({len(diagnostics.messages)}):")
         for diagnostic in diagnostics.messages:
             print(f"  {diagnostic}")
+    if failures or diagnostics.messages:
+        return 1
+    if not passes:
+        print("No supported contracts found; structural verification is unavailable.")
+        return 2
+    print(f"All {len(passes)} contracts structurally verified.")
     return 0
 
 

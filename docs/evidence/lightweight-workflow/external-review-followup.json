@@ -1,0 +1,444 @@
+{
+  "base_commit": "591c2e566aba96d5a80eda874840deca4663205a",
+  "baseline_reproduction_path": "/var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2",
+  "regression_before_fix": {
+    "command": "PYTHONDONTWRITEBYTECODE=1 .venv/bin/python -B scripts/run_tests.py tests/test_contract_check.py -q -k 'scope_ or acceptance_'",
+    "exit_code": 1,
+    "failed": 11,
+    "deselected": 32
+  },
+  "regression_after_fix": {
+    "exit_code": 0,
+    "passed": 11,
+    "deselected": 32
+  },
+  "local_checks": [
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 .venv/bin/python -B scripts/run_tests.py",
+      "exit_code": 0,
+      "output": "Retained test artifacts: /var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-tests-9089b913e07d45919fda34881dc86073\n........................................................................ [ 60%]\n...............................................                          [100%]\n119 passed in 6.01s\n"
+    },
+    {
+      "command": ".venv/bin/ruff check --no-cache scripts/ tests/ && .venv/bin/mypy --cache-dir=/dev/null scripts/ && PYTHONDONTWRITEBYTECODE=1 .venv/bin/python -B scripts/check_repo.py && PYTHONDONTWRITEBYTECODE=1 .venv/bin/python -B scripts/sync_plugin_skills.py --check && git diff --check",
+      "exit_code": 0,
+      "output": "All checks passed!\nSuccess: no issues found in 6 source files\ncheck_repo: links, skill licenses, README headings, toolchain routes, and version consistency OK\nDistribution bundles match canonical sources.\n"
+    }
+  ],
+  "upstream_references": [
+    "https://github.com/softprops/action-gh-release#inputs",
+    "https://github.com/actions/setup-python"
+  ],
+  "limitations": [
+    "Lead review and deterministic tests; no independent agent behavior evaluation.",
+    "Release workflow checked statically; no tag or release was created.",
+    "Historical report redaction applies to current content, not prior commits.",
+    "CLI argument conventions retained; import/re-export, advanced argument forms, cross-module disambiguation and runtime availability remain outside the structural pre-check.",
+    "Retained files, merged branches and historical local-trial ignores were preserved."
+  ],
+  "baseline_reproductions": [
+    {
+      "case": "nested-function",
+      "argv": [
+        "/Users/zhenkun/GitHub/auto-coding/.venv/bin/python",
+        "-B",
+        "scripts/check_python_contracts.py",
+        "--spec",
+        "/var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/nested-function/spec.md",
+        "--source",
+        "/var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/nested-function/src"
+      ],
+      "spec": "target(value: int) -> int\n",
+      "source": "def outer():\n    def target(value: int) -> int:\n        return value\n",
+      "exit_code": 0,
+      "stdout": "[contract_check] Spec: /var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/nested-function/spec.md\n[contract_check] Source: /var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/nested-function/src\n\n[contract_check] Type parser found only 1 contracts. Trying Gherkin fallback...\n\n[contract_check] Gherkin fallback found no endpoints either. Spec may use an unsupported format.\nPASSED (1):\n  OK: function 'target' (/var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/nested-function/src/module.py:2)\nAll 1 contracts structurally verified.\n",
+      "stderr": ""
+    },
+    {
+      "case": "bare-method",
+      "argv": [
+        "/Users/zhenkun/GitHub/auto-coding/.venv/bin/python",
+        "-B",
+        "scripts/check_python_contracts.py",
+        "--spec",
+        "/var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/bare-method/spec.md",
+        "--source",
+        "/var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/bare-method/src"
+      ],
+      "spec": "target(value: int) -> int\n",
+      "source": "class Service:\n    def target(self, value: int) -> int:\n        return value\n",
+      "exit_code": 0,
+      "stdout": "[contract_check] Spec: /var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/bare-method/spec.md\n[contract_check] Source: /var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/bare-method/src\n\n[contract_check] Type parser found only 1 contracts. Trying Gherkin fallback...\n\n[contract_check] Gherkin fallback found no endpoints either. Spec may use an unsupported format.\nPASSED (1):\n  OK: function 'target' (/var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/bare-method/src/module.py:2)\nAll 1 contracts structurally verified.\n",
+      "stderr": ""
+    },
+    {
+      "case": "zero-parameter-contract",
+      "argv": [
+        "/Users/zhenkun/GitHub/auto-coding/.venv/bin/python",
+        "-B",
+        "scripts/check_python_contracts.py",
+        "--spec",
+        "/var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/zero-parameter-contract/spec.md",
+        "--source",
+        "/var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/zero-parameter-contract/src"
+      ],
+      "spec": "target() -> int\n",
+      "source": "def target(value: int) -> int:\n    return value\n",
+      "exit_code": 0,
+      "stdout": "[contract_check] Spec: /var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/zero-parameter-contract/spec.md\n[contract_check] Source: /var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/zero-parameter-contract/src\n\n[contract_check] Type parser found only 1 contracts. Trying Gherkin fallback...\n\n[contract_check] Gherkin fallback found no endpoints either. Spec may use an unsupported format.\nPASSED (1):\n  OK: function 'target' (/var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/zero-parameter-contract/src/module.py:1)\nAll 1 contracts structurally verified.\n",
+      "stderr": ""
+    },
+    {
+      "case": "empty-contract",
+      "argv": [
+        "/Users/zhenkun/GitHub/auto-coding/.venv/bin/python",
+        "-B",
+        "scripts/check_python_contracts.py",
+        "--spec",
+        "/var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/empty-contract/spec.md",
+        "--source",
+        "/var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/empty-contract/src"
+      ],
+      "spec": "This document has no supported contract.\n",
+      "source": "def target() -> int:\n    return 1\n",
+      "exit_code": 0,
+      "stdout": "[contract_check] Spec: /var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/empty-contract/spec.md\n[contract_check] Source: /var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/empty-contract/src\n\n[contract_check] Type parser found only 0 contracts. Trying Gherkin fallback...\n\n[contract_check] Gherkin fallback found no endpoints either. Spec may use an unsupported format.\nAll 0 contracts structurally verified.\n",
+      "stderr": ""
+    },
+    {
+      "case": "partial-parse",
+      "argv": [
+        "/Users/zhenkun/GitHub/auto-coding/.venv/bin/python",
+        "-B",
+        "scripts/check_python_contracts.py",
+        "--spec",
+        "/var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/partial-parse/spec.md",
+        "--source",
+        "/var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/partial-parse/src"
+      ],
+      "spec": "target() -> int\n",
+      "source": "def target() -> int:\n    return 1\n",
+      "exit_code": 0,
+      "stdout": "[contract_check] Spec: /var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/partial-parse/spec.md\n[contract_check] Source: /var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/partial-parse/src\n\n[contract_check] Type parser found only 1 contracts. Trying Gherkin fallback...\n\n[contract_check] Gherkin fallback found no endpoints either. Spec may use an unsupported format.\nPASSED (1):\n  OK: function 'target' (/var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/partial-parse/src/module.py:1)\nAll 1 contracts structurally verified.\nDIAGNOSTICS (2):\n  parse error (/var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/partial-parse/src/broken.py): invalid syntax (broken.py, line 1)\n  parse error (/var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/partial-parse/src/broken.py): invalid syntax (broken.py, line 1)\n",
+      "stderr": ""
+    }
+  ],
+  "consumer_replays": [
+    {
+      "channel": "scripts/check_python_contracts.py",
+      "case": "nested-function",
+      "argv": [
+        "/Users/zhenkun/GitHub/auto-coding/.venv/bin/python",
+        "-B",
+        "/Users/zhenkun/GitHub/auto-coding/scripts/check_python_contracts.py",
+        "--spec",
+        "/var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/nested-function/spec.md",
+        "--source",
+        "/var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/nested-function/src"
+      ],
+      "exit_code": 1,
+      "stdout": "[contract_check] Spec: /var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/nested-function/spec.md\n[contract_check] Source: /var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/nested-function/src\n\n[contract_check] Type parser found only 1 contracts. Trying Gherkin fallback...\n\n[contract_check] Gherkin fallback found no endpoints either. Spec may use an unsupported format.\nFAILED (1):\n  MISSING: function 'target' \u2014 defined in spec but not found in code\n",
+      "stderr": ""
+    },
+    {
+      "channel": "scripts/check_python_contracts.py",
+      "case": "bare-method",
+      "argv": [
+        "/Users/zhenkun/GitHub/auto-coding/.venv/bin/python",
+        "-B",
+        "/Users/zhenkun/GitHub/auto-coding/scripts/check_python_contracts.py",
+        "--spec",
+        "/var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/bare-method/spec.md",
+        "--source",
+        "/var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/bare-method/src"
+      ],
+      "exit_code": 1,
+      "stdout": "[contract_check] Spec: /var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/bare-method/spec.md\n[contract_check] Source: /var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/bare-method/src\n\n[contract_check] Type parser found only 1 contracts. Trying Gherkin fallback...\n\n[contract_check] Gherkin fallback found no endpoints either. Spec may use an unsupported format.\nFAILED (1):\n  MISSING: function 'target' \u2014 defined in spec but not found in code\n",
+      "stderr": ""
+    },
+    {
+      "channel": "scripts/check_python_contracts.py",
+      "case": "zero-parameter-contract",
+      "argv": [
+        "/Users/zhenkun/GitHub/auto-coding/.venv/bin/python",
+        "-B",
+        "/Users/zhenkun/GitHub/auto-coding/scripts/check_python_contracts.py",
+        "--spec",
+        "/var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/zero-parameter-contract/spec.md",
+        "--source",
+        "/var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/zero-parameter-contract/src"
+      ],
+      "exit_code": 1,
+      "stdout": "[contract_check] Spec: /var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/zero-parameter-contract/spec.md\n[contract_check] Source: /var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/zero-parameter-contract/src\n\n[contract_check] Type parser found only 1 contracts. Trying Gherkin fallback...\n\n[contract_check] Gherkin fallback found no endpoints either. Spec may use an unsupported format.\nFAILED (1):\n  PARAM_COUNT: 'target' \u2014 spec expects 0 params ([]), code has 1 (['value']) (/var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/zero-parameter-contract/src/module.py:1)\n",
+      "stderr": ""
+    },
+    {
+      "channel": "scripts/check_python_contracts.py",
+      "case": "empty-contract",
+      "argv": [
+        "/Users/zhenkun/GitHub/auto-coding/.venv/bin/python",
+        "-B",
+        "/Users/zhenkun/GitHub/auto-coding/scripts/check_python_contracts.py",
+        "--spec",
+        "/var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/empty-contract/spec.md",
+        "--source",
+        "/var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/empty-contract/src"
+      ],
+      "exit_code": 2,
+      "stdout": "[contract_check] Spec: /var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/empty-contract/spec.md\n[contract_check] Source: /var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/empty-contract/src\n\n[contract_check] Type parser found only 0 contracts. Trying Gherkin fallback...\n\n[contract_check] Gherkin fallback found no endpoints either. Spec may use an unsupported format.\nNo supported contracts found; structural verification is unavailable.\n",
+      "stderr": ""
+    },
+    {
+      "channel": "scripts/check_python_contracts.py",
+      "case": "partial-parse",
+      "argv": [
+        "/Users/zhenkun/GitHub/auto-coding/.venv/bin/python",
+        "-B",
+        "/Users/zhenkun/GitHub/auto-coding/scripts/check_python_contracts.py",
+        "--spec",
+        "/var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/partial-parse/spec.md",
+        "--source",
+        "/var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/partial-parse/src"
+      ],
+      "exit_code": 1,
+      "stdout": "[contract_check] Spec: /var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/partial-parse/spec.md\n[contract_check] Source: /var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/partial-parse/src\n\n[contract_check] Type parser found only 1 contracts. Trying Gherkin fallback...\n\n[contract_check] Gherkin fallback found no endpoints either. Spec may use an unsupported format.\nPASSED (1):\n  OK: function 'target' (/var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/partial-parse/src/module.py:1)\nDIAGNOSTICS (2):\n  parse error (/var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/partial-parse/src/broken.py): invalid syntax (broken.py, line 1)\n  parse error (/var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/partial-parse/src/broken.py): invalid syntax (broken.py, line 1)\n",
+      "stderr": ""
+    },
+    {
+      "channel": "scripts/check_python_contracts.py",
+      "case": "valid-control",
+      "argv": [
+        "/Users/zhenkun/GitHub/auto-coding/.venv/bin/python",
+        "-B",
+        "/Users/zhenkun/GitHub/auto-coding/scripts/check_python_contracts.py",
+        "--spec",
+        "/Users/zhenkun/GitHub/auto-coding/tests/fixtures/adversarial/valid_project/spec.md",
+        "--source",
+        "/Users/zhenkun/GitHub/auto-coding/tests/fixtures/adversarial/valid_project/src"
+      ],
+      "exit_code": 0,
+      "stdout": "[contract_check] Spec: /Users/zhenkun/GitHub/auto-coding/tests/fixtures/adversarial/valid_project/spec.md\n[contract_check] Source: /Users/zhenkun/GitHub/auto-coding/tests/fixtures/adversarial/valid_project/src\n\nPASSED (3):\n  OK: method 'UserService.create' (/Users/zhenkun/GitHub/auto-coding/tests/fixtures/adversarial/valid_project/src/users.py:5)\n  OK: method 'UserService.deactivate' (/Users/zhenkun/GitHub/auto-coding/tests/fixtures/adversarial/valid_project/src/users.py:8)\n  OK: function 'hash_password' (/Users/zhenkun/GitHub/auto-coding/tests/fixtures/adversarial/valid_project/src/users.py:12)\nAll 3 contracts structurally verified.\n",
+      "stderr": ""
+    },
+    {
+      "channel": "skills/auto-coding/scripts/check_python_contracts.py",
+      "case": "nested-function",
+      "argv": [
+        "/Users/zhenkun/GitHub/auto-coding/.venv/bin/python",
+        "-B",
+        "/Users/zhenkun/GitHub/auto-coding/skills/auto-coding/scripts/check_python_contracts.py",
+        "--spec",
+        "/var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/nested-function/spec.md",
+        "--source",
+        "/var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/nested-function/src"
+      ],
+      "exit_code": 1,
+      "stdout": "[contract_check] Spec: /var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/nested-function/spec.md\n[contract_check] Source: /var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/nested-function/src\n\n[contract_check] Type parser found only 1 contracts. Trying Gherkin fallback...\n\n[contract_check] Gherkin fallback found no endpoints either. Spec may use an unsupported format.\nFAILED (1):\n  MISSING: function 'target' \u2014 defined in spec but not found in code\n",
+      "stderr": ""
+    },
+    {
+      "channel": "skills/auto-coding/scripts/check_python_contracts.py",
+      "case": "bare-method",
+      "argv": [
+        "/Users/zhenkun/GitHub/auto-coding/.venv/bin/python",
+        "-B",
+        "/Users/zhenkun/GitHub/auto-coding/skills/auto-coding/scripts/check_python_contracts.py",
+        "--spec",
+        "/var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/bare-method/spec.md",
+        "--source",
+        "/var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/bare-method/src"
+      ],
+      "exit_code": 1,
+      "stdout": "[contract_check] Spec: /var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/bare-method/spec.md\n[contract_check] Source: /var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/bare-method/src\n\n[contract_check] Type parser found only 1 contracts. Trying Gherkin fallback...\n\n[contract_check] Gherkin fallback found no endpoints either. Spec may use an unsupported format.\nFAILED (1):\n  MISSING: function 'target' \u2014 defined in spec but not found in code\n",
+      "stderr": ""
+    },
+    {
+      "channel": "skills/auto-coding/scripts/check_python_contracts.py",
+      "case": "zero-parameter-contract",
+      "argv": [
+        "/Users/zhenkun/GitHub/auto-coding/.venv/bin/python",
+        "-B",
+        "/Users/zhenkun/GitHub/auto-coding/skills/auto-coding/scripts/check_python_contracts.py",
+        "--spec",
+        "/var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/zero-parameter-contract/spec.md",
+        "--source",
+        "/var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/zero-parameter-contract/src"
+      ],
+      "exit_code": 1,
+      "stdout": "[contract_check] Spec: /var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/zero-parameter-contract/spec.md\n[contract_check] Source: /var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/zero-parameter-contract/src\n\n[contract_check] Type parser found only 1 contracts. Trying Gherkin fallback...\n\n[contract_check] Gherkin fallback found no endpoints either. Spec may use an unsupported format.\nFAILED (1):\n  PARAM_COUNT: 'target' \u2014 spec expects 0 params ([]), code has 1 (['value']) (/var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/zero-parameter-contract/src/module.py:1)\n",
+      "stderr": ""
+    },
+    {
+      "channel": "skills/auto-coding/scripts/check_python_contracts.py",
+      "case": "empty-contract",
+      "argv": [
+        "/Users/zhenkun/GitHub/auto-coding/.venv/bin/python",
+        "-B",
+        "/Users/zhenkun/GitHub/auto-coding/skills/auto-coding/scripts/check_python_contracts.py",
+        "--spec",
+        "/var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/empty-contract/spec.md",
+        "--source",
+        "/var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/empty-contract/src"
+      ],
+      "exit_code": 2,
+      "stdout": "[contract_check] Spec: /var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/empty-contract/spec.md\n[contract_check] Source: /var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/empty-contract/src\n\n[contract_check] Type parser found only 0 contracts. Trying Gherkin fallback...\n\n[contract_check] Gherkin fallback found no endpoints either. Spec may use an unsupported format.\nNo supported contracts found; structural verification is unavailable.\n",
+      "stderr": ""
+    },
+    {
+      "channel": "skills/auto-coding/scripts/check_python_contracts.py",
+      "case": "partial-parse",
+      "argv": [
+        "/Users/zhenkun/GitHub/auto-coding/.venv/bin/python",
+        "-B",
+        "/Users/zhenkun/GitHub/auto-coding/skills/auto-coding/scripts/check_python_contracts.py",
+        "--spec",
+        "/var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/partial-parse/spec.md",
+        "--source",
+        "/var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/partial-parse/src"
+      ],
+      "exit_code": 1,
+      "stdout": "[contract_check] Spec: /var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/partial-parse/spec.md\n[contract_check] Source: /var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/partial-parse/src\n\n[contract_check] Type parser found only 1 contracts. Trying Gherkin fallback...\n\n[contract_check] Gherkin fallback found no endpoints either. Spec may use an unsupported format.\nPASSED (1):\n  OK: function 'target' (/var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/partial-parse/src/module.py:1)\nDIAGNOSTICS (2):\n  parse error (/var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/partial-parse/src/broken.py): invalid syntax (broken.py, line 1)\n  parse error (/var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/partial-parse/src/broken.py): invalid syntax (broken.py, line 1)\n",
+      "stderr": ""
+    },
+    {
+      "channel": "skills/auto-coding/scripts/check_python_contracts.py",
+      "case": "valid-control",
+      "argv": [
+        "/Users/zhenkun/GitHub/auto-coding/.venv/bin/python",
+        "-B",
+        "/Users/zhenkun/GitHub/auto-coding/skills/auto-coding/scripts/check_python_contracts.py",
+        "--spec",
+        "/Users/zhenkun/GitHub/auto-coding/tests/fixtures/adversarial/valid_project/spec.md",
+        "--source",
+        "/Users/zhenkun/GitHub/auto-coding/tests/fixtures/adversarial/valid_project/src"
+      ],
+      "exit_code": 0,
+      "stdout": "[contract_check] Spec: /Users/zhenkun/GitHub/auto-coding/tests/fixtures/adversarial/valid_project/spec.md\n[contract_check] Source: /Users/zhenkun/GitHub/auto-coding/tests/fixtures/adversarial/valid_project/src\n\nPASSED (3):\n  OK: method 'UserService.create' (/Users/zhenkun/GitHub/auto-coding/tests/fixtures/adversarial/valid_project/src/users.py:5)\n  OK: method 'UserService.deactivate' (/Users/zhenkun/GitHub/auto-coding/tests/fixtures/adversarial/valid_project/src/users.py:8)\n  OK: function 'hash_password' (/Users/zhenkun/GitHub/auto-coding/tests/fixtures/adversarial/valid_project/src/users.py:12)\nAll 3 contracts structurally verified.\n",
+      "stderr": ""
+    },
+    {
+      "channel": "plugins/auto-coding/skills/auto-coding/scripts/check_python_contracts.py",
+      "case": "nested-function",
+      "argv": [
+        "/Users/zhenkun/GitHub/auto-coding/.venv/bin/python",
+        "-B",
+        "/Users/zhenkun/GitHub/auto-coding/plugins/auto-coding/skills/auto-coding/scripts/check_python_contracts.py",
+        "--spec",
+        "/var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/nested-function/spec.md",
+        "--source",
+        "/var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/nested-function/src"
+      ],
+      "exit_code": 1,
+      "stdout": "[contract_check] Spec: /var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/nested-function/spec.md\n[contract_check] Source: /var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/nested-function/src\n\n[contract_check] Type parser found only 1 contracts. Trying Gherkin fallback...\n\n[contract_check] Gherkin fallback found no endpoints either. Spec may use an unsupported format.\nFAILED (1):\n  MISSING: function 'target' \u2014 defined in spec but not found in code\n",
+      "stderr": ""
+    },
+    {
+      "channel": "plugins/auto-coding/skills/auto-coding/scripts/check_python_contracts.py",
+      "case": "bare-method",
+      "argv": [
+        "/Users/zhenkun/GitHub/auto-coding/.venv/bin/python",
+        "-B",
+        "/Users/zhenkun/GitHub/auto-coding/plugins/auto-coding/skills/auto-coding/scripts/check_python_contracts.py",
+        "--spec",
+        "/var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/bare-method/spec.md",
+        "--source",
+        "/var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/bare-method/src"
+      ],
+      "exit_code": 1,
+      "stdout": "[contract_check] Spec: /var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/bare-method/spec.md\n[contract_check] Source: /var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/bare-method/src\n\n[contract_check] Type parser found only 1 contracts. Trying Gherkin fallback...\n\n[contract_check] Gherkin fallback found no endpoints either. Spec may use an unsupported format.\nFAILED (1):\n  MISSING: function 'target' \u2014 defined in spec but not found in code\n",
+      "stderr": ""
+    },
+    {
+      "channel": "plugins/auto-coding/skills/auto-coding/scripts/check_python_contracts.py",
+      "case": "zero-parameter-contract",
+      "argv": [
+        "/Users/zhenkun/GitHub/auto-coding/.venv/bin/python",
+        "-B",
+        "/Users/zhenkun/GitHub/auto-coding/plugins/auto-coding/skills/auto-coding/scripts/check_python_contracts.py",
+        "--spec",
+        "/var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/zero-parameter-contract/spec.md",
+        "--source",
+        "/var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/zero-parameter-contract/src"
+      ],
+      "exit_code": 1,
+      "stdout": "[contract_check] Spec: /var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/zero-parameter-contract/spec.md\n[contract_check] Source: /var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/zero-parameter-contract/src\n\n[contract_check] Type parser found only 1 contracts. Trying Gherkin fallback...\n\n[contract_check] Gherkin fallback found no endpoints either. Spec may use an unsupported format.\nFAILED (1):\n  PARAM_COUNT: 'target' \u2014 spec expects 0 params ([]), code has 1 (['value']) (/var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/zero-parameter-contract/src/module.py:1)\n",
+      "stderr": ""
+    },
+    {
+      "channel": "plugins/auto-coding/skills/auto-coding/scripts/check_python_contracts.py",
+      "case": "empty-contract",
+      "argv": [
+        "/Users/zhenkun/GitHub/auto-coding/.venv/bin/python",
+        "-B",
+        "/Users/zhenkun/GitHub/auto-coding/plugins/auto-coding/skills/auto-coding/scripts/check_python_contracts.py",
+        "--spec",
+        "/var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/empty-contract/spec.md",
+        "--source",
+        "/var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/empty-contract/src"
+      ],
+      "exit_code": 2,
+      "stdout": "[contract_check] Spec: /var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/empty-contract/spec.md\n[contract_check] Source: /var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/empty-contract/src\n\n[contract_check] Type parser found only 0 contracts. Trying Gherkin fallback...\n\n[contract_check] Gherkin fallback found no endpoints either. Spec may use an unsupported format.\nNo supported contracts found; structural verification is unavailable.\n",
+      "stderr": ""
+    },
+    {
+      "channel": "plugins/auto-coding/skills/auto-coding/scripts/check_python_contracts.py",
+      "case": "partial-parse",
+      "argv": [
+        "/Users/zhenkun/GitHub/auto-coding/.venv/bin/python",
+        "-B",
+        "/Users/zhenkun/GitHub/auto-coding/plugins/auto-coding/skills/auto-coding/scripts/check_python_contracts.py",
+        "--spec",
+        "/var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/partial-parse/spec.md",
+        "--source",
+        "/var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/partial-parse/src"
+      ],
+      "exit_code": 1,
+      "stdout": "[contract_check] Spec: /var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/partial-parse/spec.md\n[contract_check] Source: /var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/partial-parse/src\n\n[contract_check] Type parser found only 1 contracts. Trying Gherkin fallback...\n\n[contract_check] Gherkin fallback found no endpoints either. Spec may use an unsupported format.\nPASSED (1):\n  OK: function 'target' (/var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/partial-parse/src/module.py:1)\nDIAGNOSTICS (2):\n  parse error (/var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/partial-parse/src/broken.py): invalid syntax (broken.py, line 1)\n  parse error (/var/folders/0l/4wxf7k013_s34b2wkdljpq1r0000gn/T/auto-coding-review-repro-xlwjc0z2/partial-parse/src/broken.py): invalid syntax (broken.py, line 1)\n",
+      "stderr": ""
+    },
+    {
+      "channel": "plugins/auto-coding/skills/auto-coding/scripts/check_python_contracts.py",
+      "case": "valid-control",
+      "argv": [
+        "/Users/zhenkun/GitHub/auto-coding/.venv/bin/python",
+        "-B",
+        "/Users/zhenkun/GitHub/auto-coding/plugins/auto-coding/skills/auto-coding/scripts/check_python_contracts.py",
+        "--spec",
+        "/Users/zhenkun/GitHub/auto-coding/tests/fixtures/adversarial/valid_project/spec.md",
+        "--source",
+        "/Users/zhenkun/GitHub/auto-coding/tests/fixtures/adversarial/valid_project/src"
+      ],
+      "exit_code": 0,
+      "stdout": "[contract_check] Spec: /Users/zhenkun/GitHub/auto-coding/tests/fixtures/adversarial/valid_project/spec.md\n[contract_check] Source: /Users/zhenkun/GitHub/auto-coding/tests/fixtures/adversarial/valid_project/src\n\nPASSED (3):\n  OK: method 'UserService.create' (/Users/zhenkun/GitHub/auto-coding/tests/fixtures/adversarial/valid_project/src/users.py:5)\n  OK: method 'UserService.deactivate' (/Users/zhenkun/GitHub/auto-coding/tests/fixtures/adversarial/valid_project/src/users.py:8)\n  OK: function 'hash_password' (/Users/zhenkun/GitHub/auto-coding/tests/fixtures/adversarial/valid_project/src/users.py:12)\nAll 3 contracts structurally verified.\n",
+      "stderr": ""
+    }
+  ],
+  "content_sha256": {
+    ".github/workflows/ci.yml": "d77a3725d8208994abdde49c5bd8b9924ca9a83b2b0068721a4de5b3492e7da8",
+    ".github/workflows/release.yml": "04f482ad03a92193c4b3b7363ee7b052d38588eeb911656ee2f1fe299767a996",
+    ".gitignore": "a5d744c358fd8d63d183f6d2676ca86033799a26db76ae9772bb4ab978356457",
+    "CHANGELOG.md": "f56a7f1caba591f6607634e37742ca06945fc9fb8f03e4eae38bd34579c98e0e",
+    "README-EN.md": "35af7f164ed149431c2b716c0a034322b4c445aa167b3e0249f9948eaeef7c12",
+    "README.md": "dc5ae9fded831e27549cf1176a4a42d86f90b7a99de6ea5f9338739116f268be",
+    "auto-coding-\u9879\u76ee\u8bc4\u5ba1\u62a5\u544a.md": "63a0de7bc668626e522598d6c10a940f92b1e89bbad57d731e22f512cddd24f5",
+    "plugins/auto-coding/skills/auto-coding/references/toolchain-python.md": "cdbd67e2932f3e6534bb094ee445d8e6492019cd178512c312919e5c47fb9f98",
+    "plugins/auto-coding/skills/auto-coding/scripts/check_python_contracts.py": "4c1f2fd89807e5e48ef81b83ccb23e9aa769db47b41f6f9b45aea3422af0d1bb",
+    "references/toolchain-python.md": "cdbd67e2932f3e6534bb094ee445d8e6492019cd178512c312919e5c47fb9f98",
+    "scripts/check_python_contracts.py": "4c1f2fd89807e5e48ef81b83ccb23e9aa769db47b41f6f9b45aea3422af0d1bb",
+    "skills/auto-coding/references/toolchain-python.md": "cdbd67e2932f3e6534bb094ee445d8e6492019cd178512c312919e5c47fb9f98",
+    "skills/auto-coding/scripts/check_python_contracts.py": "4c1f2fd89807e5e48ef81b83ccb23e9aa769db47b41f6f9b45aea3422af0d1bb",
+    "tests/test_contract_check.py": "6e725b6fec4ede3e202d9f717f939c3618e65dba8bd47f73f5f73636dccf4c55"
+  },
+  "static_checks": {
+    "ci_python_versions": [
+      "3.10",
+      "3.11",
+      "3.12",
+      "3.13"
+    ],
+    "yaml_structure_and_tag_permissions": "PASS",
+    "python_3_10_grammar": "PASS",
+    "current_report_path_redaction": "PASS",
+    "runtime_release_execution": "NOT_RUN"
+  },
+  "recorded_at_utc": "2026-09-29T05:39:16.221040+00:00"
+}

@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- CI checks Python 3.10-3.13 using the existing pinned tools. Future tag-triggered releases use generated notes without prepending the historical v2 body.
+- The Python contract checker keeps module/class scopes, supports async definitions, rejects kind and explicit zero-parameter mismatches, and fails incomplete source inspection. Unsupported contracts exit 2 rather than claiming that zero contracts were verified.
+- The old external report is labelled historical and its local checkout path is redacted in the current tree. Retained test artifact management and cleanup-denial diagnostics are documented.
+
 - Next-major development contract (`3.0.0-dev`): concise, outcome-based planning and completion replace fixed question counts, test counts, repair limits and keyword-based risk escalation. Native verification and authorization boundaries remain.
 - Current project status is the task authority; optional standalone memory preserves completion and reconciles evidence against content/environment rather than invalidating all evidence on every resume.
 - State `init` refuses overwrite. `complete --summary` preserves delivery fields and refuses known unfinished/blocked records; deprecated `clear` no longer empties state. Legacy records remain readable; completion requires enrichment.
